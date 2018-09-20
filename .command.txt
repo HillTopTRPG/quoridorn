@@ -1,0 +1,4 @@
+◆Node.js
+cd c://dev/quoridorn
+npm run dev
+vue ui
