@@ -70,6 +70,11 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - 表示
 - 個人タブ作成(new)
 
+# カットイン
+- 表示
+- 設定画面
+- チャット末尾連動
+
 # フォントサイズ変更
 # ウィンドウ配置初期化
 # マス目表示・非表示切り替え
