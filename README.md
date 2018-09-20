@@ -37,8 +37,9 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - 表示
 - ダイスボット組み込み
 - 秘匿チャット
-- 複数行
+- 複数行入力
 - 文字色設定
+- タブ
 
 # 通信処理
 - 設定画面表示
