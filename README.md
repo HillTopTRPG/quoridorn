@@ -1,4 +1,4 @@
-# quoridorn
+# Quoridorn（コリドーン）
 
 > TRPGセッションツール
 
