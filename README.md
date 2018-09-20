@@ -28,3 +28,31 @@ npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
+## 機能実装予定
+
+``` bash
+# チャット欄作成
+- 表示
+- ダイスボット組み込み
+- 秘匿チャット
+- 複数行
+- 文字色設定
+
+# 立ち絵設定
+- 表示
+- チャット連携
+
+# コマ作成
+- 表示
+- 右クリックから設定画面表示
+- ドロップインでコマ画設定
+- チャットパレット設定
+- 
+
+# BGM
+- 流す
+- チャット欄にあるアイコンから設定画面表示
+- 
+```
