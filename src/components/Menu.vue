@@ -172,6 +172,10 @@ export default {
 .span-group span {
   display: inline-block;
   padding: 2px 10px;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 .span-group span:hover, .span-group span.isHover {
   background: linear-gradient(rgba(186, 195, 199, 0.6), rgba(247, 248, 249, 1));

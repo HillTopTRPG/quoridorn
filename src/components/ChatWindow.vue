@@ -1,5 +1,5 @@
 <template>
-  <WindowBase title="チャット" displayPropery="chatWindow">
+  <WindowBase title="チャット" displayPropery="chatWindow" align="left-bottom" baseSize="-200, 200">
     <div class="tabs">
       <span class="tab" v-for="tabObj in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @mousedown.prevent="chatTabSelect(tabObj.name)">{{tabObj.name}}/0</span><!--
     --><span class="tab addButton" @click="addTab">＋</span>

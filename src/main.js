@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 import App from './App'
 import Menu from './components/Menu'
 import ChatWindow from './components/ChatWindow'
+import MapMaskWindow from './components/MapMaskWindow'
 
 Vue.use(Vuex)
 
@@ -32,11 +33,22 @@ const store = new Vuex.Store({
       standImageAutoResize: true,
       cutIn: true,
       pieceRotateMarker: true,
-      gridOn: true
+      gridOn: true,
+      mapMaskWindow: true
     },
     room: {
       id: '1a2b3c4d5e6f',
       member: []
+    },
+    map: {
+      grid: {
+        c: 20,
+        r: 16,
+        size: 50,
+        color: 'rgb(255, 255, 255)'
+      },
+      mapMasks: [],
+      draggingMapMask: null
     },
     charactors: [
 
@@ -78,6 +90,39 @@ const store = new Vuex.Store({
   mutations: {
     changeDisplay (state, property) {
       state.display[property] = !state.display[property]
+    },
+    addMapMask (state, payload) {
+      let name = payload.name
+      let gridC = payload.gridC
+      let gridR = payload.gridR
+      let gridW = payload.gridW
+      let gridH = payload.gridH
+      let color = payload.color
+      let fontColor = payload.fontColor
+
+      const mapMaskObj = {
+        name: name,
+        gridR: gridR,
+        gridC: gridC,
+        gridW: gridW,
+        gridH: gridH,
+        color: color,
+        fontColor: fontColor
+      }
+
+      state.map.mapMasks.push(mapMaskObj)
+    },
+    setDraggingMapMask (state, index) {
+      const mapMaskObj = state.map.mapMasks.splice(index, 1)[0]
+      state.map.draggingMapMask = mapMaskObj
+    },
+    moveMapMask (state, payload) {
+      let gridC = payload.gridC
+      let gridR = payload.gridR
+      const mapMaskObj = state.map.draggingMapMask
+      mapMaskObj.gridC = gridC
+      mapMaskObj.gridR = gridR
+      state.map.mapMasks.push(mapMaskObj)
     },
     changeChatTab (state, tabsText) {
       // 配列を空にする
@@ -153,6 +198,25 @@ const store = new Vuex.Store({
     chatLogs: (state) => {
       let result = state.chat.logs[store.getters.activeChatTab.name]
       return result
+    },
+    mapMaskList: function (state) {
+      const result = []
+      for (let mapMaskObj of state.map.mapMasks) {
+        let styleObj = {
+          top: (mapMaskObj.gridR - 1) * state.map.grid.size + 1 + 'px',
+          left: (mapMaskObj.gridC - 1) * state.map.grid.size + 1 + 'px',
+          width: mapMaskObj.gridW * state.map.grid.size + 'px',
+          height: mapMaskObj.gridH * state.map.grid.size + 'px',
+          'background-color': mapMaskObj.color,
+          color: mapMaskObj.fontColor
+        }
+        let name = mapMaskObj.name
+        result.push({
+          name: name,
+          style: styleObj
+        })
+      }
+      return result
     }
   }
 })
@@ -164,7 +228,8 @@ new Vue({
   components: {
     Menu: Menu,
     ChatWindow: ChatWindow,
-    App: App
+    App: App,
+    MapMaskWindow: MapMaskWindow
   },
   data: {
     scrollY: 0
@@ -180,9 +245,10 @@ new Vue({
   },
   template: `
   <div>
-    <ChatWindow></ChatWindow>
-    <App></App>
-    <Menu></Menu>
+    <ChatWindow/>
+    <App/>
+    <Menu/>
+    <MapMaskWindow/>
   </div>
   `
 })

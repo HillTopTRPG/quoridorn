@@ -5,14 +5,14 @@
       <slot></slot>
     </div>
     <div class="title" @mousedown.left.prevent="move(true)" @mouseup.left.prevent="move(false)">{{title}}</div>
-    <div class="corner-left-top" @mousedown.left.prevent="resize('corner-left-top', true)" @mouseup.left.prevent="resize('corner-left-top', false)"></div>
-    <div class="corner-left-bottom" @mousedown.left.prevent="resize('corner-left-bottom', true)" @mouseup.left.prevent="resize('corner-left-bottom', false)"></div>
-    <div class="corner-right-top" @mousedown.left.prevent="resize('corner-right-top', true)" @mouseup.left.prevent="resize('corner-right-top', false)"></div>
-    <div class="corner-right-bottom" @mousedown.left.prevent="resize('corner-right-bottom', true)" @mouseup.left.prevent="resize('corner-right-bottom', false)"></div>
-    <div class="side-top" @mouseup.left.prevent="resize('side-top', false)" @mousedown.left.prevent="resize('side-top', true)"></div>
-    <div class="side-left" @mousedown.left.prevent="resize('side-left', true)" @mouseup.left.prevent="resize('side-left', false)"></div>
-    <div class="side-right" @mousedown.left.prevent="resize('side-right', true)" @mouseup.left.prevent="resize('side-right', false)"></div>
-    <div class="side-bottom" @mousedown.left.prevent="resize('side-bottom', true)" @mouseup.left.prevent="resize('side-bottom', false)"></div>
+    <div class="corner-left-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-top', true)" @mouseup.left.prevent="resize('corner-left-top', false)"></div>
+    <div class="corner-left-bottom" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-bottom', true)" @mouseup.left.prevent="resize('corner-left-bottom', false)"></div>
+    <div class="corner-right-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-right-top', true)" @mouseup.left.prevent="resize('corner-right-top', false)"></div>
+    <div class="corner-right-bottom" v-if="!isFix" @mousedown.left.prevent="resize('corner-right-bottom', true)" @mouseup.left.prevent="resize('corner-right-bottom', false)"></div>
+    <div class="side-top" v-if="!isFix" @mouseup.left.prevent="resize('side-top', false)" @mousedown.left.prevent="resize('side-top', true)"></div>
+    <div class="side-left" v-if="!isFix" @mousedown.left.prevent="resize('side-left', true)" @mouseup.left.prevent="resize('side-left', false)"></div>
+    <div class="side-right" v-if="!isFix" @mousedown.left.prevent="resize('side-right', true)" @mouseup.left.prevent="resize('side-right', false)"></div>
+    <div class="side-bottom" v-if="!isFix" @mousedown.left.prevent="resize('side-bottom', true)" @mouseup.left.prevent="resize('side-bottom', false)"></div>
     <img class="close" src="../assets/window_close.png" @click.left.prevent="closeWindow">
   </div>
 </template>
@@ -21,7 +21,7 @@
 import { mapMutations } from 'vuex'
 
 export default {
-  props: ['title', 'displayPropery'],
+  props: ['title', 'displayPropery', 'align', 'baseSize', 'fixSize'],
   data () {
     return {
       windowBase: {
@@ -34,8 +34,10 @@ export default {
           saveY: 0
         },
         windowFactor: {
-          x: 0,
-          y: 0,
+          l: 0, // left
+          r: 0, // right
+          t: 37, // top
+          b: 0, // bottom
           w: 0,
           h: 0,
           draggingX: 0,
@@ -68,33 +70,27 @@ export default {
         this.windowBase.mouse.saveX = this.windowBase.mouse.x
         this.windowBase.mouse.saveY = this.windowBase.mouse.y
       } else {
-        // console.log(this.windowBase.moveMode, this.windowBase.windowFactor.x, this.windowBase.windowFactor.y, this.windowBase.windowFactor.w, this.windowBase.windowFactor.h, this.windowBase.windowFactor.draggingX, this.windowBase.windowFactor.draggingY)
-        switch (this.windowBase.moveMode) {
-          case 'side-right':
-          case 'corner-right-top':
-          case 'corner-right-bottom':
-            this.windowBase.windowFactor.w += this.windowBase.windowFactor.draggingX
-            break
-          case 'side-left':
-          case 'corner-left-top':
-          case 'corner-left-bottom':
-            this.windowBase.windowFactor.x += this.windowBase.windowFactor.draggingX
-            this.windowBase.windowFactor.w -= this.windowBase.windowFactor.draggingX
+        const moveMode = this.windowBase.moveMode
+        const winFac = this.windowBase.windowFactor
+        // console.log(this.windowBase.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
+        if (moveMode.indexOf('right') >= 0) {
+          winFac.r -= winFac.draggingX
+          winFac.w += winFac.draggingX
         }
-        switch (this.windowBase.moveMode) {
-          case 'side-top':
-          case 'corner-left-top':
-          case 'corner-right-top':
-            this.windowBase.windowFactor.h -= this.windowBase.windowFactor.draggingY
-            break
-          case 'side-bottom':
-          case 'corner-left-bottom':
-          case 'corner-right-bottom':
-            this.windowBase.windowFactor.y -= this.windowBase.windowFactor.draggingY
-            this.windowBase.windowFactor.h += this.windowBase.windowFactor.draggingY
+        if (moveMode.indexOf('left') >= 0) {
+          winFac.l += winFac.draggingX
+          winFac.w -= winFac.draggingX
         }
-        this.windowBase.windowFactor.draggingX = 0
-        this.windowBase.windowFactor.draggingY = 0
+        if (moveMode.indexOf('top') >= 0) {
+          winFac.t += winFac.draggingY
+          winFac.h -= winFac.draggingY
+        }
+        if (moveMode.indexOf('bottom') >= 0) {
+          winFac.b -= winFac.draggingY
+          winFac.h += winFac.draggingY
+        }
+        winFac.draggingX = 0
+        winFac.draggingY = 0
       }
       // console.log(this.windowBase.moveMode, this.windowBase.windowFactor.x, this.windowBase.windowFactor.y, this.windowBase.windowFactor.w, this.windowBase.windowFactor.h, this.windowBase.windowFactor.draggingX, this.windowBase.windowFactor.draggingY)
       this.windowBase.moveMode = (flg ? direct : '')
@@ -129,8 +125,10 @@ export default {
         this.windowBase.mouse.saveX = this.windowBase.mouse.x
         this.windowBase.mouse.saveY = this.windowBase.mouse.y
       } else {
-        this.windowBase.windowFactor.x += this.windowBase.windowFactor.draggingX
-        this.windowBase.windowFactor.y -= this.windowBase.windowFactor.draggingY
+        this.windowBase.windowFactor.r -= this.windowBase.windowFactor.draggingX
+        this.windowBase.windowFactor.t += this.windowBase.windowFactor.draggingY
+        this.windowBase.windowFactor.l += this.windowBase.windowFactor.draggingX
+        this.windowBase.windowFactor.b -= this.windowBase.windowFactor.draggingY
         this.windowBase.windowFactor.draggingX = 0
         this.windowBase.windowFactor.draggingY = 0
       }
@@ -141,58 +139,106 @@ export default {
     isDisplay: function () {
       return this.$store.state.display[this.displayPropery]
     },
-    windowStyle: function () {
-      let left = this.windowBase.windowFactor.x
-      let bottom = this.windowBase.windowFactor.y
-      let height = this.windowBase.windowFactor.h
-      let width = this.windowBase.windowFactor.w
-      switch (this.windowBase.moveMode) {
-        case 'side-top':
-          height -= this.windowBase.windowFactor.draggingY
-          break
-        case 'side-bottom':
-          height += this.windowBase.windowFactor.draggingY
-          bottom -= this.windowBase.windowFactor.draggingY
-          break
-        case 'side-left':
-          width -= this.windowBase.windowFactor.draggingX
-          left += this.windowBase.windowFactor.draggingX
-          break
-        case 'side-right':
-          width += this.windowBase.windowFactor.draggingX
-          break
-        case 'corner-right-top':
-          width += this.windowBase.windowFactor.draggingX
-          height -= this.windowBase.windowFactor.draggingY
-          break
-        case 'corner-right-bottom':
-          width += this.windowBase.windowFactor.draggingX
-          height += this.windowBase.windowFactor.draggingY
-          bottom -= this.windowBase.windowFactor.draggingY
-          break
-        case 'corner-left-bottom':
-          width -= this.windowBase.windowFactor.draggingX
-          height += this.windowBase.windowFactor.draggingY
-          bottom -= this.windowBase.windowFactor.draggingY
-          left += this.windowBase.windowFactor.draggingX
-          break
-        case 'corner-left-top':
-          width -= this.windowBase.windowFactor.draggingX
-          height -= this.windowBase.windowFactor.draggingY
-          left += this.windowBase.windowFactor.draggingX
-          break
-        case 'move':
-          left += this.windowBase.windowFactor.draggingX
-          bottom -= this.windowBase.windowFactor.draggingY
+    isFix: function () {
+      if (this.fixSize) {
+        return true
+      } else {
+        return false
       }
+    },
+    fixW: function () {
+      if (!this.isFix) {
+        return -1
+      }
+      let width = this.fixSize.split(',')[0].trim()
+      return parseInt(width)
+    },
+    fixH: function () {
+      if (!this.isFix) {
+        return -1
+      }
+      let height = this.fixSize.split(',')[1].trim()
+      return parseInt(height)
+    },
+    baseW: function () {
+      let width = this.baseSize.split(',')[0].trim()
+      return parseInt(width)
+    },
+    baseH: function () {
+      let height = this.baseSize.split(',')[1].trim()
+      return parseInt(height)
+    },
+    windowStyle: function () {
+      const moveMode = this.windowBase.moveMode
+      const winFac = this.windowBase.windowFactor
+
+      let left = winFac.l
+      let bottom = winFac.b
+      let right = winFac.r
+      let top = winFac.t
+      let height = winFac.h
+      let width = winFac.w
+
+      if (moveMode.indexOf('top') >= 0 || moveMode === 'move') {
+        top += winFac.draggingY
+        if (moveMode.indexOf('top') >= 0) {
+          height -= winFac.draggingY
+        }
+      }
+
+      if (moveMode.indexOf('bottom') >= 0 || moveMode === 'move') {
+        bottom -= winFac.draggingY
+        if (moveMode.indexOf('bottom') >= 0) {
+          height += winFac.draggingY
+        }
+      }
+
+      if (moveMode.indexOf('right') >= 0 || moveMode === 'move') {
+        right -= winFac.draggingX
+        if (moveMode.indexOf('right') >= 0) {
+          width += winFac.draggingX
+        }
+      }
+
+      if (moveMode.indexOf('left') >= 0 || moveMode === 'move') {
+        left += winFac.draggingX
+        if (moveMode.indexOf('left') >= 0) {
+          width -= winFac.draggingX
+        }
+      }
+
       const obj = {
         display: this.isDisplay ? 'block' : 'none',
-        left: left + 'px',
-        bottom: bottom + 'px',
         width: 'calc(100% - 10px - 200px + ' + width + 'px)',
         height: 'calc(200px + ' + height + 'px)'
       }
-      // console.log(obj.left, obj.bottom, obj.width, obj.height)
+      if (this.align.indexOf('left') >= 0) {
+        obj.left = left + 'px'
+      }
+      if (this.align.indexOf('right') >= 0) {
+        obj.right = right + 'px'
+      }
+      if (this.align.indexOf('top') >= 0) {
+        obj.top = top + 'px'
+      }
+      if (this.align.indexOf('bottom') >= 0) {
+        obj.bottom = bottom + 'px'
+      }
+      if (this.isFix) {
+        obj.width = this.fixW + 'px'
+        obj.height = this.fixH + 'px'
+      } else {
+        if (this.baseW > 0) {
+          obj.width = this.baseW + width + 'px'
+        } else {
+          obj.width = 'calc(100% - 10px - ' + (-this.baseW) + 'px + ' + width + 'px)'
+        }
+        if (this.baseH > 0) {
+          obj.height = this.baseH + height + 'px'
+        } else {
+          obj.height = 'calc(100% - 10px - ' + (-this.baseH) + 'px + ' + width + 'px)'
+        }
+      }
       return obj
     }
   }
@@ -203,8 +249,6 @@ export default {
 <style>
 .window {
   position: fixed;
-  bottom: 0;
-  left: 0;
   z-index: 90;
   padding: 22px 8px 8px 8px;
   overflow: visible;
