@@ -1,10 +1,12 @@
 <template>
-  <div id="map" :style="canvasStyle">
+  <div id="map" :style="canvasStyle" dropzone="move" @dragover.prevent @drop.prevent="drop">
     <canvas id="map-canvas" :width="sizeW" :height="sizeH" @mousedown.left.prevent="leftDown" @mouseup.left.prevent="leftUp" @mousedown.right.prevent="rightDown" @mouseup.right.prevent="rightUp" @contextmenu.prevent></canvas>
+    <div class="mapMask" v-for="(mapMask, index) in mapMasks" :key="index" @dragstart="(e) => dragStartMapMask(e, index)" :style="mapMask.style" @mousedown.right.prevent="rightDown" @mouseup.right.prevent="rightUp" @contextmenu.prevent draggable="true">{{mapMask.name}}</div>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 // const imageDef = () => import('./background-default.jpg')
 import imageDef from './background-default.jpg'
 
@@ -14,10 +16,6 @@ export default {
     return {
       memberNum: 1,
       menuHoverNum: 0,
-      gridX: 20,
-      gridY: 16,
-      gridSize: 50,
-      gridColor: 'rgb(255, 255, 255)',
       isDraggingLeft: false,
       leftMove: {
         totalX: 0,
@@ -51,14 +49,71 @@ export default {
       _this.mouse.x = e.pageX
       _this.mouse.y = e.pageY
       _this.reflesh(e.pageX, e.pageY)
+      // console.log(_this.mouse.x, _this.mouse.y)
     })
   },
   methods: {
+    ...mapMutations([
+      'addMapMask',
+      'moveMapMask',
+      'setDraggingMapMask'
+    ]),
     setGrid: function (flg) {
       this.isGrid = flg
     },
     wheel: function (delta) {
       this.translateZ = this.translateZ + delta
+    },
+    dragStartMapMask: function (event, index) {
+      event.dataTransfer.setData('kind', 'mapMask-move')
+      let offsetX = event.offsetX
+      let offsetY = event.offsetY
+      event.dataTransfer.setData('offsetX', offsetX)
+      event.dataTransfer.setData('offsetY', offsetY)
+      this.setDraggingMapMask(index)
+    },
+    drop: function (event) {
+      // ドロップされた物の種類
+      const kind = event.dataTransfer.getData('kind')
+
+      if (kind === 'mapMask') {
+        const name = event.dataTransfer.getData('name')
+        const color = event.dataTransfer.getData('color')
+        const fontColor = event.dataTransfer.getData('fontColor')
+        let gridW = event.dataTransfer.getData('width')
+        let gridH = event.dataTransfer.getData('height')
+
+        let offsetX = event.offsetX
+        let offsetY = event.offsetY
+        let gridC = Math.ceil(offsetX / this.gridSize)
+        let gridR = Math.ceil(offsetY / this.gridSize)
+
+        const mapMaskObj = {
+          name: name,
+          gridR: gridR,
+          gridC: gridC,
+          gridW: gridW,
+          gridH: gridH,
+          color: color,
+          fontColor: fontColor
+        }
+
+        this.addMapMask(mapMaskObj)
+      }
+      if (kind === 'mapMask-move') {
+        const _offsetX = Math.floor(event.dataTransfer.getData('offsetX') / this.gridSize) * this.gridSize
+        const _offsetY = Math.floor(event.dataTransfer.getData('offsetY') / this.gridSize) * this.gridSize
+
+        let offsetX = event.offsetX
+        let offsetY = event.offsetY
+        let gridC = Math.ceil((offsetX - _offsetX) / this.gridSize)
+        let gridR = Math.ceil((offsetY - _offsetY) / this.gridSize)
+
+        this.moveMapMask({
+          gridR: gridR,
+          gridC: gridC
+        })
+      }
     },
     leftDown: function () {
       console.log('leftDown')
@@ -118,8 +173,8 @@ export default {
       if (this.isGridLine) {
         ctx.strokeStyle = this.gridColor
         ctx.globalAlpha = 0.3
-        for (let c = 0; c <= this.gridX; c++) {
-          for (let r = 0; r <= this.gridY; r++) {
+        for (let c = 0; c <= this.gridC; c++) {
+          for (let r = 0; r <= this.gridR; r++) {
             // 横線
             this.drawLine(ctx, c * this.gridSize + 1, r * this.gridSize + 1, this.gridSize - 1, 0)
             // 縦線
@@ -132,8 +187,8 @@ export default {
         ctx.globalAlpha = 0.3
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        for (let c = 0; c <= this.gridX; c++) {
-          for (let r = 0; r <= this.gridY; r++) {
+        for (let c = 0; c <= this.gridC; c++) {
+          for (let r = 0; r <= this.gridR; r++) {
             const text = (c + 1) + '-' + (r + 1)
             ctx.fillText(text, c * this.gridSize + 2 + (this.gridSize - 1) / 2, r * this.gridSize + 2 + (this.gridSize - 1) / 2)
           }
@@ -148,12 +203,12 @@ export default {
     }
   },
   watch: {
-    isGridLine: function() {
+    isGridLine: function () {
       this.paint()
     },
-    isGridId: function() {
+    isGridId: function () {
       this.paint()
-    },
+    }
   },
   computed: {
     isGridLine: function () {
@@ -162,8 +217,23 @@ export default {
     isGridId: function () {
       return this.$store.state.display.gridId
     },
-    sizeW: function () { return this.gridX * this.gridSize + 2 },
-    sizeH: function () { return this.gridY * this.gridSize + 2 },
+    gridColor: function () {
+      return this.$store.state.map.grid.color
+    },
+    gridC: function () {
+      return this.$store.state.map.grid.c
+    },
+    gridR: function () {
+      return this.$store.state.map.grid.r
+    },
+    gridSize: function () {
+      return this.$store.state.map.grid.size
+    },
+    mapMasks: function () {
+      return this.$store.getters.mapMaskList
+    },
+    sizeW: function () { return this.gridC * this.gridSize + 2 },
+    sizeH: function () { return this.gridR * this.gridSize + 2 },
     translateX: function () { return this.leftMove.totalX + this.leftMove.draggingX },
     translateY: function () { return this.leftMove.totalY + this.leftMove.draggingY },
     canvasStyle: function () {
@@ -191,8 +261,16 @@ export default {
 #map {
   display: block;
   margin: auto;
+  -khtml-user-drag: element;
 }
 canvas {
   display: block;
+}
+.mapMask {
+  position: fixed;
+  cursor: default;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
