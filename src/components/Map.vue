@@ -64,8 +64,8 @@ export default {
     },
     leftDown: function () {
       console.log('leftDown')
-      this.mouseXSave = this.mouse.x
-      this.mouseYSave = this.mouse.y
+      this.mouse.saveX = this.mouse.x
+      this.mouse.saveY = this.mouse.y
       this.isDraggingLeft = true
     },
     leftUp: function () {
@@ -78,8 +78,8 @@ export default {
     },
     rightDown: function () {
       console.log('rightDown')
-      this.mouseXSave = this.mouse.x
-      this.mouseYSave = this.mouse.y
+      this.mouse.saveX = this.mouse.x
+      this.mouse.saveY = this.mouse.y
       this.isDraggingRight = true
     },
     rightUp: function () {
@@ -91,8 +91,8 @@ export default {
       this.rightMove.draggingY = 0
     },
     reflesh: function (x, y) {
-      const moveX = x - this.mouseXSave
-      const moveY = y - this.mouseYSave
+      const moveX = x - this.mouse.saveX
+      const moveY = y - this.mouse.saveY
       if (this.isDraggingLeft) {
         this.leftMove.draggingX = moveX
         this.leftMove.draggingY = moveY

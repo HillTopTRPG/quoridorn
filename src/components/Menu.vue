@@ -125,10 +125,11 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(#F7F8F9, #8BA0AA);
+  background: linear-gradient(rgba(247, 248, 249, 1), rgba(0, 0, 0, 0));
   border-bottom: solid gray 1px;
   padding: 0px 10px;
   font-size: 16px;
+  z-index: 100;
 }
 #menu > * {
   margin: 5px;
@@ -136,7 +137,7 @@ export default {
 }
 .span-group {
   display: inline-block;
-  background: linear-gradient(#F7F8F9, #BAC3C7);
+  background-color: rgba(250, 250, 250, 0.2);
   border: solid gray 1px;
   padding: 0px 15px;
 }
@@ -145,11 +146,11 @@ export default {
   padding: 2px 10px;
 }
 .span-group span:hover, .span-group span.isHover {
-  background: linear-gradient(#BAC3C7, #F7F8F9);
+  background: linear-gradient(rgba(186, 195, 199, 0.6), rgba(247, 248, 249, 1));
 }
 .menu-button {
   display: inline-block;
-  background: linear-gradient(#F7F8F9, #BAC3C7);
+  background: rgba(250, 250, 250, 0.4);
   border: solid gray 1px;
   padding: 2px 10px;
   border-radius: 5px;
@@ -157,7 +158,7 @@ export default {
 }
 .menu-button:hover {
   border: solid #0092ED 1px;
-  background: linear-gradient(#EBECED, #AFB8BB);
+  background: rgba(250, 250, 250, 0.5);
 }
 .hoverMenu {
   position: fixed;

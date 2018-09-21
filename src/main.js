@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import Menu from './components/Menu'
+import ChatWindow from './components/ChatWindow'
 
 Vue.config.productionTip = false
 
@@ -22,7 +23,11 @@ const mixInWindow = {
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  components: { Menu: Menu, App: App },
+  components: {
+    Menu: Menu,
+    ChatWindow: ChatWindow,
+    App: App
+  },
   data: {
     scrollY: 0
   },
@@ -37,6 +42,7 @@ new Vue({
   },
   template: `
   <div>
+    <ChatWindow></ChatWindow>
     <App></App>
     <Menu></Menu>
   </div>
