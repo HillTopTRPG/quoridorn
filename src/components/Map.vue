@@ -12,8 +12,6 @@ export default {
   name: 'map',
   data () {
     return {
-      isGrid: true,
-      isAddress: true,
       memberNum: 1,
       menuHoverNum: 0,
       gridX: 20,
@@ -104,8 +102,10 @@ export default {
     },
     paint: function () {
       const ctx = document.getElementById('map-canvas').getContext('2d')
+      console.log('paint')
 
       ctx.fillStyle = 'rgb(0, 22, 40)'
+      ctx.globalAlpha = 1
       ctx.fillRect(0, 0, this.sizeW, this.sizeH)
 
       /* Imageオブジェクトを生成 */
@@ -115,7 +115,7 @@ export default {
       /* 画像を描画 */
       ctx.drawImage(img, 0, 0, this.sizeW, this.sizeH)
 
-      if (this.isGrid) {
+      if (this.isGridLine) {
         ctx.strokeStyle = this.gridColor
         ctx.globalAlpha = 0.3
         for (let c = 0; c <= this.gridX; c++) {
@@ -127,7 +127,7 @@ export default {
           }
         }
       }
-      if (this.isAddress) {
+      if (this.isGridId) {
         ctx.fillStyle = this.gridColor
         ctx.globalAlpha = 0.3
         ctx.textAlign = 'center'
@@ -147,7 +147,21 @@ export default {
       ctx.stroke()
     }
   },
+  watch: {
+    isGridLine: function() {
+      this.paint()
+    },
+    isGridId: function() {
+      this.paint()
+    },
+  },
   computed: {
+    isGridLine: function () {
+      return this.$store.state.display.gridLine
+    },
+    isGridId: function () {
+      return this.$store.state.display.gridId
+    },
     sizeW: function () { return this.gridX * this.gridSize + 2 },
     sizeH: function () { return this.gridY * this.gridSize + 2 },
     translateX: function () { return this.leftMove.totalX + this.leftMove.draggingX },
