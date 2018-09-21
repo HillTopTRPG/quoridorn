@@ -56,13 +56,13 @@ export default {
     })
   },
   methods: {
-    closeWindow: function () {
-      this.changeDisplay(this.displayPropery, false)
-      // this.windowBase.isOpen = false
-    },
     ...mapMutations([
       'changeDisplay'
     ]),
+    closeWindow: function () {
+      this.changeDisplay(this.displayPropery)
+      // this.windowBase.isOpen = false
+    },
     resize: function (direct, flg) {
       if (flg) {
         this.windowBase.mouse.saveX = this.windowBase.mouse.x

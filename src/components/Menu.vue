@@ -2,12 +2,12 @@
   <div id="menu">
     <div class="menu-button connect" @click="clickConnect">接続</div>
     <div class="span-group">
-      <span @mouseenter="menuHover(2, true)" @mouseleave="menuHover(2, false)" :class="{isHover : hover2}">ファイル</span><!--
-    --><span @mouseenter="menuHover(3, true)" @mouseleave="menuHover(3, false)" :class="{isHover : hover3}">表示</span><!--
-    --><span @mouseenter="menuHover(4, true)" @mouseleave="menuHover(4, false)" :class="{isHover : hover4}">コマ</span><!--
-    --><span @mouseenter="menuHover(5, true)" @mouseleave="menuHover(5, false)" :class="{isHover : hover5}">マップ</span><!--
-    --><span @mouseenter="menuHover(6, true)" @mouseleave="menuHover(6, false)" :class="{isHover : hover6}">画像</span><!--
-    --><span @mouseenter="menuHover(7, true)" @mouseleave="menuHover(7, false)" :class="{isHover : hover7}">ヘルプ</span>
+      <span @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')" :class="{isHover : hover2}">ファイル</span><!--
+    --><span @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')" :class="{isHover : hover3}">表示</span><!--
+    --><span @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')" :class="{isHover : hover4}">コマ</span><!--
+    --><span @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')" :class="{isHover : hover5}">マップ</span><!--
+    --><span @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')" :class="{isHover : hover6}">画像</span><!--
+    --><span @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')" :class="{isHover : hover7}">ヘルプ</span>
     </div>
     <div class="menu-button room-id" @click="clickRoomInfo">
       ルームID.<span id="room-id">{{ roomId }}</span>
@@ -16,30 +16,31 @@
     </div>
     <div class="menu-button public-memo" @click="clickPublicMemo">共有メモ</div>
     <div class="menu-button logout" @click="clickLogout">ログアウト</div>
-    <div class="hoverMenu hoverMenu2" v-if="menuHoverNum === 2" @mouseenter="menuHover(2, true)" @mouseleave="menuHover(2, false)">
+    <div class="hoverMenu hoverMenu2" v-show="menu['ファイル']" @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')">
       <div class="item">セーブ</div>
       <div class="item">ロード</div>
       <hr>
       <div class="item">ログアウト</div>
     </div>
-    <div class="hoverMenu hoverMenu3" v-if="menuHoverNum === 3" @mouseenter="menuHover(3, true)" @mouseleave="menuHover(3, false)">
-      <div class="item">ウィンドウ</div>
+    <div class="hoverMenu hoverMenu3" v-show="menu['表示']" @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')">
+      <div class="item" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, 'ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
       <hr>
-      <div class="item">立ち絵表示</div>
-      <div class="item">カットイン表示</div>
+      <BooleanItem property="standImage">立ち絵表示</BooleanItem>
+      <div class="item"></div>
+      <BooleanItem property="cutIn">カットイン表示</BooleanItem>
       <hr>
-      <div class="item">座標表示</div>
-      <div class="item">マス目表示</div>
+      <BooleanItem property="gridLine">座標表示</BooleanItem>
+      <BooleanItem property="gridId">マス目表示</BooleanItem>
       <hr>
-      <div class="item">マス目にキャラクターを合わせる</div>
-      <div class="item">立ち絵のサイズを自動調整する</div>
+      <BooleanItem property="gridOn">マス目にキャラクターを合わせる</BooleanItem>
+      <BooleanItem property="standImageAutoResize">立ち絵のサイズを自動調整する</BooleanItem>
       <hr>
       <div class="item">フォントサイズ調整</div>
       <hr>
       <div class="item">ウィンドウ配置初期化</div>
       <div class="item">表示状態初期化</div>
     </div>
-    <div class="hoverMenu hoverMenu4" v-if="menuHoverNum === 4" @mouseenter="menuHover(4, true)" @mouseleave="menuHover(4, false)">
+    <div class="hoverMenu hoverMenu4" v-show="menu['コマ']" @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')">
       <div class="item">キャラクター追加</div>
       <div class="item">範囲追加</div>
       <div class="item">魔法タイマー追加</div>
@@ -49,9 +50,9 @@
       <div class="item">墓場</div>
       <div class="item">キャラクター待合室</div>
       <hr>
-      <div class="item">回転マーカーを表示する</div>
+      <BooleanItem property="pieceRotateMarker">回転マーカーを表示する</BooleanItem>
     </div>
-    <div class="hoverMenu hoverMenu5" v-if="menuHoverNum === 5" @mouseenter="menuHover(5, true)" @mouseleave="menuHover(5, false)">
+    <div class="hoverMenu hoverMenu5" v-show="menu['マップ']" @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')">
       <div class="item">マップ変更</div>
       <div class="item">フロアタイル変更モード</div>
       <div class="item">マップマスク追加</div>
@@ -59,39 +60,66 @@
       <hr>
       <div class="item">マップ状態保存</div>
       <div class="item">マップ切り替え</div>
-      <hr>
-      <div class="item">回転マーカーを表示する</div>
     </div>
-    <div class="hoverMenu hoverMenu6" v-if="menuHoverNum === 6" @mouseenter="menuHover(6, true)" @mouseleave="menuHover(6, false)">
+    <div class="hoverMenu hoverMenu6" v-show="menu['画像']" @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')">
       <div class="item">ファイルアップローダー</div>
       <div class="item">Webカメラ撮影</div>
       <hr>
       <div class="item">タグ編集</div>
       <div class="item">画像削除</div>
     </div>
-    <div class="hoverMenu hoverMenu7" v-if="menuHoverNum === 7" @mouseenter="menuHover(7, true)" @mouseleave="menuHover(7, false)">
+    <div class="hoverMenu hoverMenu7" v-show="menu['ヘルプ']" @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')">
       <div class="item">バージョン</div>
       <div class="item">マニュアル</div>
       <hr>
       <div class="item">チュートリアル動画</div>
       <div class="item">オフィシャルサイトへ</div>
     </div>
+    <div class="hoverMenu hoverMenu8" v-show="menu['ウィンドウ']" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, '表示', 'ウィンドウ')">
+      <BooleanItem property="chatWindow">チャット表示</BooleanItem>
+      <BooleanItem property="dice">ダイス表示</BooleanItem>
+      <BooleanItem property="initiativeWindow">イニシアティブ表示</BooleanItem>
+      <BooleanItem property="resourceWindow">リソース表示</BooleanItem>
+      <hr>
+      <BooleanItem property="chatpaletteWindow">チャットパレット表示</BooleanItem>
+      <BooleanItem property="counterRemoConWindow">カウンターリモコン表示</BooleanItem>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+import MenuBooleanItem from './MenuBooleanItem'
+
 export default {
   name: 'menu',
+  components: {
+    BooleanItem: MenuBooleanItem
+  },
   data () {
     return {
       roomId: '0a1b2c3d4e5f',
+      checkImg: require('../assets/check.png'),
       memberNum: 1,
-      menuHoverNum: 0
+      menu: {
+        'ファイル': false,
+        '表示': false,
+        'コマ': false,
+        'マップ': false,
+        '画像': false,
+        'ヘルプ': false,
+        'ウィンドウ': false
+      }
     }
   },
   methods: {
-    menuHover: function (_num, _flg) {
-      this.menuHoverNum = (!_flg ? 0 : _num)
+    ...mapMutations([
+      'changeDisplay'
+    ]),
+    menuHover: function (flg, ...targets) {
+      for (let target of targets) {
+        this.menu[target] = flg
+      }
     },
     clickConnect: function () {
       alert('接続は未実装')
@@ -178,4 +206,41 @@ export default {
 .hoverMenu5 { left: 250px; }
 .hoverMenu6 { left: 309px; }
 .hoverMenu7 { left: 354px; }
+.hoverMenu8 { left: 385px; }
+
+.item {
+  position: relative;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.item > * {
+  display: inline;
+  vertical-align: middle;
+}
+.item img.check {
+  display: inline;
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
+  margin-right: 5px;
+  border: none;
+}
+.triangle {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  display: inline-block;
+  vertical-align: middle;
+  width: 0px;
+  height: 0px;
+  border-left: 6px solid black;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
 </style>

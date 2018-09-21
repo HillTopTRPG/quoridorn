@@ -22,7 +22,17 @@ const store = new Vuex.Store({
     display: {
       gridLine: true,
       gridId: true,
-      chatWindow: true
+      chatWindow: true,
+      dice: true,
+      initiativeWindow: true,
+      resourceWindow: true,
+      chatpaletteWindow: true,
+      counterRemoConWindow: true,
+      standImage: true,
+      standImageAutoResize: true,
+      cutIn: true,
+      pieceRotateMarker: true,
+      gridOn: true
     },
     room: {
       id: '1a2b3c4d5e6f',
@@ -66,8 +76,8 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
-    changeDisplay (state, property, flg) {
-      state.display[property] = flg
+    changeDisplay (state, property) {
+      state.display[property] = !state.display[property]
     },
     changeChatTab (state, tabsText) {
       // 配列を空にする
