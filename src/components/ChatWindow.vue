@@ -1,11 +1,11 @@
 <template>
-  <WindowBase title="チャット">
+  <WindowBase title="チャット" displayPropery="chatWindow">
     <div class="tabs">
-      <span class="tab" v-for="tabObj in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive, hover: tabObj.isHover }" @mouseover.prevent="tabHover(tabObj, true)" @mouseout.prevent="tabHover(tabObj, false)" @mousedown.prevent="tabSelect(tabObj)">{{tabObj.text}}/0</span><!--
+      <span class="tab" v-for="tabObj in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @mousedown.prevent="chatTabSelect(tabObj.name)">{{tabObj.name}}/0</span><!--
     --><span class="tab addButton" @click="addTab">＋</span>
     </div>
     <ul class="log">
-      <li v-for="(chatLog, index) in currentTabLogs" v-html="chatLog.viewHtml" :key="index"></li>
+      <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
     </ul>
     <div class="oneLine">
       <span class="label">名前</span>
@@ -13,6 +13,7 @@
       <select></select>
       <select></select>
       <img src="../assets/dice.png" alt='ダイスボット' title='ダイスボットの設定'>
+      <img src="../assets/font.png" alt='フォント' title='フォントの設定'>
     </div>
     <div class="sendLine">
       <span class="label">発言</span>
@@ -23,6 +24,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import WindowBase from './WindowBase'
 
 export default {
@@ -31,57 +33,20 @@ export default {
   components: {
     WindowBase: WindowBase
   },
+  created () {
+    this.$store.commit('changeChatTab', '雑談')
+  },
   data () {
     return {
-      chatTabList: [
-        {
-          text: 'メイン',
-          isActive: true,
-          isHover: false
-        },
-        {
-          text: '雑談',
-          isActive: false,
-          isHover: false
-        }
-      ],
-      chatLogList: {
-        'メイン': [
-          {
-            peerId: 12345,
-            text: '課題',
-            viewHtml: '<b>SYSTEM</b>：abcdefgだぜぇ'
-          },
-          {
-            peerId: 12345,
-            text: 'おはようございますだぜぇ',
-            viewHtml: '<span style="color: green;"><b>SYSTEM</b>：おはようございますだぜぇ</span>'
-          },
-          {
-            peerId: 12345,
-            text: 'おはようございますだぜぇ',
-            viewHtml: '<span style="color: green;"><b>SYSTEM</b>：おはようございますだぜぇ</span>'
-          },
-          {
-            peerId: 12345,
-            text: 'おはようございますだぜぇ',
-            viewHtml: '<span style="color: green;"><b>SYSTEM</b>：おはようございますだぜぇ</span>'
-          },
-          {
-            peerId: 12345,
-            text: 'おはようございますだぜぇ',
-            viewHtml: '<span style="color: green;"><b>SYSTEM</b>：おはようございますだぜぇ</span>'
-          }
-        ],
-        '雑談': [
-        ]
-      },
-      currentTab: 'メイン',
       currentMessage: '',
       name: ''
     }
   },
   methods: {
+    ...mapMutations([
+      'chatTabSelect',
+      'addChatLog'
+    ]),
     addTab: function () {
       alert('タブの追加は未実装')
     },
@@ -90,21 +55,12 @@ export default {
         this.currentMessage += '\r\n'
         return
       }
-      let htmlText = '<b>' + this.name + '</b>：' + this.currentMessage.replace(/\r?\n/g, '<br>')
-      console.log(htmlText)
-      if (!this.chatLogList[this.currentTab]) {
-        this.chatLogList[this.currentTab] = []
-        this.chatLogList = this.chatLogList
-      }
-      this.chatLogList[this.currentTab].push({
-        peerId: 12345,
+      this.addChatLog({
+        name: this.name,
         text: this.currentMessage,
-        viewHtml: htmlText
+        color: 'black'
       })
       this.currentMessage = ''
-    },
-    tabHover: function (tabObj, flg) {
-      tabObj.isHover = flg
     },
     tabSelect: function (tabObj) {
       this.currentTab = tabObj.text
@@ -114,8 +70,14 @@ export default {
     }
   },
   computed: {
-    currentTabLogs: function () {
-      return this.chatLogList[this.currentTab]
+    chatLogList: function () {
+      return this.$store.getters.chatLogs
+    },
+    chatTabList: function () {
+      return this.$store.state.chat.tabs
+    },
+    currentCount: function () {
+      return this.$store.state.count
     }
   }
 }
@@ -160,7 +122,7 @@ export default {
   display: block;
   margin-top: 0px;
   background-color: white;
-  box-flex: 1;
+  flex: 1;
 -moz-box-flex: 1;
   -webkit-box-flex: 1;
   border-style: solid;

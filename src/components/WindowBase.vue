@@ -13,13 +13,15 @@
     <div class="side-left" @mousedown.left.prevent="resize('side-left', true)" @mouseup.left.prevent="resize('side-left', false)"></div>
     <div class="side-right" @mousedown.left.prevent="resize('side-right', true)" @mouseup.left.prevent="resize('side-right', false)"></div>
     <div class="side-bottom" @mousedown.left.prevent="resize('side-bottom', true)" @mouseup.left.prevent="resize('side-bottom', false)"></div>
-    <img class="close" src="../assets/window_close.png" @click.left.prevent="closeWindow"></div>
+    <img class="close" src="../assets/window_close.png" @click.left.prevent="closeWindow">
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
-  props: ['title'],
+  props: ['title', 'displayPropery'],
   data () {
     return {
       windowBase: {
@@ -55,8 +57,12 @@ export default {
   },
   methods: {
     closeWindow: function () {
-      this.windowBase.isOpen = false
+      this.changeDisplay(this.displayPropery, false)
+      // this.windowBase.isOpen = false
     },
+    ...mapMutations([
+      'changeDisplay'
+    ]),
     resize: function (direct, flg) {
       if (flg) {
         this.windowBase.mouse.saveX = this.windowBase.mouse.x
@@ -132,6 +138,9 @@ export default {
     }
   },
   computed: {
+    isDisplay: function () {
+      return this.$store.state.display[this.displayPropery]
+    },
     windowStyle: function () {
       let left = this.windowBase.windowFactor.x
       let bottom = this.windowBase.windowFactor.y
@@ -177,7 +186,7 @@ export default {
           bottom -= this.windowBase.windowFactor.draggingY
       }
       const obj = {
-        display: this.windowBase.isOpen ? 'block' : 'none',
+        display: this.isDisplay ? 'block' : 'none',
         left: left + 'px',
         bottom: bottom + 'px',
         width: 'calc(100% - 10px - 200px + ' + width + 'px)',
