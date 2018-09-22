@@ -55,7 +55,7 @@
     <div class="hoverMenu hoverMenu5" v-show="menu['マップ']" @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')">
       <div class="item">マップ変更</div>
       <div class="item">フロアタイル変更モード</div>
-      <div class="item">マップマスク追加</div>
+      <div class="item" @click="changeBooleanAndClose('addMapMaskWindow')">マップマスク追加</div>
       <div class="item">簡易マップ作成</div>
       <hr>
       <div class="item">マップ状態保存</div>
@@ -88,11 +88,11 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import MenuBooleanItem from './MenuBooleanItem'
 
 export default {
-  name: 'menu',
+  name: 'menuComponent',
   components: {
     BooleanItem: MenuBooleanItem
   },
@@ -114,8 +114,15 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'changeDisplay'
+      'windowOpen'
     ]),
+    changeBooleanAndClose: function (target) {
+      console.log(`target : ${target}`)
+      for (let m in this.menu) {
+        this.menu[m] = false
+      }
+      this.windowOpen(target)
+    },
     menuHover: function (flg, ...targets) {
       for (let target of targets) {
         this.menu[target] = flg
@@ -135,6 +142,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([]),
     hover1: function () { return this.menuHoverNum === 1 },
     hover2: function () { return this.menuHoverNum === 2 },
     hover3: function () { return this.menuHoverNum === 3 },
