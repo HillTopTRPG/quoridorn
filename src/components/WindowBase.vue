@@ -4,7 +4,7 @@
     <div class="contents">
       <slot></slot>
     </div>
-    <div class="title" @mousedown.left.prevent="move(true)" @mouseup.left.prevent="move(false)">{{title}}</div>
+    <div class="title" :class="{fix : isFix}" @mousedown.left.prevent="move(true)" @mouseup.left.prevent="move(false)">{{title}}</div>
     <div class="corner-left-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-top', true)" @mouseup.left.prevent="resize('corner-left-top', false)"></div>
     <div class="corner-left-bottom" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-bottom', true)" @mouseup.left.prevent="resize('corner-left-bottom', false)"></div>
     <div class="corner-right-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-right-top', true)" @mouseup.left.prevent="resize('corner-right-top', false)"></div>
@@ -70,6 +70,7 @@ export default {
     ]),
     closeWindow: function () {
       this.changeDisplay(this.displayProperty)
+      this.$emit('close')
     },
     resize: function (direct, flg) {
       if (flg) {
@@ -156,6 +157,7 @@ export default {
         this.windowBase.windowFactor.b = 0
         this.windowBase.windowFactor.w = 0
         this.windowBase.windowFactor.h = 0
+        this.$emit('open')
       } else {
         console.log('◆◆◆◆◆◆◆◆◆◆not-open   ' + this.displayProperty)
       }
@@ -170,6 +172,7 @@ export default {
         this.windowBase.windowFactor.w = 0
         this.windowBase.windowFactor.h = 0
         this.changeDisplayValue({ main: this.displayProperty, sub: 'doResetPosition', value: false })
+        this.$emit('reset')
       } else {
         console.log('◆◆◆◆◆◆◆◆◆◆not-reset   ' + this.displayProperty)
       }
@@ -284,18 +287,19 @@ export default {
           this.align.indexOf('top') < 0 &&
           this.align.indexOf('bottom') < 0) {
         if (this.isFix) {
-          obj.left = `calc((100% - ${this.fixW}px) / 2 + ${left}px)`
-          obj.top = `calc((100% - ${this.fixH}px) / 2 + ${top}px)`
+          // obj.left = `calc((100% - ${this.fixW}px) / 2 + ${left}px)`
+          obj.left = `calc(50% - ${this.fixW / 2 - left}px)`
+          obj.top = `calc(50% - ${this.fixH / 2 - top}px)`
         } else {
           if (this.baseW > 0) {
-            obj.left = `calc((100% - ${this.baseW}px) / 2 + ${left}px)`
+            obj.left = `calc(50% - ${this.baseW / 2 - left}px)`
           } else {
-            obj.left = `calc(${-this.baseW}px / 2 + ${left}px)`
+            obj.left = `calc(${-this.baseW / 2 + left}px)`
           }
           if (this.baseH > 0) {
-            obj.top = `calc((100% - ${this.baseH}px) / 2 + ${top}px)`
+            obj.top = `calc(50% - ${this.baseH / 2 + top}px)`
           } else {
-            obj.top = `calc(${-this.baseH}px / 2 + ${top}px)`
+            obj.top = `calc(${-this.baseH / 2 + top}px)`
           }
         }
       }
@@ -306,12 +310,12 @@ export default {
         if (this.baseW > 0) {
           obj.width = `${this.baseW + width}px`
         } else {
-          obj.width = `calc(100% - 10px - ${-this.baseW}px + ${width}px)`
+          obj.width = `calc(100% - ${-this.baseW - width + 10}px)`
         }
         if (this.baseH > 0) {
           obj.height = `${this.baseH + height}px`
         } else {
-          obj.height = `calc(100% - 10px - ${-this.baseH}px + ${height}px)`
+          obj.height = `calc(100% - ${-this.baseH - height - 10}px)`
         }
       }
       return obj
@@ -331,10 +335,18 @@ export default {
   border-radius: 8px 8px 0 0;
   background-color: rgba(255, 255, 255, 0.8);
   box-shadow: 5px 5px 5px rgba(0,0,0,0.6);
-  border: solid black 1px;
+  border: solid gray 1px;
   box-sizing: border-box;
 }
-.window:focus {
+.window img,
+.window button {
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.window:focus,
+.window:active {
   z-index: 91;
 }
 
@@ -357,6 +369,13 @@ export default {
   cursor: move;
   font-size: 10px;
   font-weight: bold;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.title.fix {
+  background: linear-gradient(rgba(170, 233, 203, 1), rgba(142, 226, 186, 1));
 }
 
 .side-left,
@@ -414,5 +433,9 @@ export default {
   top: 2px;
   right: 8px;
   cursor: pointer;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 </style>

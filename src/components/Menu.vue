@@ -195,6 +195,10 @@ export default {
   padding: 2px 10px;
   border-radius: 5px;
   cursor: pointer;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 .menu-button:hover {
   border: solid #0092ED 1px;
