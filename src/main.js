@@ -5,7 +5,9 @@ import Vuex from 'vuex'
 import App from './App'
 import Menu from './components/Menu'
 import ChatWindow from './components/ChatWindow'
-import MapMaskWindow from './components/MapMaskWindow'
+import AddMapMaskWindow from './components/AddMapMaskWindow'
+import EditMapMaskWindow from './components/EditMapMaskWindow'
+import MapMaskContext from './components/MapMaskContext'
 
 Vue.use(Vuex)
 
@@ -23,107 +25,141 @@ const store = new Vuex.Store({
     display: {
       gridLine: true,
       gridId: true,
-      chatWindow: true,
-      dice: true,
-      initiativeWindow: true,
-      resourceWindow: true,
-      chatpaletteWindow: true,
-      counterRemoConWindow: true,
       standImage: true,
-      standImageAutoResize: true,
+      dice: true,
       cutIn: true,
-      pieceRotateMarker: true,
       gridOn: true,
-      mapMaskWindow: true
+      pieceRotateMarker: true,
+      standImageAutoResize: true,
+      chatWindow: { isDisplay: true, doResetPosition: false },
+      initiativeWindow: { isDisplay: true, doResetPosition: false },
+      resourceWindow: { isDisplay: true, doResetPosition: false },
+      chatpaletteWindow: { isDisplay: true, doResetPosition: false },
+      counterRemoConWindow: { isDisplay: true, doResetPosition: false },
+      addMapMaskWindow: { isDisplay: false, doResetPosition: false },
+      editMapMaskWindow: { isDisplay: false, doResetPosition: false, index: -1 },
+      mapMaskContext: { isDisplay: false, doResetPosition: false, index: -1 }
     },
     room: {
-      id: '1a2b3c4d5e6f',
-      member: []
+      id: '1a2b3c4d5e6f', member: []
     },
     map: {
-      grid: {
-        c: 20,
-        r: 16,
-        size: 50,
-        color: 'rgb(255, 255, 255)'
-      },
+      grid: { c: 20, r: 16, size: 50, color: 'rgb(255, 255, 255)' },
       mapMasks: [],
       draggingMapMask: null
     },
-    charactors: [
-
-    ],
+    charactors: [],
     chat: {
       tabs: [
-        {
-          text: 'メイン',
-          isActive: true,
-          isHover: false
-        }
+        { text: 'メイン', isActive: true, isHover: false }
       ],
       logs: {
         'メイン': [
-          {
-            peerId: 12345,
-            viewHtml: '<b>HillTop</b>：Hello World!!'
-          },
-          {
-            peerId: 12345,
-            viewHtml: '<span style="color: red;"><b>SYSTEM</b>：おはようございますだぜぇ</span>'
-          },
-          {
-            peerId: 12345,
-            viewHtml: '<span style="color: red;"><b>SYSTEM</b>：ワイルドだろぉ？</span>'
-          },
-          {
-            peerId: 12345,
-            viewHtml: '<span style="color: red;"><b>SYSTEM</b>：時代遅れとか言ってんじゃないぜぇ？</span>'
-          },
-          {
-            peerId: 12345,
-            viewHtml: '<span style="color: black;"><b>HillTop</b>：テストメッセージのセンス（ぇ</span>'
-          }
+          { peerId: 12345, viewHtml: '<b>HillTop</b>：Hello World!!' },
+          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：おはようございますだぜぇ</span>' },
+          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：ワイルドだろぉ？</span>' },
+          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：時代遅れとか言ってんじゃないぜぇ？</span>' },
+          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：テストメッセージのセンス（ぇ</span>' }
         ]
       }
     }
   },
   mutations: {
+    /**
+     * 設定を変更する
+     * @param {object} state    state of Vuex
+     * @param {string} property 設定のプロパティ名
+     */
     changeDisplay (state, property) {
-      state.display[property] = !state.display[property]
+      if (typeof state.display[property] === 'boolean') {
+        state.display[property] = !state.display[property]
+      } else {
+        state.display[property].isDisplay = !state.display[property].isDisplay
+      }
     },
-    addMapMask (state, payload) {
-      let name = payload.name
-      let gridC = payload.gridC
-      let gridR = payload.gridR
-      let gridW = payload.gridW
-      let gridH = payload.gridH
-      let color = payload.color
-      let fontColor = payload.fontColor
+    windowOpen (state, property) {
+      if (state.display[property].isDisplay) {
+        state.display[property].doResetPosition = true
+      } else {
+        state.display[property].isDisplay = true
+      }
+    },
+    /**
+     * 設定を変更する
+     * @param {object} state   state of Vuex
+     * @param {object} payload payload of Vuex
+     */
+    changeDisplayValue (state, payload) {
+      let main = payload.main
+      let sub = payload.sub
+      let value = payload.value
+      console.log(`display[${main}][${sub}] = ${value}`)
+      state.display[main][sub] = value
+    },
+    /**
+     * マップマスク情報を追加する
+     * @param {object} state   state of Vuex
+     * @param {object} payload payload of Vuex
+     */
+    addMapMaskInfo (state, payload) {
+      const copyProps = ['name', 'gridC', 'gridR', 'gridW', 'gridH', 'color', 'fontColor']
 
-      const mapMaskObj = {
-        name: name,
-        gridR: gridR,
-        gridC: gridC,
-        gridW: gridW,
-        gridH: gridH,
-        color: color,
-        fontColor: fontColor
+      const mapMaskObj = { isLock: false }
+      for (let prop of copyProps) {
+        mapMaskObj[prop] = payload[prop]
       }
 
       state.map.mapMasks.push(mapMaskObj)
     },
+    /**
+     * ストアされているマップマスク情報を変更する
+     * @param {object} state   state of Vuex
+     * @param {object} payload state of Vuex
+     */
+    changeMapMaskInfo (state, payload) {
+      const copyProps = ['name', 'gridC', 'gridR', 'gridW', 'gridH', 'color', 'fontColor', 'isLock']
+      let index = payload.index
+      console.log(`マップマスクの情報を変更(${index})`, payload)
+
+      const lastMapMaskObj = state.map.mapMasks[index]
+      const mapMaskObj = {}
+      for (let prop of copyProps) {
+        if (payload[prop] !== undefined) {
+          console.log(`prop:${prop}を${payload[prop]}で上書き`, index, lastMapMaskObj)
+          lastMapMaskObj[prop] = payload[prop]
+        } else {
+          mapMaskObj[prop] = lastMapMaskObj[prop]
+        }
+      }
+      // setTimeout(function () { state.map.mapMasks.splice(index, 0, state.map.mapMasks.splice(index, 1)) }, 0)
+    },
+    /**
+     * ドラッグ中のマップマスクの登録
+     * @param {object} state state of Vuex
+     * @param {number} index マップマスクを管理する配列のインデックス
+     */
     setDraggingMapMask (state, index) {
+      // console.log(`mapMask drag start ${index}`)
       const mapMaskObj = state.map.mapMasks.splice(index, 1)[0]
       state.map.draggingMapMask = mapMaskObj
     },
+    /**
+     * ドラッグ中のマップマスクの位置情報を変更し、表示状態にする
+     * @param {object} state   state of Vuex
+     * @param {object} payload state of Vuex
+     */
     moveMapMask (state, payload) {
-      let gridC = payload.gridC
-      let gridR = payload.gridR
+      // console.log(`mapMask drag end`)
       const mapMaskObj = state.map.draggingMapMask
-      mapMaskObj.gridC = gridC
-      mapMaskObj.gridR = gridR
+      mapMaskObj.gridC = payload.gridC
+      mapMaskObj.gridR = payload.gridR
       state.map.mapMasks.push(mapMaskObj)
     },
+    /**
+     * チャットのタブの構成を変更する
+     * @param {object} state    state of Vuex
+     * @param {string} tabsText タブ構成を意味する、スペース区切りの文字列
+     */
     changeChatTab (state, tabsText) {
       // 配列を空にする
       state.chat.tabs.splice(0, state.chat.tabs.length)
@@ -138,8 +174,7 @@ const store = new Vuex.Store({
           isActive = true
         }
         let tabObj = {
-          name: tab,
-          isActive: isActive
+          name: tab, isActive: isActive
         }
         state.chat.tabs.push(tabObj)
       }
@@ -172,6 +207,11 @@ const store = new Vuex.Store({
         }
       }
     },
+    /**
+     * チャットログを追加する（発言の記録）
+     * @param {object} state   state of Vuex
+     * @param {object} payload state of Vuex
+     */
     addChatLog (state, payload) {
       let name = payload.name
       let text = payload.text
@@ -184,6 +224,11 @@ const store = new Vuex.Store({
       }
       state.chat.logs[tab].push(logObj)
     },
+    /**
+     * チャットタブの選択を記録する
+     * @param {object} state state of Vuex
+     * @param {string} tab   state of Vuex
+     */
     chatTabSelect (state, tab) {
       for (let tabObj of state.chat.tabs) {
         tabObj.isActive = tab === tabObj.name
@@ -191,29 +236,41 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    activeChatTab: (state) => {
-      let filtered = state.chat.tabs.filter(tabObj => tabObj.isActive)
+    activeChatTab: function (state) {
+      let filtered = state.chat.tabs.filter(function (tabObj) { return tabObj.isActive })
       return filtered.length > 0 ? filtered[0] : null
     },
-    chatLogs: (state) => {
+    chatLogs: function (state) {
       let result = state.chat.logs[store.getters.activeChatTab.name]
       return result
+    },
+    isWindowOpen: (state) => (displayProperty) => {
+      if (typeof state.display[displayProperty] === 'boolean') {
+        return state.display[displayProperty]
+      } else {
+        return state.display[displayProperty].isDisplay
+      }
+    },
+    doResetPosition: (state) => (displayProperty) => {
+      // console.log(`window: ${displayProperty}, 再配置かどうか:${state.display[displayProperty].doResetPosition}`)
+      return state.display[displayProperty].doResetPosition
     },
     mapMaskList: function (state) {
       const result = []
       for (let mapMaskObj of state.map.mapMasks) {
         let styleObj = {
-          top: (mapMaskObj.gridR - 1) * state.map.grid.size + 1 + 'px',
-          left: (mapMaskObj.gridC - 1) * state.map.grid.size + 1 + 'px',
-          width: mapMaskObj.gridW * state.map.grid.size + 'px',
-          height: mapMaskObj.gridH * state.map.grid.size + 'px',
+          top: (mapMaskObj.gridR - 1) * state.map.grid.size + 'px',
+          left: (mapMaskObj.gridC - 1) * state.map.grid.size + 'px',
+          width: mapMaskObj.gridW * state.map.grid.size - 2 + 'px',
+          height: mapMaskObj.gridH * state.map.grid.size - 2 + 'px',
           'background-color': mapMaskObj.color,
           color: mapMaskObj.fontColor
         }
         let name = mapMaskObj.name
         result.push({
           name: name,
-          style: styleObj
+          style: styleObj,
+          isLock: mapMaskObj.isLock
         })
       }
       return result
@@ -229,7 +286,9 @@ new Vue({
     Menu: Menu,
     ChatWindow: ChatWindow,
     App: App,
-    MapMaskWindow: MapMaskWindow
+    AddMapMaskWindow: AddMapMaskWindow,
+    EditMapMaskWindow: EditMapMaskWindow,
+    MapMaskContext: MapMaskContext
   },
   data: {
     scrollY: 0
@@ -245,10 +304,12 @@ new Vue({
   },
   template: `
   <div>
-    <ChatWindow/>
+    <ChatWindow title="ChatWindow"/>
     <App/>
     <Menu/>
-    <MapMaskWindow/>
+    <AddMapMaskWindow title="AddMapMaskWindow"/>
+    <EditMapMaskWindow title="EditMapMaskWindow"/>
+    <MapMaskContext displayProperty="mapMaskContext"/>
   </div>
   `
 })

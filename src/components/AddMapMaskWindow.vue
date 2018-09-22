@@ -1,5 +1,5 @@
 <template>
-  <WindowBase title="マップマスク" displayPropery="mapMaskWindow" align="right-bottom" fixSize="285, 165">
+  <WindowBase title="マスク作成" display-property="addMapMaskWindow" align="center" fixSize="285, 195">
     <table>
       <tbody>
         <tr>
@@ -36,8 +36,7 @@ import { mapMutations } from 'vuex'
 import WindowBase from './WindowBase'
 
 export default {
-  name: 'mapMask',
-  mixins: [WindowBase],
+  name: 'addMapMask',
   components: {
     WindowBase: WindowBase
   },
@@ -52,13 +51,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'chatTabSelect',
-      'addChatLog'
-    ]),
-    addTab: function () {
-      alert('タブの追加は未実装')
-    },
+    ...mapMutations([]),
     dragStart: function (event) {
       event.dataTransfer.setData('kind', 'mapMask')
       event.dataTransfer.setData('name', this.name)
@@ -66,6 +59,7 @@ export default {
       event.dataTransfer.setData('fontColor', this.fontColor)
       event.dataTransfer.setData('width', this.width)
       event.dataTransfer.setData('height', this.height)
+      console.log(`name:${this.name}, width:${this.width}, height:${this.height}, color:${this.color}, transparency:${this.transparency}`)
     }
   },
   computed: {
@@ -88,7 +82,7 @@ export default {
     r: function () {
       let result
       if (this.color.startsWith('rgb(')) {
-        result = this.color.replace('rgb(', '').replace(')', '').split(',')[0].trim()
+        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[0].trim()
       } else {
         result = parseInt(this.color.substr(1, 2), 16)
       }
@@ -97,7 +91,7 @@ export default {
     g: function () {
       let result
       if (this.color.startsWith('rgb(')) {
-        result = this.color.replace('rgb(', '').replace(')', '').split(',')[1].trim()
+        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[1].trim()
       } else {
         result = parseInt(this.color.substr(3, 2), 16)
       }
@@ -106,9 +100,8 @@ export default {
     b: function () {
       let result
       if (this.color.startsWith('rgb(')) {
-        result = this.color.replace('rgb(', '').replace(')', '').split(',')[2].trim()
+        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[2].trim()
       } else {
-        console.log(this.color.substr(5, 2))
         result = parseInt(this.color.substr(5, 2), 16)
       }
       return result

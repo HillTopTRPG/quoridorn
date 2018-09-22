@@ -42,6 +42,7 @@ html, body {
   margin-top: 60px;
   width: 100%;
   height: 100%;
+  perspective: 1000px;
 }
 
 </style>

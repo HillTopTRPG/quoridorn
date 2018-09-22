@@ -1,7 +1,25 @@
 <template>
   <div id="map" :style="canvasStyle" dropzone="move" @dragover.prevent @drop.prevent="drop">
-    <canvas id="map-canvas" :width="sizeW" :height="sizeH" @mousedown.left.prevent="leftDown" @mouseup.left.prevent="leftUp" @mousedown.right.prevent="rightDown" @mouseup.right.prevent="rightUp" @contextmenu.prevent></canvas>
-    <div class="mapMask" v-for="(mapMask, index) in mapMasks" :key="index" @dragstart="(e) => dragStartMapMask(e, index)" :style="mapMask.style" @mousedown.right.prevent="rightDown" @mouseup.right.prevent="rightUp" @contextmenu.prevent draggable="true">{{mapMask.name}}</div>
+    <canvas
+      id="map-canvas"
+      :width="sizeW"
+      :height="sizeH"
+      @mousedown.left.prevent="leftDown"
+      @mouseup.left.prevent="leftUp"
+      @mousedown.right.prevent="rightDown"
+      @mouseup.right.prevent="rightUp"
+      @contextmenu.prevent />
+    <div
+      class="mapMask"
+      v-for="(mapMask, index) in mapMasks"
+      :key="index"
+      :class="[mapMask.isLock ? 'isLock' : 'isUnLock']"
+      :style="mapMask.style"
+      :draggable="!mapMask.isLock"
+      @dragstart="(e) => dragStartMapMask(e, index)"
+      @click.right.prevent="(e) => openContext(e, 'mapMask', index)"
+      @contextmenu.prevent
+    >{{mapMask.name}}</div>
   </div>
 </template>
 
@@ -11,7 +29,7 @@ import { mapMutations } from 'vuex'
 import imageDef from './background-default.jpg'
 
 export default {
-  name: 'map',
+  name: 'mapComponent',
   data () {
     return {
       memberNum: 1,
@@ -54,15 +72,29 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'addMapMask',
+      'addMapMaskInfo',
       'moveMapMask',
-      'setDraggingMapMask'
+      'setDraggingMapMask',
+      'changeDisplay',
+      'changeDisplayValue'
     ]),
     setGrid: function (flg) {
       this.isGrid = flg
     },
     wheel: function (delta) {
       this.translateZ = this.translateZ + delta
+    },
+    openContext: function (event, kind, index) {
+      let pageX = event.pageX
+      let pageY = event.pageY
+
+      if (kind === 'mapMask') {
+        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'index', value: index })
+        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'x', value: pageX })
+        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'y', value: pageY })
+        this.changeDisplay('mapMaskContext')
+        console.log(`mapMask(${index})のコンテキストをオープン`)
+      }
     },
     dragStartMapMask: function (event, index) {
       event.dataTransfer.setData('kind', 'mapMask-move')
@@ -76,6 +108,14 @@ export default {
       // ドロップされた物の種類
       const kind = event.dataTransfer.getData('kind')
 
+      let canvasElm = document.getElementById('map-canvas')
+
+      let offsetX = event.pageX - canvasElm.getBoundingClientRect().left
+      let offsetY = event.pageY - canvasElm.getBoundingClientRect().top
+
+      const zoom = (1000 - this.translateZ) / 1000
+      const zoomedGridSize = this.gridSize / zoom
+
       if (kind === 'mapMask') {
         const name = event.dataTransfer.getData('name')
         const color = event.dataTransfer.getData('color')
@@ -83,10 +123,8 @@ export default {
         let gridW = event.dataTransfer.getData('width')
         let gridH = event.dataTransfer.getData('height')
 
-        let offsetX = event.offsetX
-        let offsetY = event.offsetY
-        let gridC = Math.ceil(offsetX / this.gridSize)
-        let gridR = Math.ceil(offsetY / this.gridSize)
+        let gridC = Math.ceil(offsetX / zoomedGridSize)
+        let gridR = Math.ceil(offsetY / zoomedGridSize)
 
         const mapMaskObj = {
           name: name,
@@ -98,16 +136,14 @@ export default {
           fontColor: fontColor
         }
 
-        this.addMapMask(mapMaskObj)
+        this.addMapMaskInfo(mapMaskObj)
       }
       if (kind === 'mapMask-move') {
-        const _offsetX = Math.floor(event.dataTransfer.getData('offsetX') / this.gridSize) * this.gridSize
-        const _offsetY = Math.floor(event.dataTransfer.getData('offsetY') / this.gridSize) * this.gridSize
+        const _offsetX = Math.floor(event.dataTransfer.getData('offsetX') / this.gridSize) * zoomedGridSize
+        const _offsetY = Math.floor(event.dataTransfer.getData('offsetY') / this.gridSize) * zoomedGridSize
 
-        let offsetX = event.offsetX
-        let offsetY = event.offsetY
-        let gridC = Math.ceil((offsetX - _offsetX) / this.gridSize)
-        let gridR = Math.ceil((offsetY - _offsetY) / this.gridSize)
+        let gridC = Math.ceil((offsetX - _offsetX) / zoomedGridSize)
+        let gridR = Math.ceil((offsetY - _offsetY) / zoomedGridSize)
 
         this.moveMapMask({
           gridR: gridR,
@@ -239,14 +275,18 @@ export default {
     canvasStyle: function () {
       const _this = this
       const translateZ = this.translateZ
+      const zoom = (1000 - this.translateZ) / 1000
+      let translateX = this.translateX
+      let translateY = this.translateY
+      translateX *= zoom
+      translateY *= zoom
       return {
         width: _this.sizeW + 'px',
         height: _this.sizeH + 'px',
         transform:
-          'perspective(' + _this.sizeW + 'px)' +
           'translateZ(' + translateZ + 'px) ' +
-          'translateY(' + _this.translateY + 'px) ' +
-          'translateX(' + _this.translateX + 'px) ' +
+          'translateY(' + translateY + 'px) ' +
+          'translateX(' + translateX + 'px) ' +
           'rotateY(' + _this.rotateY + 'deg) ' +
           'rotateX(' + _this.rotateX + 'deg) ' +
           'rotateZ(' + _this.rotateZ + 'deg)'
@@ -272,5 +312,14 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
+  border-style: solid;
+  border-width: 2px;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
+.mapMask.isLock { border-color: blue; }
+.mapMask.isUnLock { border-color: yellow; }
+.mapMask.isUnLock:hover { border-width: 4px; transform: translate(-2px, -2px); z-index: 1000; }
 </style>

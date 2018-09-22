@@ -18,10 +18,16 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
-  props: ['title', 'displayPropery', 'align', 'baseSize', 'fixSize'],
+  props: {
+    'title': { type: String, required: true },
+    'displayProperty': { type: String, required: true },
+    'align': { type: String, required: true },
+    'baseSize': String,
+    'fixSize': String
+  },
   data () {
     return {
       windowBase: {
@@ -36,10 +42,10 @@ export default {
         windowFactor: {
           l: 0, // left
           r: 0, // right
-          t: 37, // top
+          t: 0, // top
           b: 0, // bottom
-          w: 0,
-          h: 0,
+          w: 0, // width
+          h: 0, // height
           draggingX: 0,
           draggingY: 0
         }
@@ -59,11 +65,11 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'changeDisplay'
+      'changeDisplay',
+      'changeDisplayValue'
     ]),
     closeWindow: function () {
-      this.changeDisplay(this.displayPropery)
-      // this.windowBase.isOpen = false
+      this.changeDisplay(this.displayProperty)
     },
     resize: function (direct, flg) {
       if (flg) {
@@ -135,9 +141,54 @@ export default {
       this.windowBase.moveMode = flg ? 'move' : ''
     }
   },
+  watch: {
+    title: function (newValue, oldValue) { console.log(`title:${newValue}`) },
+    displayProperty: function (newValue, oldValue) { console.log(`title:${newValue}`) },
+    align: function (newValue, oldValue) { console.log(`title:${newValue}`) },
+    baseSize: function (newValue, oldValue) { console.log(`title:${newValue}`) },
+    fixSize: function (newValue, oldValue) { console.log(`title:${newValue}`) },
+    isDisplay: function (newValue, oldValue) {
+      if (newValue) {
+        console.log('◆◆◆◆◆◆◆◆◆open   ' + this.displayProperty)
+        this.windowBase.windowFactor.l = 0
+        this.windowBase.windowFactor.r = 0
+        this.windowBase.windowFactor.t = 0
+        this.windowBase.windowFactor.b = 0
+        this.windowBase.windowFactor.w = 0
+        this.windowBase.windowFactor.h = 0
+      } else {
+        console.log('◆◆◆◆◆◆◆◆◆◆not-open   ' + this.displayProperty)
+      }
+    },
+    isResetPosition: function (newValue, oldValue) {
+      if (newValue) {
+        console.log(`◆◆◆◆◆◆◆◆◆do-Reset!!!   ${this.displayProperty} ${this.title} newValue=${newValue}`)
+        this.windowBase.windowFactor.l = 0
+        this.windowBase.windowFactor.r = 0
+        this.windowBase.windowFactor.t = 0
+        this.windowBase.windowFactor.b = 0
+        this.windowBase.windowFactor.w = 0
+        this.windowBase.windowFactor.h = 0
+        this.changeDisplayValue({ main: this.displayProperty, sub: 'doResetPosition', value: false })
+      } else {
+        console.log('◆◆◆◆◆◆◆◆◆◆not-reset   ' + this.displayProperty)
+      }
+    }
+  },
   computed: {
+    ...mapGetters([
+      'isWindowOpen',
+      'doResetPosition'
+    ]),
     isDisplay: function () {
-      return this.$store.state.display[this.displayPropery]
+      if (!this.displayProperty) return false
+      return this.isWindowOpen(this.displayProperty)
+    },
+    isResetPosition: function () {
+      if (!this.displayProperty) return false
+      let isResetPosition = this.doResetPosition(this.displayProperty)
+      // console.log(`isResetPosition ${isResetPosition} ${this.displayProperty}`)
+      return isResetPosition
     },
     isFix: function () {
       if (this.fixSize) {
@@ -161,10 +212,16 @@ export default {
       return parseInt(height)
     },
     baseW: function () {
+      if (!this.baseSize) {
+        return 0
+      }
       let width = this.baseSize.split(',')[0].trim()
       return parseInt(width)
     },
     baseH: function () {
+      if (!this.baseSize) {
+        return 0
+      }
       let height = this.baseSize.split(',')[1].trim()
       return parseInt(height)
     },
@@ -208,9 +265,7 @@ export default {
       }
 
       const obj = {
-        display: this.isDisplay ? 'block' : 'none',
-        width: 'calc(100% - 10px - 200px + ' + width + 'px)',
-        height: 'calc(200px + ' + height + 'px)'
+        display: this.isDisplay ? 'block' : 'none'
       }
       if (this.align.indexOf('left') >= 0) {
         obj.left = left + 'px'
@@ -224,19 +279,39 @@ export default {
       if (this.align.indexOf('bottom') >= 0) {
         obj.bottom = bottom + 'px'
       }
+      if (this.align.indexOf('left') < 0 &&
+          this.align.indexOf('right') < 0 &&
+          this.align.indexOf('top') < 0 &&
+          this.align.indexOf('bottom') < 0) {
+        if (this.isFix) {
+          obj.left = `calc((100% - ${this.fixW}px) / 2 + ${left}px)`
+          obj.top = `calc((100% - ${this.fixH}px) / 2 + ${top}px)`
+        } else {
+          if (this.baseW > 0) {
+            obj.left = `calc((100% - ${this.baseW}px) / 2 + ${left}px)`
+          } else {
+            obj.left = `calc(${-this.baseW}px / 2 + ${left}px)`
+          }
+          if (this.baseH > 0) {
+            obj.top = `calc((100% - ${this.baseH}px) / 2 + ${top}px)`
+          } else {
+            obj.top = `calc(${-this.baseH}px / 2 + ${top}px)`
+          }
+        }
+      }
       if (this.isFix) {
         obj.width = this.fixW + 'px'
         obj.height = this.fixH + 'px'
       } else {
         if (this.baseW > 0) {
-          obj.width = this.baseW + width + 'px'
+          obj.width = `${this.baseW + width}px`
         } else {
-          obj.width = 'calc(100% - 10px - ' + (-this.baseW) + 'px + ' + width + 'px)'
+          obj.width = `calc(100% - 10px - ${-this.baseW}px + ${width}px)`
         }
         if (this.baseH > 0) {
-          obj.height = this.baseH + height + 'px'
+          obj.height = `${this.baseH + height}px`
         } else {
-          obj.height = 'calc(100% - 10px - ' + (-this.baseH) + 'px + ' + width + 'px)'
+          obj.height = `calc(100% - 10px - ${-this.baseH}px + ${height}px)`
         }
       }
       return obj
@@ -256,6 +331,8 @@ export default {
   border-radius: 8px 8px 0 0;
   background-color: rgba(255, 255, 255, 0.8);
   box-shadow: 5px 5px 5px rgba(0,0,0,0.6);
+  border: solid black 1px;
+  box-sizing: border-box;
 }
 .window:focus {
   z-index: 91;

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'menuBooleanItem',
@@ -19,8 +19,11 @@ export default {
     ])
   },
   computed: {
+    ...mapGetters([
+      'isWindowOpen'
+    ]),
     propValue: function () {
-      return this.$store.state.display[this.property]
+      return this.isWindowOpen(this.property)
     }
   }
 }
