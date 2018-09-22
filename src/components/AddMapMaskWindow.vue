@@ -5,7 +5,7 @@
         <tr>
           <th>文字：</th>
           <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" draggable="true" :style="mapMaskStyle" @dragstart="dragStart"></div></td>
+          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" draggable="true" :style="mapMaskStyle" @dragstart="dragStart">{{name}}</div></td>
         </tr>
         <tr>
           <th>色：</th>
@@ -75,7 +75,8 @@ export default {
       let result = {
         width: width + 'px',
         height: height + 'px',
-        'background-color': this.rgba
+        'background-color': this.rgba,
+        color: this.fontColor
       }
       return result
     },
@@ -152,6 +153,11 @@ td.mapMaskGrid {
   max-width: 161px;
   max-height: 161px;
   margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  border: solid yellow 2px;
 }
 input[type=number] {
   width: 46px;

@@ -3,11 +3,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
-import Menu from './components/Menu'
-import ChatWindow from './components/ChatWindow'
-import AddMapMaskWindow from './components/AddMapMaskWindow'
-import EditMapMaskWindow from './components/EditMapMaskWindow'
-import MapMaskContext from './components/MapMaskContext'
 
 Vue.use(Vuex)
 
@@ -44,7 +39,7 @@ const store = new Vuex.Store({
       id: '1a2b3c4d5e6f', member: []
     },
     map: {
-      grid: { c: 20, r: 16, size: 50, color: 'rgb(255, 255, 255)' },
+      grid: { c: 20, r: 16, size: 51, color: 'rgb(255, 255, 255)' },
       mapMasks: [],
       draggingMapMask: null
     },
@@ -83,6 +78,9 @@ const store = new Vuex.Store({
       } else {
         state.display[property].isDisplay = true
       }
+    },
+    windowClose (state, property) {
+      state.display[property].isDisplay = false
     },
     /**
      * 設定を変更する
@@ -134,12 +132,19 @@ const store = new Vuex.Store({
       // setTimeout(function () { state.map.mapMasks.splice(index, 0, state.map.mapMasks.splice(index, 1)) }, 0)
     },
     /**
+     * マップマスク情報の削除
+     * @param {object} state state of Vuex
+     * @param {number} index マップマスクを管理する配列のインデックス
+     */
+    deleteMapMaskInfo (state, index) {
+      state.map.mapMasks.splice(index, 1)
+    },
+    /**
      * ドラッグ中のマップマスクの登録
      * @param {object} state state of Vuex
      * @param {number} index マップマスクを管理する配列のインデックス
      */
     setDraggingMapMask (state, index) {
-      // console.log(`mapMask drag start ${index}`)
       const mapMaskObj = state.map.mapMasks.splice(index, 1)[0]
       state.map.draggingMapMask = mapMaskObj
     },
@@ -267,6 +272,7 @@ const store = new Vuex.Store({
           color: mapMaskObj.fontColor
         }
         let name = mapMaskObj.name
+        console.log(`name:${name}, top:${styleObj.top}, left:${styleObj.left}, width:${styleObj.width}, height:${styleObj.height}, background-color:${styleObj['background-color']}, isLock:${mapMaskObj.isLock}`)
         result.push({
           name: name,
           style: styleObj,
@@ -283,12 +289,7 @@ new Vue({
   el: '#app',
   store,
   components: {
-    Menu: Menu,
-    ChatWindow: ChatWindow,
-    App: App,
-    AddMapMaskWindow: AddMapMaskWindow,
-    EditMapMaskWindow: EditMapMaskWindow,
-    MapMaskContext: MapMaskContext
+    App: App
   },
   data: {
     scrollY: 0
@@ -302,14 +303,5 @@ new Vue({
       console.log('scroll', this.scrollY)
     }
   },
-  template: `
-  <div>
-    <ChatWindow title="ChatWindow"/>
-    <App/>
-    <Menu/>
-    <AddMapMaskWindow title="AddMapMaskWindow"/>
-    <EditMapMaskWindow title="EditMapMaskWindow"/>
-    <MapMaskContext displayProperty="mapMaskContext"/>
-  </div>
-  `
+  template: `<App/>`
 })

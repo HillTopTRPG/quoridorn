@@ -1,11 +1,11 @@
 <template>
-  <WindowBase title="マスク変更" display-property="editMapMaskWindow" align="center" fixSize="285, 195">
+  <WindowBase title="マスク変更" display-property="editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow" @close="closeWindow">
     <table>
       <tbody>
         <tr>
           <th>文字：</th>
           <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" :style="mapMaskStyle"></div></td>
+          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" :style="mapMaskStyle">{{name}}</div></td>
         </tr>
         <tr>
           <th>色：</th>
@@ -51,14 +51,14 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'changeDisplay',
+      'windowClose',
       'changeDisplayValue',
       'changeMapMaskInfo'
     ]),
     closeWindow: function () {
       console.log('★★★ override closeWindow!!!!')
       this.changeDisplayValue({ main: 'editMapMaskWindow', sub: 'index', value: -1 })
-      this.changeDisplay('editMapMaskWindow')
+      this.windowClose('editMapMaskWindow')
     },
     commitEdit: function () {
       const mapMaskObj = {
@@ -75,64 +75,29 @@ export default {
     },
     cancelEdit: function () {
       this.closeWindow()
-    }
-  },
-  watch: {
-    isDisplay: function (newValue, oldValue) {
-      if (newValue) {
-        let mapMaskObj = this.$store.state.map.mapMasks[this.value.index]
-        this.name = mapMaskObj.name
-        this.width = mapMaskObj.gridW
-        this.height = mapMaskObj.gridH
-        let rgba = mapMaskObj.color
-        let r = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[0].trim())
-        let g = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[1].trim())
-        let b = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[2].trim())
-        let a = parseFloat(rgba.replace(/(rgba\()|\)/g, '').split(',')[3].trim())
-        let rt = ('00' + r.toString(16)).slice(-2)
-        let gt = ('00' + g.toString(16)).slice(-2)
-        let bt = ('00' + b.toString(16)).slice(-2)
-        this.color = `#${rt}${gt}${bt}`
-        this.transparency = 100 - Math.floor(a * 100)
-        console.log(`name:${this.name}, width:${this.width}, height:${this.height}, color:${this.color}, transparency:${this.transparency}`)
-      }
     },
-    isResetPosition: function (newValue, oldValue) {
-      if (newValue) {
-        console.log('★★★★★★★★★★★★★do-Reset!!!   ' + this.displayProperty)
-        let mapMaskObj = this.$store.state.map.mapMasks[this.value.index]
-        this.name = mapMaskObj.name
-        this.width = mapMaskObj.gridW
-        this.height = mapMaskObj.gridH
-        let rgba = mapMaskObj.color
-        let r = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[0].trim())
-        let g = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[1].trim())
-        let b = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[2].trim())
-        let a = parseFloat(rgba.replace(/(rgba\()|\)/g, '').split(',')[3].trim())
-        let rt = ('00' + r.toString(16)).slice(-2)
-        let gt = ('00' + g.toString(16)).slice(-2)
-        let bt = ('00' + b.toString(16)).slice(-2)
-        this.color = `#${rt}${gt}${bt}`
-        this.transparency = 100 - Math.floor(a * 100)
-        console.log(`name:${this.name}, width:${this.width}, height:${this.height}, color:${this.color}, transparency:${this.transparency}`)
-      } else {
-        console.log('★★★★★★★★★★★★★★not-reset   ' + this.displayProperty)
-      }
+    initWindow: function () {
+      let mapMaskObj = this.$store.state.map.mapMasks[this.value.index]
+      this.name = mapMaskObj.name
+      this.width = mapMaskObj.gridW
+      this.height = mapMaskObj.gridH
+      let rgba = mapMaskObj.color
+      let r = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[0].trim())
+      let g = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[1].trim())
+      let b = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[2].trim())
+      let a = parseFloat(rgba.replace(/(rgba\()|\)/g, '').split(',')[3].trim())
+      let rt = ('00' + r.toString(16)).slice(-2)
+      let gt = ('00' + g.toString(16)).slice(-2)
+      let bt = ('00' + b.toString(16)).slice(-2)
+      this.color = `#${rt}${gt}${bt}`
+      this.transparency = 100 - Math.floor(a * 100)
+      console.log(`name:${this.name}, width:${this.width}, height:${this.height}, color:${this.color}, transparency:${this.transparency}`)
     }
   },
   computed: {
     ...mapGetters([
       'doResetPosition'
     ]),
-    isDisplay: function () {
-      // console.log('★★★overrided!!!! isDisplay:', this.value.index)
-      return this.value.index >= 0
-    },
-    isResetPosition: function () {
-      let isResetPosition = this.doResetPosition('editMapMaskWindow')
-      // console.log(`isResetPosition ${isResetPosition} ★★★overrided by editMapMaskWindow`)
-      return isResetPosition
-    },
     value: function () {
       const propValue = this.$store.state.display['editMapMaskWindow']
       return propValue
@@ -149,7 +114,8 @@ export default {
       let result = {
         width: width + 'px',
         height: height + 'px',
-        'background-color': this.rgba
+        'background-color': this.rgba,
+        color: this.fontColor
       }
       return result
     },
@@ -226,6 +192,11 @@ td.mapMaskGrid {
   max-width: 161px;
   max-height: 161px;
   margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  border: solid yellow 2px;
 }
 input[type=number] {
   width: 46px;
