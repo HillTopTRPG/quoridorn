@@ -25,40 +25,46 @@ export default {
       'windowClose'
     ]),
     viewEditMapMask: function () {
-      console.log('$$ viewEditMapMask', this.value.index)
-      this.changeDisplayValue({ main: 'editMapMaskWindow', sub: 'index', value: this.value.index })
+      console.log(`  [methods] select context item => MapMask(${this.objKey}).viewEditMapMask`)
+      this.changeDisplayValue({ main: 'editMapMaskWindow', sub: 'key', value: this.objKey })
       this.windowOpen('editMapMaskWindow')
       this.windowClose('mapMaskContext')
     },
     changeMapMaskLock: function () {
-      console.log('$$ changeMapMaskLock')
+      console.log(`  [methods] select context item => MapMask(${this.objKey}).changeMapMaskLock`)
       this.changeMapMaskInfo({
-        index: this.index,
+        key: this.objKey,
         isLock: !this.isLock
       })
       this.windowClose('mapMaskContext')
     },
     deleteMapMask: function () {
-      console.log('$$ deleteMapMask')
-      this.deleteMapMaskInfo(this.index)
+      console.log(`  [methods] select context item => MapMask(${this.objKey}).deleteMapMask`)
+      this.deleteMapMaskInfo(this.objKey)
       this.windowClose('mapMaskContext')
     }
   },
   computed: {
     ...mapGetters([
-      'isWindowOpen'
+      'isWindowOpen',
+      'getPieceObj'
     ]),
-    value: function () {
-      return this.$store.state.display['mapMaskContext']
+    objKey: function () {
+      return this.$store.state.display['mapMaskContext'].key
     },
-    index: function () {
-      return this.value.index
+    storeObj: function () {
+      const type = 'mapMasks'
+      const key = this.objKey
+      console.log(`key:${key}`)
+      return this.getPieceObj(type, key)
     },
     isLock: function () {
       if (!this.isWindowOpen('mapMaskContext')) {
         return false
       }
-      return this.$store.state.map.mapMasks[this.index].isLock
+      const isLock = this.storeObj.isLock
+      console.log(` [computed] isLock => ${isLock}`)
+      return isLock
     }
   }
 }

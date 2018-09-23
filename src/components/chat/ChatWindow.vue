@@ -1,10 +1,10 @@
 <template>
-  <WindowBase title="チャット" display-property="chatWindow" align="left-bottom" baseSize="-300, 240">
+  <WindowFrame title="チャット" display-property="chatWindow" align="left-bottom" baseSize="-300, 240">
     <div class="tabs">
       <span class="tab" v-for="tabObj in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @mousedown.prevent="chatTabSelect(tabObj.name)">{{tabObj.name}}/0</span><!--
     --><span class="tab addButton" @click="addTab">＋</span>
     </div>
-    <ul class="log">
+    <ul class="log" @wheel.stop>
       <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
     </ul>
     <div class="oneLine">
@@ -20,17 +20,17 @@
       <textarea v-model="currentMessage" @keydown.enter.prevent="sendMessage" @keyup.enter.prevent></textarea>
       <button>送信</button>
     </div>
-  </WindowBase>
+  </WindowFrame>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
-import WindowBase from '../WindowBase'
+import WindowFrame from '../WindowFrame'
 
 export default {
   name: 'chat',
   components: {
-    WindowBase: WindowBase
+    WindowFrame: WindowFrame
   },
   created () {
     this.$store.commit('changeChatTab', '雑談')

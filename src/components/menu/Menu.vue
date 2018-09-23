@@ -32,7 +32,7 @@
       <BooleanItem property="gridLine">座標表示</BooleanItem>
       <BooleanItem property="gridId">マス目表示</BooleanItem>
       <hr>
-      <BooleanItem property="gridOn">マス目にキャラクターを合わせる</BooleanItem>
+      <BooleanItem property="isFitGrid">マス目にキャラクターを合わせる</BooleanItem>
       <BooleanItem property="standImageAutoResize">立ち絵のサイズを自動調整する</BooleanItem>
       <hr>
       <div class="item">フォントサイズ調整</div>
@@ -117,7 +117,7 @@ export default {
       'windowOpen'
     ]),
     changeBooleanAndClose: function (target) {
-      console.log(`target : ${target}`)
+      console.log(`  [methods] change boolean by menu => ${target}`)
       for (let m in this.menu) {
         this.menu[m] = false
       }
