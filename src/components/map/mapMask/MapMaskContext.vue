@@ -10,7 +10,7 @@
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import ContextFrame from './ContextFrame'
+import ContextFrame from '../../ContextFrame'
 
 export default {
   components: {

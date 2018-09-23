@@ -99,7 +99,7 @@ export default {
   data () {
     return {
       roomId: '0a1b2c3d4e5f',
-      checkImg: require('../assets/check.png'),
+      checkImg: require('../../assets/check.png'),
       memberNum: 1,
       menu: {
         'ファイル': false,

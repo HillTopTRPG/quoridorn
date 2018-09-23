@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-import WindowBase from './WindowBase'
+import { mapMutations, mapGetters } from 'vuex'
+import WindowBase from '../../WindowBase'
 
 export default {
   name: 'addMapMask',
@@ -63,6 +63,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'parseColor'
+    ]),
     mapMaskStyle: function () {
       let width = this.width * 50
       let height = this.height * 50
@@ -80,41 +83,14 @@ export default {
       }
       return result
     },
-    r: function () {
-      let result
-      if (this.color.startsWith('rgb(')) {
-        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[0].trim()
-      } else {
-        result = parseInt(this.color.substr(1, 2), 16)
-      }
-      return result
-    },
-    g: function () {
-      let result
-      if (this.color.startsWith('rgb(')) {
-        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[1].trim()
-      } else {
-        result = parseInt(this.color.substr(3, 2), 16)
-      }
-      return result
-    },
-    b: function () {
-      let result
-      if (this.color.startsWith('rgb(')) {
-        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[2].trim()
-      } else {
-        result = parseInt(this.color.substr(5, 2), 16)
-      }
-      return result
-    },
-    a: function () {
-      return (100 - this.transparency) / 100
-    },
     rgba: function () {
-      return 'rgba(' + this.r + ', ' + this.g + ', ' + this.b + ', ' + this.a + ')'
+      const colorObj = this.parseColor(this.color)
+      colorObj.a = (100 - this.transparency) / 100
+      return colorObj.getRGBA()
     },
     fontColor: function () {
-      return 'rgb(' + (255 - this.r) + ', ' + (255 - this.g) + ', ' + (255 - this.b) + ')'
+      const colorObj = this.parseColor(this.color)
+      return colorObj.getRGBReverse()
     }
   }
 }

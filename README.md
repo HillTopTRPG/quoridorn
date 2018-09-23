@@ -22,6 +22,15 @@ Quoridornでは、コマやマップに関する情報を、ブラウザ間で�
 みんなの操作が他の人にも反映されることになります。
 ```
 
+## 素材参照
+
+```
+## デフォルトの背景画像
+# TEDDY-PLAZA様
+http://teddy-plaza.sakura.ne.jp/?cat=105
+【麦畑と村】
+```
+
 ## Build Setup
 
 ``` bash
@@ -115,5 +124,5 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 # BGM
 - 流す
 - チャット欄にあるアイコンから設定画面表示
-- 
+-
 ```

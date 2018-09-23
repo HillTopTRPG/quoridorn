@@ -33,7 +33,7 @@
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import WindowBase from './WindowBase'
+import WindowBase from '../../WindowBase'
 
 export default {
   name: 'editMapMask',
@@ -81,22 +81,16 @@ export default {
       this.name = mapMaskObj.name
       this.width = mapMaskObj.gridW
       this.height = mapMaskObj.gridH
-      let rgba = mapMaskObj.color
-      let r = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[0].trim())
-      let g = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[1].trim())
-      let b = parseInt(rgba.replace(/(rgba\()|\)/g, '').split(',')[2].trim())
-      let a = parseFloat(rgba.replace(/(rgba\()|\)/g, '').split(',')[3].trim())
-      let rt = ('00' + r.toString(16)).slice(-2)
-      let gt = ('00' + g.toString(16)).slice(-2)
-      let bt = ('00' + b.toString(16)).slice(-2)
-      this.color = `#${rt}${gt}${bt}`
-      this.transparency = 100 - Math.floor(a * 100)
+      const colorObj = this.parseColor(mapMaskObj.color)
+      this.color = colorObj.getColorCode()
+      this.transparency = 100 - Math.floor(colorObj.a * 100)
       console.log(`name:${this.name}, width:${this.width}, height:${this.height}, color:${this.color}, transparency:${this.transparency}`)
     }
   },
   computed: {
     ...mapGetters([
-      'doResetPosition'
+      'doResetPosition',
+      'parseColor'
     ]),
     value: function () {
       const propValue = this.$store.state.display['editMapMaskWindow']
@@ -119,41 +113,14 @@ export default {
       }
       return result
     },
-    r: function () {
-      let result
-      if (this.color.startsWith('rgb(')) {
-        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[0].trim()
-      } else {
-        result = parseInt(this.color.substr(1, 2), 16)
-      }
-      return result
-    },
-    g: function () {
-      let result
-      if (this.color.startsWith('rgb(')) {
-        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[1].trim()
-      } else {
-        result = parseInt(this.color.substr(3, 2), 16)
-      }
-      return result
-    },
-    b: function () {
-      let result
-      if (this.color.startsWith('rgb(')) {
-        result = this.color.replace(/(rgba\()|\)/g, '').split(',')[2].trim()
-      } else {
-        result = parseInt(this.color.substr(5, 2), 16)
-      }
-      return result
-    },
-    a: function () {
-      return (100 - this.transparency) / 100
-    },
     rgba: function () {
-      return 'rgba(' + this.r + ', ' + this.g + ', ' + this.b + ', ' + this.a + ')'
+      const colorObj = this.parseColor(this.color)
+      colorObj.a = (100 - this.transparency) / 100
+      return colorObj.getRGBA()
     },
     fontColor: function () {
-      return 'rgb(' + (255 - this.r) + ', ' + (255 - this.g) + ', ' + (255 - this.b) + ')'
+      const colorObj = this.parseColor(this.color)
+      return colorObj.getRGBReverse()
     }
   }
 }
