@@ -1,11 +1,11 @@
 <template>
-  <WindowBase title="マスク変更" display-property="editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow" @close="closeWindow">
+  <WindowFrame title="マスク変更" display-property="editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow" @close="closeWindow">
     <table>
       <tbody>
         <tr>
           <th>文字：</th>
           <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" :style="mapMaskStyle">{{name}}</div></td>
+          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" :style="mapMaskStyle">{{name}}<br>({{this.key}})</div></td>
         </tr>
         <tr>
           <th>色：</th>
@@ -28,17 +28,17 @@
         </tr>
       </tbody>
     </table>
-  </WindowBase>
+  </WindowFrame>
 </template>
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import WindowBase from '../../WindowBase'
+import WindowFrame from '../../WindowFrame'
 
 export default {
   name: 'editMapMask',
   components: {
-    WindowBase: WindowBase
+    WindowFrame: WindowFrame
   },
   data () {
     return {
@@ -57,12 +57,12 @@ export default {
     ]),
     closeWindow: function () {
       console.log('★★★ override closeWindow!!!!')
-      this.changeDisplayValue({ main: 'editMapMaskWindow', sub: 'index', value: -1 })
+      this.changeDisplayValue({ main: 'editMapMaskWindow', sub: 'key', value: -1 })
       this.windowClose('editMapMaskWindow')
     },
     commitEdit: function () {
       const mapMaskObj = {
-        index: this.value.index,
+        key: this.key,
         name: this.name,
         gridW: this.width,
         gridH: this.height,
@@ -77,24 +77,25 @@ export default {
       this.closeWindow()
     },
     initWindow: function () {
-      let mapMaskObj = this.$store.state.map.mapMasks[this.value.index]
+      console.log(`initWindow`)
+      let mapMaskObj = this.getPieceObj('mapMasks', this.key)
       this.name = mapMaskObj.name
       this.width = mapMaskObj.gridW
       this.height = mapMaskObj.gridH
       const colorObj = this.parseColor(mapMaskObj.color)
       this.color = colorObj.getColorCode()
       this.transparency = 100 - Math.floor(colorObj.a * 100)
-      console.log(`name:${this.name}, width:${this.width}, height:${this.height}, color:${this.color}, transparency:${this.transparency}`)
+      console.log(`  [methods] init window => EditMapMask:{name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}}`)
     }
   },
   computed: {
     ...mapGetters([
       'doResetPosition',
-      'parseColor'
+      'parseColor',
+      'getPieceObj'
     ]),
-    value: function () {
-      const propValue = this.$store.state.display['editMapMaskWindow']
-      return propValue
+    key: function () {
+      return this.$store.state.display['editMapMaskWindow'].key
     },
     mapMaskStyle: function () {
       let width = this.width * 50
@@ -120,7 +121,7 @@ export default {
     },
     fontColor: function () {
       const colorObj = this.parseColor(this.color)
-      return colorObj.getRGBReverse()
+      return colorObj.getColorCodeReverse()
     }
   }
 }

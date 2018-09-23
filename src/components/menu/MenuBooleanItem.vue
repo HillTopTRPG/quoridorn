@@ -7,7 +7,12 @@ import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   name: 'menuBooleanItem',
-  props: ['property'],
+  props: {
+    'property': {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       checkImg: require('../../assets/check.png')

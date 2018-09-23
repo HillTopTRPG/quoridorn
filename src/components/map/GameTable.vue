@@ -12,13 +12,13 @@
       <MapBoard/>
     </div>
 
-    <MapMask v-for="(mapMask, index) in mapMasks" :key="index" :mapMask="mapMask" :index="index" @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
+    <MapMask v-for="mapMask in mapMaskList" type="mapMasks" :objKey="mapMask.key" :key="mapMask.key" @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
 
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import MapMask from './mapMask/MapMask'
 import MapBoard from './MapBoard'
 
@@ -30,7 +30,6 @@ export default {
   },
   data () {
     return {
-      marginGridNum: 60,
       isDraggingLeft: false,
       leftMove: {
         totalX: 0,
@@ -74,7 +73,7 @@ export default {
       console.log(`★★★★ dragging ★★★★`)
     },
     mouseMove: function (event) {
-      console.log('$$$$$$$$$  mouseMove', event)
+      // console.log('$$$$$$$$$  mouseMove', event)
       // const f = this.f
       let pageX = event.pageX
       let pageY = event.pageY
@@ -106,23 +105,10 @@ export default {
       }
       this.translateZ = afterTranslateZ
     },
-    openContext: function (event, kind, index) {
-      let pageX = event.pageX
-      let pageY = event.pageY
-
-      if (kind === 'mapMask') {
-        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'index', value: index })
-        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'x', value: pageX })
-        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'y', value: pageY })
-        this.changeDisplay('mapMaskContext')
-        console.log(`mapMask(${index})のコンテキストをオープン`)
-      }
-    },
     f: function (v) {
       return Math.floor(v * 100) / 100
     },
     calcAddress: function (clientX, clientY, offsetX = 0, offsetY = 0) {
-      let gridC, gridR
       // const f = this.f
 
       const zoom = (1000 - this.translateZ) / 1000
@@ -142,12 +128,11 @@ export default {
       }
 
       // console.log(`client(${f(clientX)}, ${f(clientY)}) offset(${f(offsetX)}, ${f(offsetY)}), １マスのサイズ:${f(zoomedGridSize)} zoomed(${f(clientX / zoomedGridSize)}, ${f(clientY / zoomedGridSize)}) offsetGrid(${f(offsetGridX)}, ${f(offsetGridY)})`)
+      let gridC = Math.ceil(clientX * zoom / this.gridSize)
+      let gridR = Math.ceil(clientY * zoom / this.gridSize)
       if (offsetX !== undefined && offsetY !== undefined) {
-        gridC = Math.ceil(clientX * zoom / this.gridSize) + this.marginGridNum / 2 - offsetGridX
-        gridR = Math.ceil(clientY * zoom / this.gridSize) + this.marginGridNum / 2 - offsetGridY
-      } else {
-        gridC = Math.ceil(clientX * zoom / this.gridSize) + this.marginGridNum / 2
-        gridR = Math.ceil(clientY * zoom / this.gridSize) + this.marginGridNum / 2
+        gridC -= offsetGridX
+        gridR -= offsetGridY
       }
 
       // console.log(`マス座標 rel(${gridC - this.marginGridNum / 2}, ${gridR - this.marginGridNum / 2}) abs(${gridC}, ${gridR})`)
@@ -159,7 +144,6 @@ export default {
     },
     drop: function (event) {
       // ドロップされた物の種類
-      console.log(`何かがドロップされた`)
       const kind = event.dataTransfer.getData('kind')
 
       // マス座標
@@ -173,6 +157,8 @@ export default {
       const addressObj = this.calcAddress(clientX, clientY, offsetX, offsetY)
       const gridC = addressObj.gridC
       const gridR = addressObj.gridR
+
+      console.log(`  [methods] drop on GameTable(${gridC}, ${gridR}) => ${kind}`)
 
       // マップマスクの作成
       if (kind === 'mapMask') {
@@ -203,13 +189,13 @@ export default {
       }
     },
     leftDown: function () {
-      console.log('leftDown')
+      console.log('  [methods] mousedown left on GameTable')
       this.mouse.saveX = this.mouse.x
       this.mouse.saveY = this.mouse.y
       this.isDraggingLeft = true
     },
     leftUp: function () {
-      console.log('leftUp')
+      console.log('  [methods] mouseup left on GameTable')
       this.isDraggingLeft = false
       this.leftMove.totalX += this.leftMove.draggingX
       this.leftMove.totalY += this.leftMove.draggingY
@@ -217,13 +203,13 @@ export default {
       this.leftMove.draggingY = 0
     },
     rightDown: function () {
-      console.log('rightDown')
+      console.log('  [methods] mousedown right on GameTable')
       this.mouse.saveX = this.mouse.x
       this.mouse.saveY = this.mouse.y
       this.isDraggingRight = true
     },
     rightUp: function () {
-      console.log('rightUp')
+      console.log('  [methods] mouseup right on GameTable')
       this.isDraggingRight = false
       this.rightMove.totalX += this.rightMove.draggingX
       this.rightMove.totalY += this.rightMove.draggingY
@@ -244,9 +230,9 @@ export default {
     }
   },
   computed: {
-    mapMasks: function () {
-      return this.$store.getters.mapMaskList
-    },
+    ...mapGetters([
+      'mapMaskList'
+    ]),
     gridC: function () {
       return this.$store.state.map.grid.totalColumn
     },
@@ -255,6 +241,9 @@ export default {
     },
     gridSize: function () {
       return this.$store.state.map.grid.size
+    },
+    marginGridNum: function () {
+      return this.$store.state.map.marginGridNum
     },
     sizeW: function () { return (this.gridC + this.marginGridNum) * this.gridSize + 0 },
     sizeH: function () { return (this.gridR + this.marginGridNum) * this.gridSize + 0 },

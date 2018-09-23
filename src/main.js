@@ -24,7 +24,7 @@ const store = new Vuex.Store({
       standImage: true,
       dice: true,
       cutIn: true,
-      gridOn: true,
+      isFitGrid: true,
       pieceRotateMarker: true,
       standImageAutoResize: true,
       chatWindow: { isDisplay: true, doResetPosition: false },
@@ -33,8 +33,8 @@ const store = new Vuex.Store({
       chatpaletteWindow: { isDisplay: true, doResetPosition: false },
       counterRemoConWindow: { isDisplay: true, doResetPosition: false },
       addMapMaskWindow: { isDisplay: false, doResetPosition: false },
-      editMapMaskWindow: { isDisplay: false, doResetPosition: false, index: -1 },
-      mapMaskContext: { isDisplay: false, doResetPosition: false, index: -1 }
+      editMapMaskWindow: { isDisplay: false, doResetPosition: false, key: -1 },
+      mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1 }
     },
     images: {
       background: [
@@ -48,7 +48,8 @@ const store = new Vuex.Store({
       grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(25, 25, 25, .4)' },
       imageIndex: 0,
       mapMasks: [],
-      draggingMapMask: null
+      draggingMapMask: null,
+      marginGridNum: 60
     },
     charactors: [],
     chat: {
@@ -107,7 +108,7 @@ const store = new Vuex.Store({
       let main = payload.main
       let sub = payload.sub
       let value = payload.value
-      console.log(`display[${main}][${sub}] = ${value}`)
+      console.log(`[mutations] change value => display[${main}][${sub}] = ${value}`)
       state.display[main][sub] = value
     },
     /**
@@ -118,12 +119,31 @@ const store = new Vuex.Store({
     addMapMaskInfo (state, payload) {
       const copyProps = ['name', 'gridC', 'gridR', 'gridW', 'gridH', 'color', 'fontColor']
 
-      const mapMaskObj = { isLock: false }
+      const obj = { isLock: false }
       for (let prop of copyProps) {
-        mapMaskObj[prop] = payload[prop]
+        obj[prop] = payload[prop]
       }
+      obj.gridW = parseInt(obj.gridW)
+      obj.gridH = parseInt(obj.gridH)
 
-      state.map.mapMasks.push(mapMaskObj)
+      // キーを決める(欠番を埋めるスタイル)
+      let key = -1
+      let isFind
+      do {
+        key++
+        isFind = false
+        for (let mapMaskObj of state.map.mapMasks) {
+          if (mapMaskObj.key === key) {
+            isFind = true
+            break
+          }
+        }
+      } while (isFind)
+      obj.key = key
+
+      console.log(`[mutations] add mapMask => {key:${key}, name:"${obj.name}", grid(${obj.gridC}, ${obj.gridR}), gridWH(${obj.gridW}, ${obj.gridH}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
+
+      state.map.mapMasks.push(obj)
     },
     /**
      * ストアされているマップマスク情報を変更する
@@ -132,17 +152,13 @@ const store = new Vuex.Store({
      */
     changeMapMaskInfo (state, payload) {
       const copyProps = ['name', 'gridC', 'gridR', 'gridW', 'gridH', 'color', 'fontColor', 'isLock']
-      let index = payload.index
-      console.log(`マップマスクの情報を変更(${index})`, payload)
+      let key = payload.key
 
-      const lastMapMaskObj = state.map.mapMasks[index]
-      const mapMaskObj = {}
+      const lastMapMaskObj = this.getters.getPieceObj('mapMasks', key)
       for (let prop of copyProps) {
-        if (payload[prop] !== undefined) {
-          console.log(`prop:${prop}を${payload[prop]}で上書き`, index, lastMapMaskObj)
+        if (payload[prop] !== undefined && lastMapMaskObj[prop] !== payload[prop]) {
+          console.log(`[mutations] update mapMask(${key}) => ${prop}: ${lastMapMaskObj[prop]} -> ${payload[prop]}`)
           lastMapMaskObj[prop] = payload[prop]
-        } else {
-          mapMaskObj[prop] = lastMapMaskObj[prop]
         }
       }
       // setTimeout(function () { state.map.mapMasks.splice(index, 0, state.map.mapMasks.splice(index, 1)) }, 0)
@@ -150,17 +166,21 @@ const store = new Vuex.Store({
     /**
      * マップマスク情報の削除
      * @param {object} state state of Vuex
-     * @param {number} index マップマスクを管理する配列のインデックス
+     * @param {number} key   マップマスクのキー
      */
-    deleteMapMaskInfo (state, index) {
+    deleteMapMaskInfo (state, key) {
+      const obj = this.getters.getPieceObj('mapMasks', key)
+      const index = state.map.mapMasks.indexOf(obj)
       state.map.mapMasks.splice(index, 1)
     },
     /**
      * ドラッグ中のマップマスクの登録
      * @param {object} state state of Vuex
-     * @param {number} index マップマスクを管理する配列のインデックス
+     * @param {number} key   マップマスクのキー
      */
-    setDraggingMapMask (state, index) {
+    setDraggingMapMask (state, key) {
+      const obj = this.getters.getPieceObj('mapMasks', key)
+      const index = state.map.mapMasks.indexOf(obj)
       const mapMaskObj = state.map.mapMasks.splice(index, 1)[0]
       state.map.draggingMapMask = mapMaskObj
     },
@@ -265,6 +285,9 @@ const store = new Vuex.Store({
       let result = state.chat.logs[store.getters.activeChatTab.name]
       return result
     },
+    isFitGrid: function (state) {
+      return state.display.isFitGrid
+    },
     parseColor: (state) => (colorText) => {
       let colorObj = null
       if (colorText.startsWith('rgb')) {
@@ -276,12 +299,49 @@ const store = new Vuex.Store({
       colorObj.getColorCode = function () {
         return `#${('00' + this.r.toString(16)).slice(-2)}${('00' + this.g.toString(16)).slice(-2)}${('00' + this.b.toString(16)).slice(-2)}`
       }.bind(colorObj)
+      colorObj.getColorCodeReverse = function () {
+        return `#${('00' + (255 - this.r).toString(16)).slice(-2)}${('00' + (255 - this.g).toString(16)).slice(-2)}${('00' + (255 - this.b).toString(16)).slice(-2)}`
+      }.bind(colorObj)
       colorObj.getRGB = function () { return `rgb(${this.r}, ${this.g}, ${this.b})` }.bind(colorObj)
       colorObj.getRGBA = function () { return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})` }.bind(colorObj)
       colorObj.getRGBReverse = function () { return `rgb(${255 - this.r}, ${255 - this.g}, ${255 - this.b})` }.bind(colorObj)
       return colorObj
     },
+    objToString: (state) => (obj) => {
+      let text = '{ '
+      for (let key in obj) {
+        let val = obj[key]
+        if (typeof val === 'string') {
+          val = `"${val}"`
+        }
+        text += `${key}:${val}, `
+      }
+      text = text.substr(0, text.length - 2)
+      text += ' }'
+      return text
+    },
+    getPieceObj: (state) => (type, key, logFlg) => {
+      const filteredList = state.map[type].filter(obj => obj.key === key)
+      if (filteredList.length === 0) {
+        console.error(`指定されたピースは見つからなかった。type:"${type}", key:"${key}"`)
+        return null
+      }
+      if (filteredList.length > 1) {
+        console.error(`指定されたピースは複数Hitした。type:"${type}", key:"${key}"`)
+        for (let obj of filteredList) {
+          console.log('$$$', obj)
+        }
+        return null
+      }
+      if (logFlg) {
+        console.log(`  [getters] pieceObj[${type}]#${key} => ${store.getters.objToString(filteredList[0])}`)
+      }
+      return filteredList[0]
+    },
     isWindowOpen: (state) => (displayProperty) => {
+      if (state.display[displayProperty] === undefined) {
+        console.error(`displayProperty:${displayProperty} is not find!!`)
+      }
       if (typeof state.display[displayProperty] === 'boolean') {
         return state.display[displayProperty]
       } else {
@@ -295,20 +355,9 @@ const store = new Vuex.Store({
     mapMaskList: function (state) {
       const result = []
       for (let mapMaskObj of state.map.mapMasks) {
-        let styleObj = {
-          top: (mapMaskObj.gridR - 1) * state.map.grid.size - 0 + 'px',
-          left: (mapMaskObj.gridC - 1) * state.map.grid.size - 0 + 'px',
-          width: mapMaskObj.gridW * state.map.grid.size - 0 + 'px',
-          height: mapMaskObj.gridH * state.map.grid.size - 0 + 'px',
-          'background-color': mapMaskObj.color,
-          color: mapMaskObj.fontColor
-        }
-        let name = mapMaskObj.name
-        console.log(`マップマスク - 描画情報 - name:${name}, top:${styleObj.top}, left:${styleObj.left}, width:${styleObj.width}, height:${styleObj.height}, background-color:${styleObj['background-color']}, isLock:${mapMaskObj.isLock}`)
+        // console.log(`  [getters] mapMask(${mapMaskObj.key})`)
         result.push({
-          name: name,
-          style: styleObj,
-          isLock: mapMaskObj.isLock
+          key: mapMaskObj.key
         })
       }
       return result

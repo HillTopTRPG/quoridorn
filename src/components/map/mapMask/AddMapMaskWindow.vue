@@ -1,5 +1,5 @@
 <template>
-  <WindowBase title="マスク作成" display-property="addMapMaskWindow" align="center" fixSize="285, 195">
+  <WindowFrame title="マスク作成" display-property="addMapMaskWindow" align="center" fixSize="285, 195">
     <table>
       <tbody>
         <tr>
@@ -28,17 +28,17 @@
         </tr>
       </tbody>
     </table>
-  </WindowBase>
+  </WindowFrame>
 </template>
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import WindowBase from '../../WindowBase'
+import WindowFrame from '../../WindowFrame'
 
 export default {
   name: 'addMapMask',
   components: {
-    WindowBase: WindowBase
+    WindowFrame: WindowFrame
   },
   data () {
     return {
@@ -59,7 +59,7 @@ export default {
       event.dataTransfer.setData('fontColor', this.fontColor)
       event.dataTransfer.setData('width', this.width)
       event.dataTransfer.setData('height', this.height)
-      console.log(`name:${this.name}, width:${this.width}, height:${this.height}, color:${this.color}, transparency:${this.transparency}`)
+      console.log(`  [methods] drag start mapMask => {name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}`)
     }
   },
   computed: {
@@ -90,7 +90,7 @@ export default {
     },
     fontColor: function () {
       const colorObj = this.parseColor(this.color)
-      return colorObj.getRGBReverse()
+      return colorObj.getColorCodeReverse()
     }
   }
 }

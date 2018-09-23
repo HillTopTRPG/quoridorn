@@ -1,33 +1,29 @@
 <template>
   <div class="mapMask"
-    :class="[mapMask.isLock ? 'isLock' : 'isUnLock']"
-    :style="mapMask.style"
-    :draggable="!mapMask.isLock"
-    @dragstart="(e) => dragStartMapMask(e, index)"
+    :class="[storeObj.isLock ? 'isLock' : 'isUnLock']"
+    :style="mapMaskStyle"
+    :draggable="!storeObj.isLock"
+    @dragstart="dragStartMapMask"
     @drag="dragging"
-    @click.right.prevent="(e) => openContext(e, 'mapMask', index)"
+    @click.right.prevent="(e) => openContext(e, 'mapMask')"
     @mousedown.left="leftDown" @mouseup.left="leftUp"
     @mousedown.right="rightDown" @mouseup.right="rightUp"
     @contextmenu.prevent
-  >{{mapMask.name}}</div>
+  >{{storeObj.name}}<br>({{storeObj.key}})</div>
 </template>
 
 <script>
 // !mapMask.isLock
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
+import PieceMixin from '../../PieceMixin'
 
 export default {
   name: 'mapMask',
-  props: {
-    mapMask: {
-      type: Object,
-      required: true
-    },
-    index: {
-      type: Number,
-      required: true
-    }
+  mixins: [PieceMixin],
+  data () {
+    return {}
   },
+  props: {},
   methods: {
     ...mapMutations([
       'setDraggingMapMask',
@@ -35,55 +31,46 @@ export default {
       'changeDisplayValue'
     ]),
     dragging: function (event) {
-      console.log('!!!!dragging!!!')
+      console.log('  [methods] dragging mapMask')
       this.$emit('dragging', event)
-      // setTimeout(function () { this.$emit('dragging', event) }.bind(this), 0)
     },
-    dragStartMapMask: function (event, index) {
-      console.log(`マップマスク(${index}) - 移動開始`)
+    dragStartMapMask: function (event) {
+      console.log(`  [methods] move start => mapMask(${this.objKey})`)
       event.dataTransfer.setData('kind', 'mapMask-move')
       let offsetX = event.offsetX
       let offsetY = event.offsetY
       event.dataTransfer.setData('offsetX', offsetX)
       event.dataTransfer.setData('offsetY', offsetY)
-      this.setDraggingMapMask(index)
+      this.setDraggingMapMask(this.objKey) // TODO
     },
-    openContext: function (event, kind, index) {
+    openContext: function (event, kind) {
       let pageX = event.pageX
       let pageY = event.pageY
 
       if (kind === 'mapMask') {
-        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'index', value: index })
+        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'key', value: this.objKey })
         this.changeDisplayValue({ main: 'mapMaskContext', sub: 'x', value: pageX })
         this.changeDisplayValue({ main: 'mapMaskContext', sub: 'y', value: pageY })
         this.changeDisplay('mapMaskContext')
-        console.log(`mapMask(${index})のコンテキストをオープン`)
-      }
-    },
-    leftDown: function () {
-      if (this.mapMask.isLock) {
-        this.$emit('leftDown')
-      }
-    },
-    leftUp: function () {
-      if (this.mapMask.isLock) {
-        this.$emit('leftUp')
-      }
-    },
-    rightDown: function () {
-      if (this.mapMask.isLock) {
-        this.$emit('rightDown')
-      }
-    },
-    rightUp: function () {
-      if (this.mapMask.isLock) {
-        this.$emit('rightUp')
+        console.log(`  [methods] open context => mapMask(${this.objKey})`)
       }
     }
   },
   computed: {
-    mapMasks: function () {
-      return this.$store.getters.mapMaskList
+    ...mapGetters([]),
+    mapMaskStyle: function () {
+      const storeObj = this.storeObj
+      const rectObj = this.rect
+      let obj = {
+        top: `${rectObj.top}px`,
+        left: `${rectObj.left}px`,
+        width: `${rectObj.width}px`,
+        height: `${rectObj.height}px`,
+        'background-color': storeObj.color,
+        color: storeObj.fontColor
+      }
+      console.log(` [computed] mapMask(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+      return obj
     }
   }
 }

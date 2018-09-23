@@ -69,8 +69,8 @@ export default {
       'changeDisplayValue'
     ]),
     closeWindow: function () {
+      console.log(`  [methods] closeWindow(click [x]button)`)
       this.changeDisplay(this.displayProperty)
-      this.$emit('close')
     },
     resize: function (direct, flg) {
       if (flg) {
@@ -143,14 +143,9 @@ export default {
     }
   },
   watch: {
-    title: function (newValue, oldValue) { console.log(`title:${newValue}`) },
-    displayProperty: function (newValue, oldValue) { console.log(`title:${newValue}`) },
-    align: function (newValue, oldValue) { console.log(`title:${newValue}`) },
-    baseSize: function (newValue, oldValue) { console.log(`title:${newValue}`) },
-    fixSize: function (newValue, oldValue) { console.log(`title:${newValue}`) },
     isDisplay: function (newValue, oldValue) {
       if (newValue) {
-        console.log('◆◆◆◆◆◆◆◆◆open   ' + this.displayProperty)
+        console.log(`    [watch] window open => ${this.displayProperty}`)
         this.windowBase.windowFactor.l = 0
         this.windowBase.windowFactor.r = 0
         this.windowBase.windowFactor.t = 0
@@ -159,12 +154,13 @@ export default {
         this.windowBase.windowFactor.h = 0
         this.$emit('open')
       } else {
-        console.log('◆◆◆◆◆◆◆◆◆◆not-open   ' + this.displayProperty)
+        console.log(`    [watch] window close => ${this.displayProperty}`)
+        this.$emit('close')
       }
     },
     isResetPosition: function (newValue, oldValue) {
       if (newValue) {
-        console.log(`◆◆◆◆◆◆◆◆◆do-Reset!!!   ${this.displayProperty} ${this.title} newValue=${newValue}`)
+        console.log(`    [watch] window reset => ${this.displayProperty}`)
         this.windowBase.windowFactor.l = 0
         this.windowBase.windowFactor.r = 0
         this.windowBase.windowFactor.t = 0
@@ -174,7 +170,7 @@ export default {
         this.changeDisplayValue({ main: this.displayProperty, sub: 'doResetPosition', value: false })
         this.$emit('reset')
       } else {
-        console.log('◆◆◆◆◆◆◆◆◆◆not-reset   ' + this.displayProperty)
+        console.log(`    [watch] window resetted => ${this.displayProperty}`)
       }
     }
   },
