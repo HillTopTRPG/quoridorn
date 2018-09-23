@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import Menu from './components/Menu'
-import ChatWindow from './components/ChatWindow'
-import AddMapMaskWindow from './components/AddMapMaskWindow'
-import EditMapMaskWindow from './components/EditMapMaskWindow'
-import MapMaskContext from './components/MapMaskContext'
-import GameTable from './components/GameTable'
+import Menu from './components/menu/Menu'
+import ChatWindow from './components/chat/ChatWindow'
+import AddMapMaskWindow from './components/map/mapMask/AddMapMaskWindow'
+import EditMapMaskWindow from './components/map/mapMask/EditMapMaskWindow'
+import MapMaskContext from './components/map/mapMask/MapMaskContext'
+import GameTable from './components/map/GameTable'
 
 export default {
   name: 'App',
@@ -60,6 +60,10 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 </style>

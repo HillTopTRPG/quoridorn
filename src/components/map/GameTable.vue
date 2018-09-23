@@ -12,14 +12,14 @@
       <MapBoard/>
     </div>
 
-    <MapMask v-for="(mapMask, index) in mapMasks" :key="index" :mapMask="mapMask" :index="index" @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp"/>
+    <MapMask v-for="(mapMask, index) in mapMasks" :key="index" :mapMask="mapMask" :index="index" @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
 
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
-import MapMask from './MapMask'
+import MapMask from './mapMask/MapMask'
 import MapBoard from './MapBoard'
 
 export default {
@@ -58,13 +58,8 @@ export default {
     }
   },
   mounted: function () {
-    const _this = this
-    document.body.addEventListener('mousemove', function (e) {
-      _this.mouse.x = e.pageX
-      _this.mouse.y = e.pageY
-      _this.reflesh(e.pageX, e.pageY)
-      // console.log(`page(${e.pageX}, ${e.pageY})`)
-    })
+    document.body.addEventListener('mousemove', this.mouseMove)
+    document.body.addEventListener('drag', this.mouseMove)
   },
   methods: {
     ...mapMutations([
@@ -72,11 +67,41 @@ export default {
       'moveMapMask',
       'setDraggingMapMask',
       'changeDisplay',
-      'changeDisplayValue'
+      'changeDisplayValue',
+      'setMouseAddress'
     ]),
+    dragging: function () {
+      console.log(`★★★★ dragging ★★★★`)
+    },
+    mouseMove: function (event) {
+      console.log('$$$$$$$$$  mouseMove', event)
+      // const f = this.f
+      let pageX = event.pageX
+      let pageY = event.pageY
+      this.mouse.x = pageX
+      this.mouse.y = pageY
+      this.reflesh(pageX, pageY)
+
+      let canvasElm = document.getElementById('map-canvas')
+      const canvasX = canvasElm.getBoundingClientRect().left
+      const canvasY = canvasElm.getBoundingClientRect().top
+      const clientX = pageX - canvasX
+      const clientY = pageY - canvasY
+
+      // console.log(`マウス移動 page(${f(pageX)}, ${f(pageY)}), canvas(${f(canvasX)}, ${f(canvasY)}), client(${f(clientX)}, ${f(clientY)}) translateZ:${this.translateZ}`)
+      const gridObj = this.calcAddress(clientX, clientY)
+      const addressObj = {
+        c: gridObj.gridC - this.marginGridNum / 2,
+        r: gridObj.gridR - this.marginGridNum / 2
+      }
+      this.setMouseAddress(addressObj)
+      // console.log(`address(${addressObj.c}, ${addressObj.r}) grid(${gridObj.gridC}, ${gridObj.gridR}) marginGridNum:${this.marginGridNum}`)
+    },
     wheel: function (delta) {
-      const afterTranslateZ = this.translateZ + delta
-      if (afterTranslateZ < -2400 || afterTranslateZ > 840) {
+      const changeValue = 100
+      const add = delta > 0 ? changeValue : -changeValue
+      const afterTranslateZ = this.translateZ + add
+      if (afterTranslateZ < -2400 || afterTranslateZ > 800) {
         return
       }
       this.translateZ = afterTranslateZ
@@ -93,30 +118,69 @@ export default {
         console.log(`mapMask(${index})のコンテキストをオープン`)
       }
     },
+    f: function (v) {
+      return Math.floor(v * 100) / 100
+    },
+    calcAddress: function (clientX, clientY, offsetX = 0, offsetY = 0) {
+      let gridC, gridR
+      // const f = this.f
+
+      const zoom = (1000 - this.translateZ) / 1000
+
+      // ドロップ先のマス座標を算出
+      let offsetGridX = offsetX / this.gridSize
+      let offsetGridY = offsetY / this.gridSize
+      if (offsetGridX > 0) {
+        offsetGridX = Math.floor(offsetGridX)
+      } else {
+        offsetGridX = Math.ceil(offsetGridX)
+      }
+      if (offsetGridY > 0) {
+        offsetGridY = Math.floor(offsetGridY)
+      } else {
+        offsetGridY = Math.ceil(offsetGridY)
+      }
+
+      // console.log(`client(${f(clientX)}, ${f(clientY)}) offset(${f(offsetX)}, ${f(offsetY)}), １マスのサイズ:${f(zoomedGridSize)} zoomed(${f(clientX / zoomedGridSize)}, ${f(clientY / zoomedGridSize)}) offsetGrid(${f(offsetGridX)}, ${f(offsetGridY)})`)
+      if (offsetX !== undefined && offsetY !== undefined) {
+        gridC = Math.ceil(clientX * zoom / this.gridSize) + this.marginGridNum / 2 - offsetGridX
+        gridR = Math.ceil(clientY * zoom / this.gridSize) + this.marginGridNum / 2 - offsetGridY
+      } else {
+        gridC = Math.ceil(clientX * zoom / this.gridSize) + this.marginGridNum / 2
+        gridR = Math.ceil(clientY * zoom / this.gridSize) + this.marginGridNum / 2
+      }
+
+      // console.log(`マス座標 rel(${gridC - this.marginGridNum / 2}, ${gridR - this.marginGridNum / 2}) abs(${gridC}, ${gridR})`)
+
+      return {
+        gridC: gridC,
+        gridR: gridR
+      }
+    },
     drop: function (event) {
       // ドロップされた物の種類
       console.log(`何かがドロップされた`)
       const kind = event.dataTransfer.getData('kind')
 
+      // マス座標
       let canvasElm = document.getElementById('map-canvas')
+      const clientX = event.pageX - canvasElm.getBoundingClientRect().left
+      const clientY = event.pageY - canvasElm.getBoundingClientRect().top
 
-      let offsetX = event.pageX - canvasElm.getBoundingClientRect().left
-      let offsetY = event.pageY - canvasElm.getBoundingClientRect().top
+      const offsetX = event.dataTransfer.getData('offsetX')
+      const offsetY = event.dataTransfer.getData('offsetY')
 
-      const zoom = (1000 - this.translateZ) / 1000
-      const zoomedGridSize = this.gridSize / zoom
+      const addressObj = this.calcAddress(clientX, clientY, offsetX, offsetY)
+      const gridC = addressObj.gridC
+      const gridR = addressObj.gridR
 
+      // マップマスクの作成
       if (kind === 'mapMask') {
         const name = event.dataTransfer.getData('name')
         const color = event.dataTransfer.getData('color')
         const fontColor = event.dataTransfer.getData('fontColor')
         let gridW = event.dataTransfer.getData('width')
         let gridH = event.dataTransfer.getData('height')
-
-        let gridC = Math.ceil(offsetX / zoomedGridSize) + this.marginGridNum / 2
-        let gridR = Math.ceil(offsetY / zoomedGridSize) + this.marginGridNum / 2
-
-        console.log(`grid(${gridC}, ${gridR})`)
 
         const mapMaskObj = {
           name: name,
@@ -130,13 +194,8 @@ export default {
 
         this.addMapMaskInfo(mapMaskObj)
       }
+      // マップマスクの移動
       if (kind === 'mapMask-move') {
-        const _offsetX = Math.floor(event.dataTransfer.getData('offsetX') / this.gridSize) * zoomedGridSize
-        const _offsetY = Math.floor(event.dataTransfer.getData('offsetY') / this.gridSize) * zoomedGridSize
-
-        let gridC = Math.ceil((offsetX - _offsetX) / zoomedGridSize) + this.marginGridNum / 2
-        let gridR = Math.ceil((offsetY - _offsetY) / zoomedGridSize) + this.marginGridNum / 2
-
         this.moveMapMask({
           gridR: gridR,
           gridC: gridC
@@ -189,16 +248,16 @@ export default {
       return this.$store.getters.mapMaskList
     },
     gridC: function () {
-      return this.$store.state.map.grid.c
+      return this.$store.state.map.grid.totalColumn
     },
     gridR: function () {
-      return this.$store.state.map.grid.r
+      return this.$store.state.map.grid.totalRow
     },
     gridSize: function () {
       return this.$store.state.map.grid.size
     },
-    sizeW: function () { return (this.gridC + this.marginGridNum) * this.gridSize + 2 },
-    sizeH: function () { return (this.gridR + this.marginGridNum) * this.gridSize + 2 },
+    sizeW: function () { return (this.gridC + this.marginGridNum) * this.gridSize + 0 },
+    sizeH: function () { return (this.gridR + this.marginGridNum) * this.gridSize + 0 },
     gameTableStyle: function () {
       const _this = this
       const translateZ = this.translateZ
@@ -218,6 +277,12 @@ export default {
           'rotateY(' + _this.rotateY + 'deg) ' +
           'rotateX(' + _this.rotateX + 'deg) ' +
           'rotateZ(' + _this.rotateZ + 'deg)'
+        /*
+          ,
+        background-image:
+          'linear-gradient(0deg, transparent -2px,' +
+            `rgba(255, 255, 255, .3) 2px, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,`
+            */
       }
     }
   }
@@ -228,28 +293,34 @@ export default {
 <style scoped>
 #gameTable {
   position: fixed;
-  box-sizing: border-box;
   display: block;
   margin: auto;
   text-align: center;
   vertical-align: middle;
   -khtml-user-drag: element;
-  background-color: rgba(20, 20, 20, .1);
-  // border: groove 18px gray;
+  background-color: rgba(20, 80, 20, .1);
+  cursor: crosshair;
+  border: none;
+  border-width: 0;
+  /*
+  box-sizing: border-box;
+  */
+  border: ridge 24px gray;
+  background-position: 1px 1px;
     background-image:
-    linear-gradient(0deg, transparent 0%,
-            rgba(255, 255, 255, .2) 1%, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,
+    linear-gradient(0deg, transparent -2px,
+            rgba(255, 255, 255, .3) 2px, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,
             rgba(255, 255, 255, .1) 21%, rgba(255, 255, 255, .1) 22%, transparent 23%, transparent 40%,
             rgba(255, 255, 255, .1) 41%, rgba(255, 255, 255, .1) 42%, transparent 43%, transparent 60%,
             rgba(255, 255, 255, .1) 61%, rgba(255, 255, 255, .1) 62%, transparent 63%, transparent 80%,
-            rgba(255, 255, 255, .1) 81%, rgba(255, 255, 255, .1) 82%, transparent 83%, transparent 99%, rgba(255, 255, 255, .2) 1%),
-    linear-gradient(90deg, transparent 0%,
-            rgba(255, 255, 255, .2) 1%, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,
+            rgba(255, 255, 255, .1) 81%, rgba(255, 255, 255, .1) 82%, transparent 83%, transparent),
+    linear-gradient(270deg, transparent -2px,
+            rgba(255, 255, 255, .3) 2px, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,
             rgba(255, 255, 255, .1) 21%, rgba(255, 255, 255, .1) 22%, transparent 23%, transparent 40%,
             rgba(255, 255, 255, .1) 41%, rgba(255, 255, 255, .1) 42%, transparent 43%, transparent 60%,
             rgba(255, 255, 255, .1) 61%, rgba(255, 255, 255, .1) 62%, transparent 63%, transparent 80%,
-            rgba(255, 255, 255, .1) 81%, rgba(255, 255, 255, .1) 82%, transparent 83%, transparent 99%);
-  background-size:51px 51px;
+            rgba(255, 255, 255, .1) 81%, rgba(255, 255, 255, .1) 82%, transparent 83%, transparent);
+  background-size:48px 48px;
 }
 .mapBoardFrame {
   position: fixed;
@@ -259,6 +330,9 @@ export default {
   bottom: 0;
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-width: 0;
   text-align: center;
   vertical-align: middle;
 }

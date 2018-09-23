@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
+import defaultImage from './assets/background-default.jpg'
 
 Vue.use(Vuex)
 
@@ -35,11 +36,17 @@ const store = new Vuex.Store({
       editMapMaskWindow: { isDisplay: false, doResetPosition: false, index: -1 },
       mapMaskContext: { isDisplay: false, doResetPosition: false, index: -1 }
     },
+    images: {
+      background: [
+        { data: defaultImage }
+      ]
+    },
     room: {
       id: '1a2b3c4d5e6f', member: []
     },
     map: {
-      grid: { c: 20, r: 16, size: 51, color: 'rgb(255, 255, 255)' },
+      grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(25, 25, 25, .4)' },
+      imageIndex: 0,
       mapMasks: [],
       draggingMapMask: null
     },
@@ -71,6 +78,15 @@ const store = new Vuex.Store({
       } else {
         state.display[property].isDisplay = !state.display[property].isDisplay
       }
+    },
+    /**
+     * マウスオーバーしているマス座標を変更する
+     * @param {object} state    state of Vuex
+     * @param {string} property 設定のプロパティ名
+     */
+    setMouseAddress (state, payload) {
+      state.map.grid.c = payload.c
+      state.map.grid.r = payload.r
     },
     windowOpen (state, property) {
       if (state.display[property].isDisplay) {
@@ -249,6 +265,22 @@ const store = new Vuex.Store({
       let result = state.chat.logs[store.getters.activeChatTab.name]
       return result
     },
+    parseColor: (state) => (colorText) => {
+      let colorObj = null
+      if (colorText.startsWith('rgb')) {
+        let splits = colorText.replace(/(rgba?\()|\)/g, '').split(',')
+        colorObj = { r: parseInt(splits[0].trim()), g: parseInt(splits[1].trim()), b: parseInt(splits[2].trim()), a: colorText.startsWith('rgb(') ? 1 : parseFloat(splits[3].trim()) }
+      } else if (colorText.startsWith('#')) {
+        colorObj = { r: parseInt(colorText.substr(1, 2), 16), g: parseInt(colorText.substr(3, 2), 16), b: parseInt(colorText.substr(5, 2), 16), a: 1 }
+      }
+      colorObj.getColorCode = function () {
+        return `#${('00' + this.r.toString(16)).slice(-2)}${('00' + this.g.toString(16)).slice(-2)}${('00' + this.b.toString(16)).slice(-2)}`
+      }.bind(colorObj)
+      colorObj.getRGB = function () { return `rgb(${this.r}, ${this.g}, ${this.b})` }.bind(colorObj)
+      colorObj.getRGBA = function () { return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})` }.bind(colorObj)
+      colorObj.getRGBReverse = function () { return `rgb(${255 - this.r}, ${255 - this.g}, ${255 - this.b})` }.bind(colorObj)
+      return colorObj
+    },
     isWindowOpen: (state) => (displayProperty) => {
       if (typeof state.display[displayProperty] === 'boolean') {
         return state.display[displayProperty]
@@ -264,15 +296,15 @@ const store = new Vuex.Store({
       const result = []
       for (let mapMaskObj of state.map.mapMasks) {
         let styleObj = {
-          top: (mapMaskObj.gridR - 1) * state.map.grid.size + 'px',
-          left: (mapMaskObj.gridC - 1) * state.map.grid.size + 'px',
-          width: mapMaskObj.gridW * state.map.grid.size - 2 + 'px',
-          height: mapMaskObj.gridH * state.map.grid.size - 2 + 'px',
+          top: (mapMaskObj.gridR - 1) * state.map.grid.size - 0 + 'px',
+          left: (mapMaskObj.gridC - 1) * state.map.grid.size - 0 + 'px',
+          width: mapMaskObj.gridW * state.map.grid.size - 0 + 'px',
+          height: mapMaskObj.gridH * state.map.grid.size - 0 + 'px',
           'background-color': mapMaskObj.color,
           color: mapMaskObj.fontColor
         }
         let name = mapMaskObj.name
-        console.log(`name:${name}, top:${styleObj.top}, left:${styleObj.left}, width:${styleObj.width}, height:${styleObj.height}, background-color:${styleObj['background-color']}, isLock:${mapMaskObj.isLock}`)
+        console.log(`マップマスク - 描画情報 - name:${name}, top:${styleObj.top}, left:${styleObj.left}, width:${styleObj.width}, height:${styleObj.height}, background-color:${styleObj['background-color']}, isLock:${mapMaskObj.isLock}`)
         result.push({
           name: name,
           style: styleObj,
@@ -280,6 +312,9 @@ const store = new Vuex.Store({
         })
       }
       return result
+    },
+    getBackgroundImage: function (state) {
+      return state.images.background[state.map.imageIndex].data
     }
   }
 })

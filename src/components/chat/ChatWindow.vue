@@ -12,8 +12,8 @@
       <input type="text" v-model="name">
       <select></select>
       <select></select>
-      <img src="../assets/dice.png" alt='ダイスボット' title='ダイスボットの設定'>
-      <img src="../assets/font.png" alt='フォント' title='フォントの設定'>
+      <img src="../../assets/dice.png" alt='ダイスボット' title='ダイスボットの設定'>
+      <img src="../../assets/font.png" alt='フォント' title='フォントの設定'>
     </div>
     <div class="sendLine">
       <span class="label">発言</span>
@@ -25,7 +25,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import WindowBase from './WindowBase'
+import WindowBase from '../WindowBase'
 
 export default {
   name: 'chat',

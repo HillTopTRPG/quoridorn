@@ -10,7 +10,7 @@ export default {
   props: ['property'],
   data () {
     return {
-      checkImg: require('../assets/check.png')
+      checkImg: require('../../assets/check.png')
     }
   },
   methods: {

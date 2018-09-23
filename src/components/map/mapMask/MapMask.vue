@@ -4,6 +4,7 @@
     :style="mapMask.style"
     :draggable="!mapMask.isLock"
     @dragstart="(e) => dragStartMapMask(e, index)"
+    @drag="dragging"
     @click.right.prevent="(e) => openContext(e, 'mapMask', index)"
     @mousedown.left="leftDown" @mouseup.left="leftUp"
     @mousedown.right="rightDown" @mouseup.right="rightUp"
@@ -33,8 +34,13 @@ export default {
       'changeDisplay',
       'changeDisplayValue'
     ]),
+    dragging: function (event) {
+      console.log('!!!!dragging!!!')
+      this.$emit('dragging', event)
+      // setTimeout(function () { this.$emit('dragging', event) }.bind(this), 0)
+    },
     dragStartMapMask: function (event, index) {
-      console.log('マップマスクドラッグ開始')
+      console.log(`マップマスク(${index}) - 移動開始`)
       event.dataTransfer.setData('kind', 'mapMask-move')
       let offsetX = event.offsetX
       let offsetY = event.offsetY
@@ -88,18 +94,29 @@ export default {
 .mapMask {
   position: fixed;
   cursor: default;
+  /*
+ box-sizing: border-box;
+   */
   display: flex;
   justify-content: center;
   align-items: center;
   border-style: solid;
-  border-width: 2px;
+  border-width: 0px;
+  border-color: rgba(0, 0, 0, 0);
   white-space: nowrap;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   font-size: 12px;
+  cursor: crosshair;
 }
-.mapMask.isLock { border-color: blue; }
-.mapMask.isUnLock { border-color: yellow; }
-.mapMask.isUnLock:hover { border-width: 4px; transform: translate(-2px, -2px); z-index: 1000; }
+.mapMask:hover {
+  border-width: 2px;
+  z-index: 1000;
+  transform: translate(-2px, -2px);
+}
+.mapMask.isLock:hover { border-color: blue; }
+.mapMask.isUnLock:hover { border-color: yellow; }
+/*
+*/
 </style>
