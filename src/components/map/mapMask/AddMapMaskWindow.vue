@@ -57,8 +57,8 @@ export default {
       event.dataTransfer.setData('name', this.name)
       event.dataTransfer.setData('color', this.rgba)
       event.dataTransfer.setData('fontColor', this.fontColor)
-      event.dataTransfer.setData('width', this.width)
-      event.dataTransfer.setData('height', this.height)
+      event.dataTransfer.setData('columns', this.width)
+      event.dataTransfer.setData('rows', this.height)
       console.log(`  [methods] drag start mapMask => {name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}`)
     }
   },
@@ -67,8 +67,8 @@ export default {
       'parseColor'
     ]),
     mapMaskStyle: function () {
-      let width = this.width * 50
-      let height = this.height * 50
+      let width = this.width * this.gridSize
+      let height = this.height * this.gridSize
       let zoom = 1
       if (Math.max(width, height) > 160) {
         zoom = 160 / Math.max(width, height)
@@ -91,6 +91,9 @@ export default {
     fontColor: function () {
       const colorObj = this.parseColor(this.color)
       return colorObj.getColorCodeReverse()
+    },
+    gridSize: function () {
+      return this.$store.state.map.grid.size
     }
   }
 }

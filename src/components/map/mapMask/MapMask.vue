@@ -2,10 +2,7 @@
   <div class="mapMask"
     :class="[storeObj.isLock ? 'isLock' : 'isUnLock']"
     :style="mapMaskStyle"
-    :draggable="!storeObj.isLock"
-    @dragstart="dragStartMapMask"
-    @drag="dragging"
-    @click.right.prevent="(e) => openContext(e, 'mapMask')"
+    @click.right.prevent="(e) => openContext(e, 'mapMaskContext')"
     @mousedown.left="leftDown" @mouseup.left="leftUp"
     @mousedown.right="rightDown" @mouseup.right="rightUp"
     @contextmenu.prevent
@@ -13,63 +10,30 @@
 </template>
 
 <script>
-// !mapMask.isLock
-import { mapMutations, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import PieceMixin from '../../PieceMixin'
 
 export default {
   name: 'mapMask',
   mixins: [PieceMixin],
-  data () {
-    return {}
-  },
-  props: {},
-  methods: {
-    ...mapMutations([
-      'setDraggingMapMask',
-      'changeDisplay',
-      'changeDisplayValue'
-    ]),
-    dragging: function (event) {
-      console.log('  [methods] dragging mapMask')
-      this.$emit('dragging', event)
-    },
-    dragStartMapMask: function (event) {
-      console.log(`  [methods] move start => mapMask(${this.objKey})`)
-      event.dataTransfer.setData('kind', 'mapMask-move')
-      let offsetX = event.offsetX
-      let offsetY = event.offsetY
-      event.dataTransfer.setData('offsetX', offsetX)
-      event.dataTransfer.setData('offsetY', offsetY)
-      this.setDraggingMapMask(this.objKey) // TODO
-    },
-    openContext: function (event, kind) {
-      let pageX = event.pageX
-      let pageY = event.pageY
-
-      if (kind === 'mapMask') {
-        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'key', value: this.objKey })
-        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'x', value: pageX })
-        this.changeDisplayValue({ main: 'mapMaskContext', sub: 'y', value: pageY })
-        this.changeDisplay('mapMaskContext')
-        console.log(`  [methods] open context => mapMask(${this.objKey})`)
-      }
-    }
-  },
   computed: {
-    ...mapGetters([]),
+    ...mapGetters([
+      'parseColor'
+    ]),
     mapMaskStyle: function () {
-      const storeObj = this.storeObj
-      const rectObj = this.rect
-      let obj = {
-        top: `${rectObj.top}px`,
-        left: `${rectObj.left}px`,
-        width: `${rectObj.width}px`,
-        height: `${rectObj.height}px`,
-        'background-color': storeObj.color,
-        color: storeObj.fontColor
+      let obj = this.style
+      let colorObj = this.parseColor(this.storeObj.color)
+      if (this.storeObj.isDraggingLeft) {
+        const plus = 1.5
+        obj.left = this.rect.left - plus + 'px'
+        obj.top = this.rect.top - plus + 'px'
+        obj.width = this.rect.width + plus * 2 + 'px'
+        obj.height = this.rect.height + plus * 2 + 'px'
+        colorObj.a = colorObj.a / 2
       }
-      console.log(` [computed] mapMask(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+      obj['background-color'] = colorObj.getRGBA()
+      obj['color'] = this.storeObj.fontColor
+      // console.log(` [computed] mapMask(${this.objKey}) style => isDraggingLeft:${storeObj.isDraggingLeft},transZ:${obj['transform']} lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj
     }
   }
@@ -104,6 +68,4 @@ export default {
 }
 .mapMask.isLock:hover { border-color: blue; }
 .mapMask.isUnLock:hover { border-color: yellow; }
-/*
-*/
 </style>

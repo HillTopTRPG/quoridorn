@@ -66,7 +66,7 @@ export default {
   methods: {
     ...mapMutations([
       'changeDisplay',
-      'changeDisplayValue'
+      'setProperty'
     ]),
     closeWindow: function () {
       console.log(`  [methods] closeWindow(click [x]button)`)
@@ -167,7 +167,7 @@ export default {
         this.windowBase.windowFactor.b = 0
         this.windowBase.windowFactor.w = 0
         this.windowBase.windowFactor.h = 0
-        this.changeDisplayValue({ main: this.displayProperty, sub: 'doResetPosition', value: false })
+        this.setProperty({property: `display.${this.displayProperty}.doResetPosition`, value: false})
         this.$emit('reset')
       } else {
         console.log(`    [watch] window resetted => ${this.displayProperty}`)

@@ -4,8 +4,8 @@
     dropzone="move"
     @dragover.prevent
     @drop.prevent="drop"
-    :style="gameTableStyle"
-    @contextmenu.prevent>
+    @contextmenu.prevent
+    :style="gameTableStyle">
 
     <div class="mapBoardFrame"
       @mousedown.left.prevent="leftDown" @mouseup.left.prevent="leftUp"
@@ -22,45 +22,17 @@
 import { mapMutations, mapGetters } from 'vuex'
 import MapMask from './mapMask/MapMask'
 import MapBoard from './MapBoard'
+import AddressCalcMixin from '../AddressCalcMixin'
 
 export default {
   name: 'mapComponent',
+  mixins: [AddressCalcMixin],
   components: {
     MapMask: MapMask,
     MapBoard: MapBoard
   },
   data () {
     return {
-      isDraggingLeft: false,
-      isDraggingRight: false,
-      mouse: {
-        x: 0,
-        y: 0,
-        left: {
-          from: { x: 0, y: 0 },
-          to: { x: 0, y: 0 },
-          totalX: 0,
-          totalY: 0,
-          draggingX: 0,
-          draggingY: 0
-        },
-        right: {
-          from: { x: 0, y: 0 },
-          to: { x: 0, y: 0 },
-          totalX: 0,
-          totalY: 0,
-          draggingX: 0,
-          draggingY: 0
-        }
-      },
-      angle: {
-        total: 0,
-        dragging: 0,
-        dragStart: 0
-      },
-      translateZ: 0,
-      rotateY: 0,
-      rotateX: 0
     }
   },
   mounted: function () {
@@ -70,11 +42,8 @@ export default {
   methods: {
     ...mapMutations([
       'addMapMaskInfo',
-      'moveMapMask',
-      'setDraggingMapMask',
       'changeDisplay',
-      'changeDisplayValue',
-      'setMouseAddress'
+      'setProperty'
     ]),
     dragging: function () {
       console.log(`★★★★ dragging ★★★★`)
@@ -84,204 +53,52 @@ export default {
       // const f = this.f
       let pageX = event.pageX
       let pageY = event.pageY
-      this.mouse.x = pageX
-      this.mouse.y = pageY
-      this.reflesh()
+      this.setProperty({property: 'mouse.x', value: pageX, logOff: true})
+      this.setProperty({property: 'mouse.y', value: pageY, logOff: true})
+
+      const canvasAddress = this.calcCanvasAddress(event.pageX, event.pageY, this.currentAngle)
+      this.setProperty({property: 'map.mouse.onScreen.x', value: canvasAddress.locateOnScreen.x, logOff: true})
+      this.setProperty({property: 'map.mouse.onScreen.y', value: canvasAddress.locateOnScreen.y, logOff: true})
+      this.setProperty({property: 'map.mouse.onTable.x', value: canvasAddress.locateOnTable.x, logOff: true})
+      this.setProperty({property: 'map.mouse.onTable.y', value: canvasAddress.locateOnTable.y, logOff: true})
+      this.setProperty({property: 'map.mouse.onCanvas.x', value: canvasAddress.locateOnCanvas.x, logOff: true})
+      this.setProperty({property: 'map.mouse.onCanvas.y', value: canvasAddress.locateOnCanvas.y, logOff: true})
+      this.setProperty({property: 'map.grid.c', value: canvasAddress.grid.column, logOff: true})
+      this.setProperty({property: 'map.grid.r', value: canvasAddress.grid.row, logOff: true})
     },
-    wheel: function (delta) {
+    onWheel: function (delta) {
       const changeValue = 100
       const add = delta > 0 ? changeValue : -changeValue
-      const afterTranslateZ = this.translateZ + add
-      if (afterTranslateZ < -2400 || afterTranslateZ > 800) {
+      const wheel = this.wheel + add
+      if (wheel < -2400 || wheel > 800) {
         return
       }
-      this.translateZ = afterTranslateZ
+      this.setProperty({property: 'map.wheel', value: wheel})
     },
     leftDown: function () {
-      console.log('  [methods] mousedown left on GameTable')
-      this.mouse.left.from.x = this.mouse.x
-      this.mouse.left.from.y = this.mouse.y
-      this.isDraggingLeft = true
+      console.log(`  [methods] mousedown left on GameTable`)
+      this.setProperty({property: 'map.move.from.x', value: this.mouseLocate.x})
+      this.setProperty({property: 'map.move.from.y', value: this.mouseLocate.y})
+      this.setProperty({property: 'map.isDraggingLeft', value: true})
     },
     leftUp: function () {
-      console.log('  [methods] mouseup left on GameTable')
-      this.isDraggingLeft = false
-      this.mouse.left.totalX += this.mouse.left.draggingX
-      this.mouse.left.totalY += this.mouse.left.draggingY
-      this.mouse.left.draggingX = 0
-      this.mouse.left.draggingY = 0
+      console.log(`  [methods] mouseup left on GameTable`)
+      this.setProperty({property: 'map.move.total.x', value: this.move.total.x + this.move.dragging.x})
+      this.setProperty({property: 'map.move.total.y', value: this.move.total.y + this.move.dragging.y})
+      this.setProperty({property: 'map.move.dragging.x', value: 0})
+      this.setProperty({property: 'map.move.dragging.y', value: 0})
+      this.setProperty({property: 'map.isDraggingLeft', value: false})
     },
     rightDown: function () {
-      console.log('  [methods] mousedown right on GameTable')
-      this.mouse.right.from.x = this.mouse.x
-      this.mouse.right.from.y = this.mouse.y
-      this.angle.dragStart = this.calcCoordinate(this.mouse.x, this.mouse.y).angle
-      this.isDraggingRight = true
+      console.log(`  [methods] mousedown right on GameTable`)
+      this.setProperty({property: 'map.angle.dragStart', value: this.calcCoordinate(this.mouseLocate.x, this.mouseLocate.y, this.currentAngle).angle})
+      this.setProperty({property: 'map.isDraggingRight', value: true})
     },
     rightUp: function () {
-      console.log('  [methods] mouseup right on GameTable')
-      this.isDraggingRight = false
-      this.mouse.right.totalX += this.mouse.right.draggingX
-      this.mouse.right.totalY += this.mouse.right.draggingY
-      this.mouse.right.draggingX = 0
-      this.mouse.right.draggingY = 0
-
-      this.angle.total += Math.round(this.angle.dragging / 5) * 5
-      this.angle.dragging = 0
-    },
-    arrangeAngle: function (angle) {
-      if (angle > 180) { angle -= 360 }
-      if (angle < -180) { angle += 360 }
-      return angle
-    },
-    /**
-     * 指定されたスクリーン座標を元に、座標計算を行う
-     * @param  {Number} screenX スクリーン上のX座標
-     * @param  {Number} screenY スクリーン上のY座標
-     * @return {Object}         ソース参照
-     */
-    calcCoordinate: function (screenX, screenY) {
-      // スクロール倍率を考慮
-      const zoom = (1000 - this.translateZ) / 1000.0
-
-      // canvas上のマス座標を計算する
-      const cr = document.getElementById('map-canvas').getBoundingClientRect()
-      // canvasの中心点
-      const center = {
-        x: cr.x + cr.width / 2,
-        y: cr.y + cr.height / 2
-      }
-      // 中心座標を基準としたマウス座標
-      const loc = {
-        x: (screenX - center.x),
-        y: (screenY - center.y)
-      }
-
-      // 中心点と指定された座標とを結ぶ線の角度を求める
-      const angle = Math.atan2(loc.y, loc.x) * 180 / Math.PI
-
-      // 中心点と指定された座標とを結ぶ線の長さを求める
-      const distance = Math.sqrt(Math.pow(loc.x, 2) + Math.pow(loc.y, 2)) * zoom
-
-      // マップ回転前の角度を求める
-      const oldAngle = this.arrangeAngle(this.angle.total + this.angle.dragging)
-      const angleBeforeAround = this.arrangeAngle(angle - oldAngle)
-      const planeLocate = {
-        x: center.x + distance * Math.cos(angleBeforeAround * Math.PI / 180),
-        y: center.y + distance * Math.sin(angleBeforeAround * Math.PI / 180)
-      }
-
-      /*
-      const f = Math.floor
-      const planeLocateFromCenter = {
-        x: planeLocate.x - center.x,
-        y: planeLocate.y - center.y
-      }
-      console.log(
-          `zm:${zoom} `
-        + `center(${f(center.x)}, ${f(center.y)}) `
-        + `loc(${f(loc.x)}, ${f(loc.y)}) `
-        + `angle:${f(angle)} `
-        + `oldAngle:${f(oldAngle)} `
-        + `angleBeforeAround:${f(angleBeforeAround)} `
-        + `dist:${f(distance)} `
-        + `planeLocate(${f(planeLocate.x)}, ${f(planeLocate.y)}) `
-        + `planeLocateC(${f(planeLocateFromCenter.x)}, ${f(planeLocateFromCenter.y)}) `
-        )
-      */
-
-      const result = {
-        angle: angle, // 角度
-        planeLocate: planeLocate // マップ回転前のスクリーン座標
-      }
-      // console.log(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
-      return result
-    },
-    f: function (v) {
-      return Math.floor(v * 100) / 100
-    },
-    calcAddress: function (screenX, screenY, offsetX = 0, offsetY = 0) {
-      // 回転やズームの前のスクリーン座標がどこになるかを計算し、そこをベースにマップ上の座標を算出する
-      let planeLocate = this.calcCoordinate(screenX, screenY).planeLocate
-      let canvasElm = document.getElementById('map-canvas')
-      const canvasRect = canvasElm.getBoundingClientRect()
-      const center = {
-        x: canvasRect.x + canvasRect.width / 2,
-        y: canvasRect.y + canvasRect.height / 2
-      }
-      const leftTop = {
-        x: center.x - this.gridC * this.gridSize / 2,
-        y: center.y - this.gridR * this.gridSize / 2
-      }
-      const clientX = planeLocate.x - leftTop.x
-      const clientY = planeLocate.y - leftTop.y
-
-      //
-      let gridC = Math.ceil(clientX / this.gridSize)
-      let gridR = Math.ceil(clientY / this.gridSize)
-
-      /*
-      const f = Math.floor
-      console.log(`screen(${f(screenX)}, ${f(screenY)}), center(${f(center.x)}, ${f(center.y)}), leftTop(${f(leftTop.x)}, ${f(leftTop.y)}), size(${f(this.sizeW)}, ${f(this.sizeH)}), planeLocate(${f(planeLocate.x)}, ${f(planeLocate.y)}), client(${f(clientX)}, ${f(clientY)})`)
-      */
-
-      // ドロップ先のマス座標を算出
-      let offsetGridX = offsetX / this.gridSize
-      let offsetGridY = offsetY / this.gridSize
-      if (offsetGridX > 0) {
-        offsetGridX = Math.floor(offsetGridX)
-      } else {
-        offsetGridX = Math.ceil(offsetGridX)
-      }
-      if (offsetGridY > 0) {
-        offsetGridY = Math.floor(offsetGridY)
-      } else {
-        offsetGridY = Math.ceil(offsetGridY)
-      }
-
-      // console.log(`client(${f(clientX)}, ${f(clientY)}) offset(${f(offsetX)}, ${f(offsetY)}), １マスのサイズ:${f(zoomedGridSize)} zoomed(${f(clientX / zoomedGridSize)}, ${f(clientY / zoomedGridSize)}) offsetGrid(${f(offsetGridX)}, ${f(offsetGridY)})`)
-      if (offsetX !== undefined && offsetY !== undefined) {
-        gridC -= offsetGridX
-        gridR -= offsetGridY
-      }
-
-      // console.log(`マス座標 rel(${gridC - this.marginGridNum / 2}, ${gridR - this.marginGridNum / 2}) abs(${gridC}, ${gridR})`)
-
-      return {
-        gridC: gridC,
-        gridR: gridR
-      }
-    },
-    reflesh: function () {
-      if (this.isDraggingLeft) {
-        this.mouse.left.to.x = this.mouse.x
-        this.mouse.left.to.y = this.mouse.y
-        const moveLeftX = this.mouse.x - this.mouse.left.from.x
-        const moveLeftY = this.mouse.y - this.mouse.left.from.y
-        this.mouse.left.draggingX = moveLeftX
-        this.mouse.left.draggingY = moveLeftY
-      }
-
-      if (this.isDraggingRight) {
-        this.mouse.right.to.x = this.mouse.x
-        this.mouse.right.to.y = this.mouse.y
-        const moveRightX = this.mouse.x - this.mouse.right.from.x
-        const moveRightY = this.mouse.y - this.mouse.right.from.y
-        this.mouse.right.draggingX = moveRightX
-        this.mouse.right.draggingY = moveRightY
-
-        const angle = this.calcCoordinate(this.mouse.x, this.mouse.y).angle
-        let angleDiff = this.arrangeAngle(angle - this.angle.dragStart)
-        this.angle.dragging = angleDiff
-      }
-
-      // canvas上のマス座標を計算する
-      const gridObj = this.calcAddress(this.mouse.x, this.mouse.y)
-      const addressObj = {
-        c: gridObj.gridC,
-        r: gridObj.gridR
-      }
-      this.setMouseAddress(addressObj)
+      console.log(`  [methods] mouseup right on GameTable`)
+      this.setProperty({property: 'map.angle.total', value: this.angle.total + Math.round(this.angle.dragging / 15) * 15})
+      this.setProperty({property: 'map.angle.dragging', value: 0})
+      this.setProperty({property: 'map.isDraggingRight', value: false})
     },
     drop: function (event) {
       // ドロップされた物の種類
@@ -290,77 +107,91 @@ export default {
       const offsetX = event.dataTransfer.getData('offsetX')
       const offsetY = event.dataTransfer.getData('offsetY')
 
-      // マス座標
-      const addressObj = this.calcAddress(event.pageX, event.pageY, offsetX, offsetY)
-      const gridC = addressObj.gridC
-      const gridR = addressObj.gridR
+      const canvasAddress = this.calcCanvasAddress(event.pageX, event.pageY, this.currentAngle, offsetX, offsetY)
+      const locateOnTable = canvasAddress.locateOnTable
+      if (this.isFitGrid) {
+        locateOnTable.x = (Math.ceil(locateOnTable.x / this.gridSize) - 1) * this.gridSize
+        locateOnTable.y = (Math.ceil(locateOnTable.y / this.gridSize) - 1) * this.gridSize
+      }
 
-      console.log(`  [methods] drop on GameTable(${gridC}, ${gridR}) => ${kind}`)
+      console.log(`  [methods] drop on GameTable(${canvasAddress.grid.column}, ${canvasAddress.grid.row}) => ${kind}`)
 
       // マップマスクの作成
       if (kind === 'mapMask') {
         const name = event.dataTransfer.getData('name')
         const color = event.dataTransfer.getData('color')
         const fontColor = event.dataTransfer.getData('fontColor')
-        let gridW = event.dataTransfer.getData('width')
-        let gridH = event.dataTransfer.getData('height')
+        let columns = event.dataTransfer.getData('columns')
+        let rows = event.dataTransfer.getData('rows')
 
         const mapMaskObj = {
           name: name,
-          gridR: gridR,
-          gridC: gridC,
-          gridW: gridW,
-          gridH: gridH,
+          left: canvasAddress.locateOnTable.x,
+          top: canvasAddress.locateOnTable.y,
+          columns: parseInt(columns),
+          rows: parseInt(rows),
           color: color,
           fontColor: fontColor
         }
 
         this.addMapMaskInfo(mapMaskObj)
       }
-      // マップマスクの移動
-      if (kind === 'mapMask-move') {
-        this.moveMapMask({
-          gridR: gridR,
-          gridC: gridC
-        })
-      }
+    }
+  },
+  watch: {
+    mouseLocate: {
+      handler: function (mouseLocate) {
+        if (this.isDraggingLeft) {
+          this.setProperty({property: 'map.move.dragging.x', value: mouseLocate.x - this.move.from.x, logOff: true})
+          this.setProperty({property: 'map.move.dragging.y', value: mouseLocate.y - this.move.from.y, logOff: true})
+        }
+        if (this.isDraggingRight) {
+          const angle = this.calcCoordinate(mouseLocate.x, mouseLocate.y, this.currentAngle).angle
+          let angleDiff = this.arrangeAngle(angle - this.angle.dragStart)
+          this.setProperty({property: 'map.angle.dragging', value: angleDiff})
+        }
+      },
+      deep: true
     }
   },
   computed: {
     ...mapGetters([
-      'mapMaskList'
+      'mapMaskList',
+      'isFitGrid'
     ]),
-    gridC: function () {
-      return this.$store.state.map.grid.totalColumn
+    isDraggingLeft: function () {
+      return this.$store.state.map.isDraggingLeft
     },
-    gridR: function () {
-      return this.$store.state.map.grid.totalRow
+    isDraggingRight: function () {
+      return this.$store.state.map.isDraggingRight
     },
-    gridSize: function () {
-      return this.$store.state.map.grid.size
+    move: function () {
+      return this.$store.state.map.move
     },
-    marginGridNum: function () {
-      return this.$store.state.map.marginGridNum
+    angle: function () {
+      return this.$store.state.map.angle
     },
-    sizeW: function () { return (this.gridC + this.marginGridNum) * this.gridSize + 0 },
-    sizeH: function () { return (this.gridR + this.marginGridNum) * this.gridSize + 0 },
+    currentAngle: function () {
+      return this.arrangeAngle(this.angle.total + this.angle.dragging)
+    },
+    sizeW: function () { return (this.columns + this.marginGridNum) * this.gridSize + 0 },
+    sizeH: function () { return (this.rows + this.marginGridNum) * this.gridSize + 0 },
     gameTableStyle: function () {
-      const _this = this
-      const translateZ = this.translateZ
-      const zoom = (1000 - this.translateZ) / 1000
-      const totalLeftX = (this.mouse.left.totalX + this.mouse.left.draggingX) * zoom
-      const totalLeftY = (this.mouse.left.totalY + this.mouse.left.draggingY) * zoom
-      const rotateZ = this.arrangeAngle(this.angle.total + this.angle.dragging)
-      // console.log(`rect(${this.sizeW}, ${this.sizeH}), position(${left}, ${top}), screen(${window.innerWidth}, ${window.innerHeight})`)
+      const translateZ = this.wheel
+      const zoom = (1000 - this.wheel) / 1000
+      const totalLeftX = (this.move.total.x + this.move.dragging.x) * zoom
+      const totalLeftY = (this.move.total.y + this.move.dragging.y) * zoom
+      let rotateZ = this.currentAngle
       return {
         width: this.sizeW + 'px',
         height: this.sizeH + 'px',
+        'border-width': this.borderWidth + 'px',
         transform:
           'translateZ(' + translateZ + 'px) ' +
           'translateY(' + totalLeftY + 'px) ' +
           'translateX(' + totalLeftX + 'px) ' +
-          'rotateY(' + _this.rotateY + 'deg) ' +
-          'rotateX(' + _this.rotateX + 'deg) ' +
+          'rotateY(0deg) ' +
+          'rotateX(0deg) ' +
           'rotateZ(' + rotateZ + 'deg)'
         /*
           ,
@@ -386,11 +217,12 @@ export default {
   background-color: rgba(20, 80, 20, .1);
   cursor: crosshair;
   border: none;
-  border-width: 0;
   /*
   box-sizing: border-box;
   */
-  border: ridge 24px gray;
+  perspective: 1000px;
+  border-style: ridge;
+  border-color: gray;
   background-position: 1px 1px;
     background-image:
     linear-gradient(0deg, transparent -2px,

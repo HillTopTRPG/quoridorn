@@ -19,14 +19,14 @@ export default {
   methods: {
     ...mapMutations([
       'windowOpen',
-      'changeDisplayValue',
+      'setProperty',
       'changeMapMaskInfo',
       'deleteMapMaskInfo',
       'windowClose'
     ]),
     viewEditMapMask: function () {
       console.log(`  [methods] select context item => MapMask(${this.objKey}).viewEditMapMask`)
-      this.changeDisplayValue({ main: 'editMapMaskWindow', sub: 'key', value: this.objKey })
+      this.setProperty({property: 'display.editMapMaskWindow.key', value: this.objKey})
       this.windowOpen('editMapMaskWindow')
       this.windowClose('mapMaskContext')
     },

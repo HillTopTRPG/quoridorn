@@ -41,15 +41,38 @@ const store = new Vuex.Store({
         { data: defaultImage }
       ]
     },
+    mouse: {
+      x: 0,
+      y: 0,
+      drag: {
+        from: {x: 0, y: 0},
+        move: {x: 0, y: 0}
+      }
+    },
     room: {
       id: '1a2b3c4d5e6f', member: []
     },
     map: {
-      grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(25, 25, 25, 1)' },
+      grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(25, 25, 25, .4)' },
+      mouse: { onScreen: { x: 0, y: 0 }, onTable: { x: 0, y: 0 }, onCanvas: { x: 0, y: 0 } },
       imageIndex: 0,
       mapMasks: [],
       draggingMapMask: null,
-      marginGridNum: 60
+      marginGridNum: 60,
+      isDraggingLeft: false,
+      isDraggingRight: false,
+      move: {
+        from: { x: 0, y: 0 },
+        total: { x: 0, y: 0 },
+        dragging: { x: 0, y: 0 }
+      },
+      angle: {
+        total: 0,
+        dragging: 0,
+        dragStart: 0
+      },
+      wheel: 0,
+      borderWidth: 60
     },
     charactors: [],
     chat: {
@@ -80,15 +103,31 @@ const store = new Vuex.Store({
         state.display[property].isDisplay = !state.display[property].isDisplay
       }
     },
-    /**
-     * マウスオーバーしているマス座標を変更する
-     * @param {object} state    state of Vuex
-     * @param {string} property 設定のプロパティ名
-     */
-    setMouseAddress (state, payload) {
-      state.map.grid.c = payload.c
-      state.map.grid.r = payload.r
-      // console.log(`mouseAddress: (${payload.c}, ${payload.r})`)
+    setProperty (state, payload) {
+      let propStr = payload.property
+      let value = payload.value
+      let isLogOff = payload.logOff
+      const props = propStr.split('.')
+      let target = state
+
+      const propProc = (target, props, value, isLogOff) => {
+        const prop = props.shift()
+        if (props.length > 0) {
+          propProc(target[prop], props, value, isLogOff)
+        } else {
+          target[prop] = value
+        }
+        // プロパティ名が数字だった場合は配列の更新として扱い、リアクティブになるよう、splice関数で更新する
+        if (/^[0-9]+$/.test(prop)) {
+          const index = parseInt(prop)
+          target.splice(index, 1, target[index])
+        }
+      }
+
+      propProc(target, props, value, isLogOff)
+      if (!isLogOff) {
+        console.log(`${propStr} = ${value}`)
+      }
     },
     windowOpen (state, property) {
       if (state.display[property].isDisplay) {
@@ -101,31 +140,28 @@ const store = new Vuex.Store({
       state.display[property].isDisplay = false
     },
     /**
-     * 設定を変更する
-     * @param {object} state   state of Vuex
-     * @param {object} payload payload of Vuex
-     */
-    changeDisplayValue (state, payload) {
-      let main = payload.main
-      let sub = payload.sub
-      let value = payload.value
-      console.log(`[mutations] change value => display[${main}][${sub}] = ${value}`)
-      state.display[main][sub] = value
-    },
-    /**
      * マップマスク情報を追加する
      * @param {object} state   state of Vuex
      * @param {object} payload payload of Vuex
      */
     addMapMaskInfo (state, payload) {
-      const copyProps = ['name', 'gridC', 'gridR', 'gridW', 'gridH', 'color', 'fontColor']
-
-      const obj = { isLock: false }
-      for (let prop of copyProps) {
+      const obj = {
+        isDraggingLeft: false,
+        move: {
+          from: { x: 0, y: 0 },
+          dragging: { x: 0, y: 0 },
+          gridOffset: { x: 0, y: 0 }
+        },
+        angle: {
+          total: 0,
+          dragging: 0,
+          dragStart: 0
+        },
+        isLock: false
+      }
+      for (let prop in payload) {
         obj[prop] = payload[prop]
       }
-      obj.gridW = parseInt(obj.gridW)
-      obj.gridH = parseInt(obj.gridH)
 
       // キーを決める(欠番を埋めるスタイル)
       let key = -1
@@ -142,7 +178,7 @@ const store = new Vuex.Store({
       } while (isFind)
       obj.key = key
 
-      console.log(`[mutations] add mapMask => {key:${key}, name:"${obj.name}", grid(${obj.gridC}, ${obj.gridR}), gridWH(${obj.gridW}, ${obj.gridH}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
+      console.log(`[mutations] add mapMask => {key:${key}, name:"${obj.name}", locate(${obj.top}, ${obj.left}), CsRs(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
 
       state.map.mapMasks.push(obj)
     },
@@ -152,17 +188,18 @@ const store = new Vuex.Store({
      * @param {object} payload state of Vuex
      */
     changeMapMaskInfo (state, payload) {
-      const copyProps = ['name', 'gridC', 'gridR', 'gridW', 'gridH', 'color', 'fontColor', 'isLock']
       let key = payload.key
 
-      const lastMapMaskObj = this.getters.getPieceObj('mapMasks', key)
-      for (let prop of copyProps) {
-        if (payload[prop] !== undefined && lastMapMaskObj[prop] !== payload[prop]) {
-          console.log(`[mutations] update mapMask(${key}) => ${prop}: ${lastMapMaskObj[prop]} -> ${payload[prop]}`)
-          lastMapMaskObj[prop] = payload[prop]
+      const mapMaskObj = this.getters.getPieceObj('mapMasks', key)
+      for (let prop in payload) {
+        if (prop === 'key') { continue }
+        if (mapMaskObj[prop] !== payload[prop]) {
+          console.log(`[mutations] update mapMask(${key}) => ${prop}: ${mapMaskObj[prop]} -> ${payload[prop]}`)
+          mapMaskObj[prop] = payload[prop]
         }
       }
-      // setTimeout(function () { state.map.mapMasks.splice(index, 0, state.map.mapMasks.splice(index, 1)) }, 0)
+      const index = state.map['mapMasks'].indexOf(mapMaskObj)
+      state.map.mapMasks.splice(index, 1, mapMaskObj)
     },
     /**
      * マップマスク情報の削除
@@ -173,29 +210,6 @@ const store = new Vuex.Store({
       const obj = this.getters.getPieceObj('mapMasks', key)
       const index = state.map.mapMasks.indexOf(obj)
       state.map.mapMasks.splice(index, 1)
-    },
-    /**
-     * ドラッグ中のマップマスクの登録
-     * @param {object} state state of Vuex
-     * @param {number} key   マップマスクのキー
-     */
-    setDraggingMapMask (state, key) {
-      const obj = this.getters.getPieceObj('mapMasks', key)
-      const index = state.map.mapMasks.indexOf(obj)
-      const mapMaskObj = state.map.mapMasks.splice(index, 1)[0]
-      state.map.draggingMapMask = mapMaskObj
-    },
-    /**
-     * ドラッグ中のマップマスクの位置情報を変更し、表示状態にする
-     * @param {object} state   state of Vuex
-     * @param {object} payload state of Vuex
-     */
-    moveMapMask (state, payload) {
-      // console.log(`mapMask drag end`)
-      const mapMaskObj = state.map.draggingMapMask
-      mapMaskObj.gridC = payload.gridC
-      mapMaskObj.gridR = payload.gridR
-      state.map.mapMasks.push(mapMaskObj)
     },
     /**
      * チャットのタブの構成を変更する

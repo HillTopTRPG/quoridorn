@@ -52,20 +52,20 @@ export default {
   methods: {
     ...mapMutations([
       'windowClose',
-      'changeDisplayValue',
+      'setProperty',
       'changeMapMaskInfo'
     ]),
     closeWindow: function () {
       console.log('★★★ override closeWindow!!!!')
-      this.changeDisplayValue({ main: 'editMapMaskWindow', sub: 'key', value: -1 })
+      this.setProperty({property: 'display.editMapMaskWindow.key', value: -1})
       this.windowClose('editMapMaskWindow')
     },
     commitEdit: function () {
       const mapMaskObj = {
         key: this.key,
         name: this.name,
-        gridW: this.width,
-        gridH: this.height,
+        columns: this.width,
+        rows: this.height,
         color: this.rgba,
         fontColor: this.fontColor
       }
@@ -80,8 +80,8 @@ export default {
       console.log(`initWindow`)
       let mapMaskObj = this.getPieceObj('mapMasks', this.key)
       this.name = mapMaskObj.name
-      this.width = mapMaskObj.gridW
-      this.height = mapMaskObj.gridH
+      this.width = mapMaskObj.columns
+      this.height = mapMaskObj.rows
       const colorObj = this.parseColor(mapMaskObj.color)
       this.color = colorObj.getColorCode()
       this.transparency = 100 - Math.floor(colorObj.a * 100)
@@ -98,8 +98,8 @@ export default {
       return this.$store.state.display['editMapMaskWindow'].key
     },
     mapMaskStyle: function () {
-      let width = this.width * 50
-      let height = this.height * 50
+      let width = this.width * this.gridSize
+      let height = this.height * this.gridSize
       let zoom = 1
       if (Math.max(width, height) > 160) {
         zoom = 160 / Math.max(width, height)
@@ -122,6 +122,9 @@ export default {
     fontColor: function () {
       const colorObj = this.parseColor(this.color)
       return colorObj.getColorCodeReverse()
+    },
+    gridSize: function () {
+      return this.$store.state.map.grid.size
     }
   }
 }

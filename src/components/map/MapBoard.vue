@@ -1,8 +1,8 @@
 <template>
   <canvas
     id="map-canvas"
-    :width="sizeW"
-    :height="sizeH"
+    :width="canvasSize.w"
+    :height="canvasSize.h"
     @contextmenu.prevent />
 </template>
 
@@ -16,9 +16,7 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'setDraggingMapMask',
-      'changeDisplay',
-      'changeDisplayValue'
+      'changeDisplay'
     ]),
     paint: function () {
       const ctx = document.getElementById('map-canvas').getContext('2d')
@@ -26,19 +24,17 @@ export default {
 
       var img = new Image()
       img.src = '.' + this.getBackgroundImage
-      const w = this.sizeW
-      const h = this.sizeH
       img.onload = function () {
-        ctx.clearRect(0, 0, this.sizeW, this.sizeH)
+        ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
 
         ctx.globalAlpha = 1
-        ctx.drawImage(img, 0, 0, w, h)
+        ctx.drawImage(img, 0, 0, this.canvasSize.w, this.canvasSize.h)
 
-        if (this.isGridLine) {
+        if (this.isDrawGridLine) {
           ctx.strokeStyle = this.gridColor
           ctx.globalAlpha = 1
-          for (let c = 0; c <= this.gridTotalColumn; c++) {
-            for (let r = 0; r <= this.gridTotalRow; r++) {
+          for (let c = 0; c <= this.columns; c++) {
+            for (let r = 0; r <= this.rows; r++) {
               // 横線
               this.drawLine(ctx, c * this.gridSize, r * this.gridSize, this.gridSize - 1, 0)
               // 縦線
@@ -47,28 +43,40 @@ export default {
           }
         }
 
-        ctx.strokeStyle = 'rgb(255, 0, 0)'
+        ctx.strokeStyle = this.gridColor
         ctx.globalAlpha = 1
-        ctx.rect((this.gridColumn - 1) * this.gridSize, (this.gridRow - 1) * this.gridSize, this.gridSize, this.gridSize)
+        ctx.rect((this.grid.c - 1) * this.gridSize, (this.grid.r - 1) * this.gridSize, this.gridSize, this.gridSize)
         ctx.stroke()
 
+        ctx.strokeStyle = 'red'
+        ctx.globalAlpha = 1
+        // 中心点
         const center = {
-          x: this.sizeW / 2,
-          y: this.sizeH / 2
+          x: this.canvasSize.w / 2,
+          y: this.canvasSize.h / 2
         }
         // 横線
         this.drawLine(ctx, center.x - 5, center.y, 10, 0)
         // 縦線
         this.drawLine(ctx, center.x, center.y - 5, 0, 10)
 
-        // console.log(`isGridId:${this.isGridId}`)
-        if (this.isGridId) {
+        // マウス座標
+        const mouseMark = {
+          x: this.mouseOnCanvas.x - 10,
+          y: this.mouseOnCanvas.y - 10
+        }
+        this.drawLine(ctx, mouseMark.x, mouseMark.y, 20, 20)
+        this.drawLine(ctx, mouseMark.x + 20, mouseMark.y, -20, 20)
+        // console.log(this.mouseOnCanvas)
+
+        // console.log(`isDrawGridId:${this.isDrawGridId}`)
+        if (this.isDrawGridId) {
           ctx.fillStyle = this.gridColor
           ctx.globalAlpha = 1
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
-          for (let c = 0; c <= this.gridTotalColumn; c++) {
-            for (let r = 0; r <= this.gridTotalRow; r++) {
+          for (let c = 0; c <= this.columns; c++) {
+            for (let r = 0; r <= this.rows; r++) {
               const text = (c + 1) + '-' + (r + 1)
               const x = c * this.gridSize + (this.gridSize - 1) / 2
               const y = r * this.gridSize + (this.gridSize - 1) / 2
@@ -87,49 +95,58 @@ export default {
     }
   },
   watch: {
-    isGridLine: function () {
-      this.paint()
+    isDrawGridLine: function () { this.paint() },
+    isDrawGridId: function () { this.paint() },
+    gridColor: function () { this.paint() },
+    grid: {
+      handler: function () { this.paint() },
+      deep: true
     },
-    isGridId: function () {
-      this.paint()
-    },
-    gridColumn: function () {
-      this.paint()
-    },
-    gridRow: function () {
-      this.paint()
+    mouseOnCanvas: {
+      handler: function () { this.paint() },
+      deep: true
     }
   },
   computed: {
     ...mapGetters([
       'getBackgroundImage'
     ]),
-    isGridLine: function () {
+    isDrawGridLine: function () {
       return this.$store.state.display.gridLine
     },
-    isGridId: function () {
+    isDrawGridId: function () {
       return this.$store.state.display.gridId
     },
     gridColor: function () {
       return this.$store.state.map.grid.color
     },
-    gridTotalColumn: function () {
+    columns: function () {
       return this.$store.state.map.grid.totalColumn
     },
-    gridTotalRow: function () {
+    rows: function () {
       return this.$store.state.map.grid.totalRow
     },
-    gridColumn: function () {
-      return this.$store.state.map.grid.c
-    },
-    gridRow: function () {
-      return this.$store.state.map.grid.r
+    grid: function () {
+      return {
+        c: this.$store.state.map.grid.c,
+        r: this.$store.state.map.grid.r
+      }
     },
     gridSize: function () {
       return this.$store.state.map.grid.size
     },
-    sizeW: function () { return this.gridTotalColumn * this.gridSize },
-    sizeH: function () { return this.gridTotalRow * this.gridSize }
+    canvasSize: function () {
+      return {
+        w: this.columns * this.gridSize,
+        h: this.rows * this.gridSize
+      }
+    },
+    mouseOnCanvas: function () {
+      return {
+        x: this.$store.state.map.mouse.onCanvas.x,
+        y: this.$store.state.map.mouse.onCanvas.y
+      }
+    }
   }
 }
 </script>

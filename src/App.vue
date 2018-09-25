@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     onWheel: function (e) {
-      this.$refs['gameTable'].wheel(e.wheelDelta)
+      this.$refs['gameTable'].onWheel(e.wheelDelta)
     }
   }
 }
