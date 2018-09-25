@@ -45,7 +45,7 @@ const store = new Vuex.Store({
       id: '1a2b3c4d5e6f', member: []
     },
     map: {
-      grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(25, 25, 25, .4)' },
+      grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(25, 25, 25, 1)' },
       imageIndex: 0,
       mapMasks: [],
       draggingMapMask: null,
@@ -88,6 +88,7 @@ const store = new Vuex.Store({
     setMouseAddress (state, payload) {
       state.map.grid.c = payload.c
       state.map.grid.r = payload.r
+      // console.log(`mouseAddress: (${payload.c}, ${payload.r})`)
     },
     windowOpen (state, property) {
       if (state.display[property].isDisplay) {

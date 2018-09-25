@@ -47,10 +47,19 @@ export default {
           }
         }
 
-        ctx.strokeStyle = this.gridColor
+        ctx.strokeStyle = 'rgb(255, 0, 0)'
         ctx.globalAlpha = 1
         ctx.rect((this.gridColumn - 1) * this.gridSize, (this.gridRow - 1) * this.gridSize, this.gridSize, this.gridSize)
         ctx.stroke()
+
+        const center = {
+          x: this.sizeW / 2,
+          y: this.sizeH / 2
+        }
+        // 横線
+        this.drawLine(ctx, center.x - 5, center.y, 10, 0)
+        // 縦線
+        this.drawLine(ctx, center.x, center.y - 5, 0, 10)
 
         // console.log(`isGridId:${this.isGridId}`)
         if (this.isGridId) {
