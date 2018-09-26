@@ -1,7 +1,7 @@
 
 <template>
-  <div class="window" :style="windowStyle">
-    <div class="contents">
+  <div class="window" :style="windowStyle" v-show="isDisplay" @mousedown.stop @mouseup.stop>
+    <div class="_contents" @wheel.stop>
       <slot></slot>
     </div>
     <div class="title" :class="{fix : isFix}" @mousedown.left.prevent="move(true)" @mouseup.left.prevent="move(false)">{{title}}</div>
@@ -264,19 +264,10 @@ export default {
       }
 
       const obj = {
-        display: this.isDisplay ? 'block' : 'none'
-      }
-      if (this.align.indexOf('left') >= 0) {
-        obj.left = left + 'px'
-      }
-      if (this.align.indexOf('right') >= 0) {
-        obj.right = right + 'px'
-      }
-      if (this.align.indexOf('top') >= 0) {
-        obj.top = top + 'px'
-      }
-      if (this.align.indexOf('bottom') >= 0) {
-        obj.bottom = bottom + 'px'
+        left: this.align.indexOf('left') >= 0 ? left + 'px' : undefined,
+        right: this.align.indexOf('right') >= 0 ? right + 'px' : undefined,
+        top: this.align.indexOf('top') >= 0 ? top + 37 + 'px' : undefined,
+        bottom: this.align.indexOf('bottom') >= 0 ? bottom + 'px' : undefined
       }
       if (this.align.indexOf('left') < 0 &&
           this.align.indexOf('right') < 0 &&
@@ -346,7 +337,8 @@ export default {
   z-index: 91;
 }
 
-.contents {
+._contents {
+  position: relative;
   overflow: hidden;
   width: 100%;
   height: 100%;

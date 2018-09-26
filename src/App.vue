@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @wheel.passive="onWheel">
+  <div id="app" @wheel.passive="onWheel" @contextmenu.prevent>
     <!--
     <img src="./assets/logo.png">
     -->
@@ -9,6 +9,11 @@
     <AddMapMaskWindow title="AddMapMaskWindow"/>
     <EditMapMaskWindow title="EditMapMaskWindow"/>
     <MapMaskContext/>
+    <UnSupportWindo/>
+    <GameTableContext/>
+    <DevLogWindow/>
+    <FunctionListWindow/>
+    <PublicMemoWindow/>
   </div>
 </template>
 
@@ -19,6 +24,11 @@ import AddMapMaskWindow from './components/map/mapMask/AddMapMaskWindow'
 import EditMapMaskWindow from './components/map/mapMask/EditMapMaskWindow'
 import MapMaskContext from './components/map/mapMask/MapMaskContext'
 import GameTable from './components/map/GameTable'
+import UnSupportWindo from './components/UnSupportWindow'
+import GameTableContext from './components/map/GameTableContext'
+import DevLogWindow from './components/simple/DevLogWindow'
+import FunctionListWindow from './components/simple/FunctionListWindow'
+import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
 
 export default {
   name: 'App',
@@ -28,7 +38,12 @@ export default {
     ChatWindow: ChatWindow,
     AddMapMaskWindow: AddMapMaskWindow,
     EditMapMaskWindow: EditMapMaskWindow,
-    MapMaskContext: MapMaskContext
+    MapMaskContext: MapMaskContext,
+    UnSupportWindo: UnSupportWindo,
+    GameTableContext: GameTableContext,
+    DevLogWindow: DevLogWindow,
+    FunctionListWindow: FunctionListWindow,
+    PublicMemoWindow: PublicMemoWindow
   },
   methods: {
     onWheel: function (e) {
@@ -52,7 +67,6 @@ html, body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
   font-size: 16px;
   width: 100%;
   height: 100%;

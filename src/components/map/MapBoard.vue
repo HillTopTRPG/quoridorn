@@ -41,12 +41,13 @@ export default {
               this.drawLine(ctx, c * this.gridSize, r * this.gridSize + 1, 0, this.gridSize - 1)
             }
           }
-        }
 
-        ctx.strokeStyle = this.gridColor
-        ctx.globalAlpha = 1
-        ctx.rect((this.grid.c - 1) * this.gridSize, (this.grid.r - 1) * this.gridSize, this.gridSize, this.gridSize)
-        ctx.stroke()
+          // マウス下のマスを強調表示
+          ctx.strokeStyle = this.gridColor
+          ctx.globalAlpha = 1
+          ctx.rect((this.grid.c - 1) * this.gridSize, (this.grid.r - 1) * this.gridSize, this.gridSize, this.gridSize)
+          ctx.stroke()
+        }
 
         ctx.strokeStyle = 'red'
         ctx.globalAlpha = 1
@@ -60,6 +61,7 @@ export default {
         // 縦線
         this.drawLine(ctx, center.x, center.y - 5, 0, 10)
 
+        /*
         // マウス座標
         const mouseMark = {
           x: this.mouseOnCanvas.x - 10,
@@ -68,6 +70,7 @@ export default {
         this.drawLine(ctx, mouseMark.x, mouseMark.y, 20, 20)
         this.drawLine(ctx, mouseMark.x + 20, mouseMark.y, -20, 20)
         // console.log(this.mouseOnCanvas)
+        */
 
         // console.log(`isDrawGridId:${this.isDrawGridId}`)
         if (this.isDrawGridId) {

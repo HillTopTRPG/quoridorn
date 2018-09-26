@@ -13,23 +13,28 @@
       <MapBoard/>
     </div>
 
-    <MapMask v-for="mapMask in mapMaskList" type="mapMasks" :objKey="mapMask.key" :key="mapMask.key" @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
+    <MapMask v-for="mapMask in pieceList('mapMasks')" type="mapMasks" :objKey="mapMask.key" :key="mapMask.key"
+      @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
+    <Character v-for="character in pieceList('characters')" type="characters" :objKey="character.key" :key="character.key"
+      @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
 
   </div>
 </template>
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
-import MapMask from './mapMask/MapMask'
-import MapBoard from './MapBoard'
 import AddressCalcMixin from '../AddressCalcMixin'
+import MapBoard from './MapBoard'
+import MapMask from './mapMask/MapMask'
+import Character from './character/Character'
 
 export default {
-  name: 'mapComponent',
+  name: 'gameTable',
   mixins: [AddressCalcMixin],
   components: {
+    MapBoard: MapBoard,
     MapMask: MapMask,
-    MapBoard: MapBoard
+    Character: Character
   },
   data () {
     return {
@@ -47,24 +52,6 @@ export default {
     ]),
     dragging: function () {
       console.log(`★★★★ dragging ★★★★`)
-    },
-    mouseMove: function (event) {
-      // console.log('$$$$$$$$$  mouseMove', event)
-      // const f = this.f
-      let pageX = event.pageX
-      let pageY = event.pageY
-      this.setProperty({property: 'mouse.x', value: pageX, logOff: true})
-      this.setProperty({property: 'mouse.y', value: pageY, logOff: true})
-
-      const canvasAddress = this.calcCanvasAddress(event.pageX, event.pageY, this.currentAngle)
-      this.setProperty({property: 'map.mouse.onScreen.x', value: canvasAddress.locateOnScreen.x, logOff: true})
-      this.setProperty({property: 'map.mouse.onScreen.y', value: canvasAddress.locateOnScreen.y, logOff: true})
-      this.setProperty({property: 'map.mouse.onTable.x', value: canvasAddress.locateOnTable.x, logOff: true})
-      this.setProperty({property: 'map.mouse.onTable.y', value: canvasAddress.locateOnTable.y, logOff: true})
-      this.setProperty({property: 'map.mouse.onCanvas.x', value: canvasAddress.locateOnCanvas.x, logOff: true})
-      this.setProperty({property: 'map.mouse.onCanvas.y', value: canvasAddress.locateOnCanvas.y, logOff: true})
-      this.setProperty({property: 'map.grid.c', value: canvasAddress.grid.column, logOff: true})
-      this.setProperty({property: 'map.grid.r', value: canvasAddress.grid.row, logOff: true})
     },
     onWheel: function (delta) {
       const changeValue = 100
@@ -92,13 +79,48 @@ export default {
     rightDown: function () {
       console.log(`  [methods] mousedown right on GameTable`)
       this.setProperty({property: 'map.angle.dragStart', value: this.calcCoordinate(this.mouseLocate.x, this.mouseLocate.y, this.currentAngle).angle})
-      this.setProperty({property: 'map.isDraggingRight', value: true})
+      this.setProperty({property: 'map.isMouseDownRight', value: true})
     },
-    rightUp: function () {
+    rightUp: function (event) {
       console.log(`  [methods] mouseup right on GameTable`)
-      this.setProperty({property: 'map.angle.total', value: this.angle.total + Math.round(this.angle.dragging / 15) * 15})
-      this.setProperty({property: 'map.angle.dragging', value: 0})
-      this.setProperty({property: 'map.isDraggingRight', value: false})
+      const isDraggingRight = this.isDraggingRight
+      this.setProperty({property: 'map.isMouseDownRight', value: false})
+      if (isDraggingRight) {
+        this.setProperty({property: 'map.angle.total', value: this.angle.total + Math.round(this.angle.dragging / 15) * 15})
+        this.setProperty({property: 'map.angle.dragging', value: 0})
+        this.setProperty({property: 'map.isDraggingRight', value: false})
+      } else {
+        let pageX = event.pageX
+        let pageY = event.pageY
+
+        console.log(`  [methods] open context => gameTableContext`)
+        this.setProperty({property: `display.gameTableContext.x`, value: pageX})
+        this.setProperty({property: `display.gameTableContext.y`, value: pageY})
+        this.changeDisplay(`gameTableContext`)
+      }
+    },
+    mouseMove: function (event) {
+      // console.log('$$$$$$$$$  mouseMove', event)
+      // const f = this.f
+
+      if (this.isMouseDownRight) {
+        this.setProperty({property: 'map.isDraggingRight', value: true})
+      }
+
+      let pageX = event.pageX
+      let pageY = event.pageY
+      this.setProperty({property: 'mouse.x', value: pageX, logOff: true})
+      this.setProperty({property: 'mouse.y', value: pageY, logOff: true})
+
+      const canvasAddress = this.calcCanvasAddress(event.pageX, event.pageY, this.currentAngle)
+      this.setProperty({property: 'map.mouse.onScreen.x', value: canvasAddress.locateOnScreen.x, logOff: true})
+      this.setProperty({property: 'map.mouse.onScreen.y', value: canvasAddress.locateOnScreen.y, logOff: true})
+      this.setProperty({property: 'map.mouse.onTable.x', value: canvasAddress.locateOnTable.x, logOff: true})
+      this.setProperty({property: 'map.mouse.onTable.y', value: canvasAddress.locateOnTable.y, logOff: true})
+      this.setProperty({property: 'map.mouse.onCanvas.x', value: canvasAddress.locateOnCanvas.x, logOff: true})
+      this.setProperty({property: 'map.mouse.onCanvas.y', value: canvasAddress.locateOnCanvas.y, logOff: true})
+      this.setProperty({property: 'map.grid.c', value: canvasAddress.grid.column, logOff: true})
+      this.setProperty({property: 'map.grid.r', value: canvasAddress.grid.row, logOff: true})
     },
     drop: function (event) {
       // ドロップされた物の種類
@@ -121,17 +143,46 @@ export default {
         const name = event.dataTransfer.getData('name')
         const color = event.dataTransfer.getData('color')
         const fontColor = event.dataTransfer.getData('fontColor')
-        let columns = event.dataTransfer.getData('columns')
-        let rows = event.dataTransfer.getData('rows')
+        const columns = parseInt(event.dataTransfer.getData('columns'))
+        const rows = parseInt(event.dataTransfer.getData('rows'))
 
         const mapMaskObj = {
           name: name,
-          left: canvasAddress.locateOnTable.x,
-          top: canvasAddress.locateOnTable.y,
-          columns: parseInt(columns),
-          rows: parseInt(rows),
+          left: locateOnTable.x,
+          top: locateOnTable.y,
+          columns: columns,
+          rows: rows,
           color: color,
           fontColor: fontColor
+        }
+
+        this.addMapMaskInfo(mapMaskObj)
+      }
+
+      // キャラクターの作成
+      if (kind === 'character') {
+        const name = event.dataTransfer.getData('name')
+        const imgDataListStr = event.dataTransfer.getData('imgDataList')
+        const imgIndex = parseInt(event.dataTransfer.getData('imgIndex'))
+
+        const imgTag = event.dataTransfer.getData('imgTag')
+        const gridSize = parseInt(event.dataTransfer.getData('gridSize'))
+        const url = event.dataTransfer.getData('url')
+        const text = event.dataTransfer.getData('text')
+
+        const imgDataList = imgDataListStr.split(',')
+
+        const mapMaskObj = {
+          name: name,
+          left: locateOnTable.x,
+          top: locateOnTable.y,
+          columns: gridSize,
+          rows: gridSize,
+          imgDataList: imgDataList,
+          imgIndex: imgIndex,
+          imgTag: imgTag,
+          url: url,
+          text: text
         }
 
         this.addMapMaskInfo(mapMaskObj)
@@ -156,11 +207,14 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'mapMaskList',
+      'pieceList',
       'isFitGrid'
     ]),
     isDraggingLeft: function () {
       return this.$store.state.map.isDraggingLeft
+    },
+    isMouseDownRight: function () {
+      return this.$store.state.map.isMouseDownRight
     },
     isDraggingRight: function () {
       return this.$store.state.map.isDraggingRight
@@ -193,12 +247,6 @@ export default {
           'rotateY(0deg) ' +
           'rotateX(0deg) ' +
           'rotateZ(' + rotateZ + 'deg)'
-        /*
-          ,
-        background-image:
-          'linear-gradient(0deg, transparent -2px,' +
-            `rgba(255, 255, 255, .3) 2px, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,`
-            */
       }
     }
   }

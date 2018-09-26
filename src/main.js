@@ -1,5 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+// import 'bcdice-js/lib/preload-dicebots'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
@@ -27,6 +28,7 @@ const store = new Vuex.Store({
       isFitGrid: true,
       pieceRotateMarker: true,
       standImageAutoResize: true,
+      unSupportWindow: { isDisplay: false, doResetPosition: false, title: 'default' },
       chatWindow: { isDisplay: true, doResetPosition: false },
       initiativeWindow: { isDisplay: true, doResetPosition: false },
       resourceWindow: { isDisplay: true, doResetPosition: false },
@@ -34,7 +36,13 @@ const store = new Vuex.Store({
       counterRemoConWindow: { isDisplay: true, doResetPosition: false },
       addMapMaskWindow: { isDisplay: false, doResetPosition: false },
       editMapMaskWindow: { isDisplay: false, doResetPosition: false, key: -1 },
-      mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1 }
+      mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1 },
+      gameTableContext: { isDisplay: false, doResetPosition: false },
+      addCharacterSettingWindow: { isDisplay: false, doResetPosition: false },
+      devLogWindow: { isDisplay: false, doResetPosition: false },
+      publicMemoWindow: { isDisplay: false, doResetPosition: false, key: -1 },
+      secretDiceWindow: { isDisplay: false, doResetPosition: false },
+      functionListWindow: { isDisplay: true, doResetPosition: false }
     },
     images: {
       background: [
@@ -57,9 +65,11 @@ const store = new Vuex.Store({
       mouse: { onScreen: { x: 0, y: 0 }, onTable: { x: 0, y: 0 }, onCanvas: { x: 0, y: 0 } },
       imageIndex: 0,
       mapMasks: [],
+      characters: [],
       draggingMapMask: null,
       marginGridNum: 60,
       isDraggingLeft: false,
+      isMouseDownRight: false,
       isDraggingRight: false,
       move: {
         from: { x: 0, y: 0 },
@@ -82,12 +92,23 @@ const store = new Vuex.Store({
       logs: {
         'メイン': [
           { peerId: 12345, viewHtml: '<b>HillTop</b>：Hello World!!' },
-          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：おはようございますだぜぇ</span>' },
-          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：ワイルドだろぉ？</span>' },
-          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：時代遅れとか言ってんじゃないぜぇ？</span>' },
-          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：テストメッセージのセンス（ぇ</span>' }
+          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>' },
+          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：どどんとふの仕様にできるだけ近づけるように努力しています。</span>' },
+          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：Twitterで私が困ってたらいろいろ教えていただけると嬉しいです。</span>' },
+          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：9月末までは休みを利用して開発できますが、10月からは新しい仕事が始まるので、開発スピードが落ちます。</span>' }
         ]
       }
+    },
+    publicMemo: {
+      editTab: '',
+      contents: [
+        {
+          key: 0,
+          texts: [
+            {tab: 'メイン', text: 'これは共有メモでーす！'}
+          ]
+        }
+      ]
     }
   },
   mutations: {
@@ -135,6 +156,9 @@ const store = new Vuex.Store({
       } else {
         state.display[property].isDisplay = true
       }
+    },
+    doResetWindowLocate (state) {
+      alert('未実装の機能です。')
     },
     windowClose (state, property) {
       state.display[property].isDisplay = false
@@ -273,7 +297,7 @@ const store = new Vuex.Store({
       let text = payload.text
       let color = payload.color
       let tab = store.getters.activeChatTab.name
-      let htmlText = '<span style="font-color: ' + color + '"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
+      let htmlText = '<span style="color: ' + color + '"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
       let logObj = {
         peerId: state.connect.peerId,
         viewHtml: htmlText
@@ -367,12 +391,11 @@ const store = new Vuex.Store({
       // console.log(`window: ${displayProperty}, 再配置かどうか:${state.display[displayProperty].doResetPosition}`)
       return state.display[displayProperty].doResetPosition
     },
-    mapMaskList: function (state) {
+    pieceList: (state) => (type) => {
       const result = []
-      for (let mapMaskObj of state.map.mapMasks) {
-        // console.log(`  [getters] mapMask(${mapMaskObj.key})`)
+      for (let pieceObj of state.map[type]) {
         result.push({
-          key: mapMaskObj.key
+          key: pieceObj.key
         })
       }
       return result

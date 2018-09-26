@@ -1,0 +1,65 @@
+<template>
+  <WindowFrame title="開発履歴 on Twitter   「みんなありがとう！！！！！」" display-property="devLogWindow" align="left-top" fixSize="385, 600">
+    <div class="contents" tabindex="-1">
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">ご本家様にお助けいただいて大変助かりました…<br><br>1000ファボくらいしたい……</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044903560842903552?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://t.co/dFKjJJKKBY">https://t.co/dFKjJJKKBY</a><br>このあたり、参考になるでしょうか？</p>&mdash; うか/エスニヤ (@y_esnya) <a href="https://twitter.com/y_esnya/status/1044902405727383552?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">あれは、どどんとふに組み込んであるB&amp;Cってダイスボットをそのまま提供してるんですよ。だからどどんとふと全く同じロールが何も考えずにサポートできるという。</p>&mdash; たいたい竹流 (@torgtaitai) <a href="https://twitter.com/torgtaitai/status/1044892506830192641?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">そうだ！！！！<br><br>チャパレ生成ツール作ったんだから、これをQuoridornに組み込めばいいじゃねぇか！！！<br><br>各システム対応のコマ情報画面も作れる……！！<br><br>推しシステムから一つ一つ対応していけば、サイツヨじゃんか！！</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044846266797182976?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">座標系の処理はもう山場を越えました。<br><br>私が予想してるヤバい処理ベスト3<br><br>３位：BGM再生（技術未検証）<br>２位：同時操作によるデータ破壊を防ぐ同期制御<br>１位：各システム用のダイスボットの用意</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044845260122324992?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">間違えたので消して再掲。どどんとふは修正BSDライセンスでした。どっちにしても流用OK！ <a href="https://t.co/B7VTzRBJAW">https://t.co/B7VTzRBJAW</a></p>&mdash; どどんとふ公式鯖中の人 (@DoDontoF_Srv) <a href="https://twitter.com/DoDontoF_Srv/status/1044789975022092288?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">わたしも教えて貰ったサイトなんですけど、こことかどうでしょうか〜！？🐷🙌✨<a href="https://t.co/edYKiv0yqR">https://t.co/edYKiv0yqR</a></p>&mdash; ぶたにく (@btnk_trpg) <a href="https://twitter.com/btnk_trpg/status/1044777537790857216?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
+      <blockquote class="twitter-tweet" data-conversation="none" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/Quoridorn?src=hash&amp;ref_src=twsrc%5Etfw">#Quoridorn</a><br>【開発経過】<br><br>今回の報告からリプでぶら下げていきます！<br><br>マップマスクの移動方式をドラッグ＆ドロップから座標計算に変更<br>これにより、画面を回転・拡大縮小していた場合に回転・大きさがリセットされるの防止<br><br>デモページ：<a href="https://t.co/6kTNn5bazs">https://t.co/6kTNn5bazs</a>  <br>GitHub：<a href="https://t.co/L0BuuUIAJE">https://t.co/L0BuuUIAJE</a></p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044666524345151488?ref_src=twsrc%5Etfw">2018年9月25日</a></blockquote>
+      <blockquote class="twitter-tweet" data-conversation="none" data-lang="ja"><p lang="ja" dir="ltr">デモページ拝見させていただきました！これ…すごい…好きです…<br>見やすいし使いやすそうでめっちゃ期待してます！開発頑張ってください！</p>&mdash; shalom (@shalom_trpg) <a href="https://twitter.com/shalom_trpg/status/1044514858178232320?ref_src=twsrc%5Etfw">2018年9月25日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/Quoridorn?src=hash&amp;ref_src=twsrc%5Etfw">#Quoridorn</a><br>【開発経過】<br><br>右ドラッグで回転するようにしました！！！<br>私にとっちゃ血と涙だらけの座標計算地獄だったぜ……！<br>高校で数学ちゃんと勉強してりゃ良かったまじで<br><br>デモページ：<a href="https://t.co/6kTNn5bazs">https://t.co/6kTNn5bazs</a> <br>GitHub：<a href="https://t.co/L0BuuUIAJE">https://t.co/L0BuuUIAJE</a></p>&mdash; HillTop＠プロット2 (@HillTop_TRPG)<a href="https://twitter.com/HillTop_TRPG/status/1044416371004604417?ref_src=twsrc%5Etfw">2018年9月25日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">はい あと 概念に慣れないうちは ご存知かもですがSourceTreeとかGUI使う方が楽かもしれません 横から失礼しました..</p>&mdash; メ=ウ (@meu_kk) <a href="https://twitter.com/meu_kk/status/1044437205903585280?ref_src=twsrc%5Etfw">2018年9月25日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">外からすみません 老婆心ですが localの.gitを破棄して git init &amp;&amp; git add &amp;&amp; git commit &amp;&amp; git remote add &amp;&amp; git push -f --set-upstream origin master してしまうのが早いと思います これやったあとに既にcloneしてる方が無理やりpullすると 歴史が壊れてしまうので 早めだとよきです..</p>&mdash; メ=ウ (@meu_kk) <a href="https://twitter.com/meu_kk/status/1044432824516767745?ref_src=twsrc%5Etfw">2018年9月25日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">あああああ！！！！<br><br>gitわけわかんねぇｗｗｗｗ<br><br>ずっとTortoiseSVN使ってたからもう複雑すぎてダメだこりゃ</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044414154419798017?ref_src=twsrc%5Etfw">2018年9月25日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">あああああああ！！！！<br><br>やっとできたぁ…！<br><br>一晩寝て、冷静になってから紙にメモしながら処理の順番を追って座標の変化を書いていって、やっと処理の矛盾点が見つけられた…！！！！<br><br>やっぱ慣れない演算をすると頭の中のイメージじゃ処理が追い付かないわけだ！！<br><br>これからの開発にも役立つ経験</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044390133443682304?ref_src=twsrc%5Etfw">2018年9月25日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">うああああああああ！！！！！<br><br>座標計算苦手すぎるうううううう！！！！<br><br>高校でまともな数学を教えてもらえなかったツケがここに来て痛すぎるぅぅうううううう！！！！！</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044229941175304192?ref_src=twsrc%5Etfw">2018年9月24日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/Quoridorn?src=hash&amp;ref_src=twsrc%5Etfw">#Quoridorn</a><br>【開発経過】<br><br>マップマスクを実装しました！<br>設置したマスクの移動や編集もできます。<br>削除はこれから作る！<br><br>デモページ：<a href="https://t.co/6kTNn5bazs">https://t.co/6kTNn5bazs</a><br>GitHub：<a href="https://t.co/kmsP1es9Yb">https://t.co/kmsP1es9Yb</a></p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1043465622569402368?ref_src=twsrc%5Etfw">2018年9月22日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/Quoridorn?src=hash&amp;ref_src=twsrc%5Etfw">#Quoridorn</a><br>【開発経過】<br><br>チャット欄の見た目をざっくり作成しました。<br>画像の読み込みを非同期で行えるようにしなきゃ…<br><br>デモページ：<a href="https://t.co/6kTNn5bazs">https://t.co/6kTNn5bazs</a><br>GitHub：<a href="https://t.co/kmsP1es9Yb">https://t.co/kmsP1es9Yb</a></p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1043013082279104512?ref_src=twsrc%5Etfw">2018年9月21日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/Quoridorn?src=hash&amp;ref_src=twsrc%5Etfw">#Quoridorn</a><br><br>夕飯頼んでるついでに報告<br><br>メニューの見た目と、マス目のマップ（ドラッグで上下左右に動かせてホイールで遠近調整可能）の作成まで、とりあえずできました。<br><br>まだGithubにはあげてません😀</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1042739528383979520?ref_src=twsrc%5Etfw">2018年9月20日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">俺と鯖管の発言シンクロニシティがヤバい。</p>&mdash; たいたい竹流 (@torgtaitai) <a href="https://twitter.com/torgtaitai/status/1042411773586894848?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">BCDice-APIをつかうのです。Rubyの知識不要で、API叩くだけで結果をJSONで拾えるし、仕様もソースも公開されているし、公開サーバーも既にあります。<a href="https://t.co/dpjmTJjTQl">https://t.co/dpjmTJjTQl</a></p>&mdash; どどんとふ公式鯖中の人 (@DoDontoF_Srv) <a href="https://twitter.com/DoDontoF_Srv/status/1042411365275643904?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">ダイスボットを使いたいのであれば、bcdice-apiというものを使うのが最速です。<a href="https://t.co/HZNn2ltLrK">https://t.co/HZNn2ltLrK</a></p>&mdash; たいたい竹流 (@torgtaitai) <a href="https://twitter.com/torgtaitai/status/1042411282916270080?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">gitのリポジトリが分かれば勝手にpullして粘着します！！(無駄なプレッシャー)</p>&mdash; どどんとふ公式鯖中の人 (@DoDontoF_Srv) <a href="https://twitter.com/DoDontoF_Srv/status/1042409117225111554?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-conversation="none" data-lang="ja"><p lang="ja" dir="ltr">プロトタイプができたら是非テストに協力させてくださいー。</p>&mdash; 飛騨 牛子 (@usipecha) <a href="https://twitter.com/usipecha/status/1042411740724527104?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">さぁて……<br><br>私史上、過去最大級の個人プロジェクトだ<br>(*≧∀≦*)<br><br>もう公式と名乗って、後戻りはできないぞい！！</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1042407757062660096?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://twitter.com/hashtag/Quoridorn?src=hash&amp;ref_src=twsrc%5Etfw">#Quoridorn</a><a href="https://twitter.com/hashtag/%E3%82%B3%E3%83%AA%E3%83%89%E3%83%BC%E3%83%B3?src=hash&amp;ref_src=twsrc%5Etfw">#コリドーン</a><a href="https://twitter.com/hashtag/TRPG?src=hash&amp;ref_src=twsrc%5Etfw">#TRPG</a><br><br>TRPGオンラインセッションツール<br>｢Quoridorn（コリドーン）｣<br><br>個人で開発し、完成させることをここに誓うと共に、このTwitterアカウントを暫定公式、告知手段として利用することを宣言いたします。<br><br>今後の告知には全て <a href="https://twitter.com/hashtag/Quoridorn?src=hash&amp;ref_src=twsrc%5Etfw">#Quoridorn</a> タグを付けます！<br><br>乞うご期待！</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1042406543759560705?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">「Quoridor（コリドール）」はフランス生まれのボードゲームなんだけど、マスとコマがあって、移動と壁の設置によって相手より先にゴールにたどり着こうってゲーム。<br><br>マス目の見た目と、コマや壁といった設置物のイメージがTRPGに似てると思ってるし、私もフランス生まれだから、縁を感じてる。</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1042331753329750016?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">HillTop制作<br><br>TRPGオンラインセッションツール<br><br>名付けて「Quoridorn（コリドーン）」<br><br>構想はほぼ自由！<br>技術的課題は8割ほど解決している！<br><br>ちょこちょこ作りはじめる！🙌🙌✨</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1042326307458039809?ref_src=twsrc%5Etfw">2018年9月19日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">ユドナリウムの存在のお陰で、どどんとふみたいなツールに使われている技術が何なのかが分かったので、これからはユドナリウムを参考にして、自分なりのセッションツールが作れそう🙌<br><br>結局ユドナリウムの劣化品ができそうだけどwww</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1041979550781931520?ref_src=twsrc%5Etfw">2018年9月18日</a></blockquote>
+      <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">ユドナリウム導入してみたー！！！！<br><br>どどんとふ用のチャットパレットがそのまま使える！！！！<br>すごい！！！</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1040956545641533446?ref_src=twsrc%5Etfw">2018年9月15日</a></blockquote>
+    </div>
+  </WindowFrame>
+</template>
+
+<script>
+import { mapMutations } from 'vuex'
+import WindowFrame from '../WindowFrame'
+
+export default {
+  components: {
+    WindowFrame: WindowFrame
+  },
+  methods: {
+    ...mapMutations([])
+  },
+  computed: {
+    title: function () {
+      return this.$store.state.display.unSupportWindow.title
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+  .contents {
+    position: relative;
+    height: 710px;
+    overflow-y: scroll;
+    width: 450px;
+    transform: scale(0.8) translate(-51px, -90px);
+  }
+</style>

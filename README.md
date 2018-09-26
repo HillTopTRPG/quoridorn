@@ -29,6 +29,11 @@ Quoridornでは、コマやマップに関する情報を、ブラウザ間で�
 # TEDDY-PLAZA様
 http://teddy-plaza.sakura.ne.jp/?cat=105
 【麦畑と村】
+
+## コマ画像のプリセット
+# ICOOON MONO
+http://icooon-mono.com/13753-%E3%83%81%E3%82%A7%E3%82%B9%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B31/
+【チェスアイコン1】
 ```
 
 ## Build Setup

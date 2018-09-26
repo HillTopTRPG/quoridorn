@@ -70,7 +70,7 @@ export default {
     mouseOnTable: {
       handler: function (mouseOnTable) {
         if (this.storeObj.isDraggingLeft) {
-          this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.x`, value: mouseOnTable.x - this.storeObj.move.from.x, logOff: true})
+          this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.x`, value: mouseOnTable.x - this.storeObj.move.from.x, logOff: false})
           this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.y`, value: mouseOnTable.y - this.storeObj.move.from.y, logOff: true})
         }
 

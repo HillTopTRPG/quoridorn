@@ -7,7 +7,8 @@
     --><span @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')" :class="{isHover : hover4}">コマ</span><!--
     --><span @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')" :class="{isHover : hover5}">マップ</span><!--
     --><span @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')" :class="{isHover : hover6}">画像</span><!--
-    --><span @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')" :class="{isHover : hover7}">ヘルプ</span>
+    --><span @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')" :class="{isHover : hover7}">ヘルプ</span><!--
+  --><span @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')" :class="{isHover : hover8}">デモ</span>
     </div>
     <div class="menu-button room-id" @click="clickRoomInfo">
       ルームID.<span id="room-id">{{ roomId }}</span>
@@ -15,12 +16,12 @@
       <span id="member-num">{{ memberNum }}</span>名
     </div>
     <div class="menu-button public-memo" @click="clickPublicMemo">共有メモ</div>
-    <div class="menu-button logout" @click="clickLogout">ログアウト</div>
+    <div class="menu-button logout" @click="clickLogOut">ログアウト</div>
     <div class="hoverMenu hoverMenu2" v-show="menu['ファイル']" @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')">
-      <div class="item">セーブ</div>
-      <div class="item">ロード</div>
+      <div class="item" @click="clickExport">セーブ</div>
+      <div class="item" @click="clickImport">ロード</div>
       <hr>
-      <div class="item">ログアウト</div>
+      <div class="item" @click="clickLogOut">ログアウト</div>
     </div>
     <div class="hoverMenu hoverMenu3" v-show="menu['表示']" @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')">
       <div class="item" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, 'ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
@@ -35,45 +36,41 @@
       <BooleanItem property="isFitGrid">マス目にキャラクターを合わせる</BooleanItem>
       <BooleanItem property="standImageAutoResize">立ち絵のサイズを自動調整する</BooleanItem>
       <hr>
-      <div class="item">フォントサイズ調整</div>
+      <div class="item" @click="clickSettingFontSize">フォントサイズ調整</div>
       <hr>
-      <div class="item">ウィンドウ配置初期化</div>
-      <div class="item">表示状態初期化</div>
+      <div class="item" @click="clickResetWindowLocate">ウィンドウ配置初期化</div>
     </div>
     <div class="hoverMenu hoverMenu4" v-show="menu['コマ']" @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')">
-      <div class="item">キャラクター追加</div>
-      <div class="item">範囲追加</div>
-      <div class="item">魔法タイマー追加</div>
+      <div class="item" @click="clickAddCharacter">キャラクター追加</div>
+      <div class="item" @click="clickAddRange">範囲追加</div>
       <hr>
-      <div class="item">チット作成</div>
+      <div class="item" @click="clickAddChit">チット作成</div>
       <hr>
-      <div class="item">墓場</div>
-      <div class="item">キャラクター待合室</div>
+      <div class="item" @click="clickGraveyard">墓場</div>
+      <div class="item" @click="clickWaitingRoom">キャラクター待合室</div>
       <hr>
       <BooleanItem property="pieceRotateMarker">回転マーカーを表示する</BooleanItem>
     </div>
     <div class="hoverMenu hoverMenu5" v-show="menu['マップ']" @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')">
-      <div class="item">マップ変更</div>
-      <div class="item">フロアタイル変更モード</div>
+      <div class="item" @click="clickChangeMap">マップ変更</div>
+      <div class="item" @click="clickFloorTileMode">フロアタイル変更モード</div>
       <div class="item" @click="changeBooleanAndClose('addMapMaskWindow')">マップマスク追加</div>
-      <div class="item">簡易マップ作成</div>
+      <div class="item" @click="clickCreateEasyMap">簡易マップ作成</div>
       <hr>
-      <div class="item">マップ状態保存</div>
-      <div class="item">マップ切り替え</div>
+      <div class="item" @click="clickSaveMap">マップ状態保存</div>
+      <div class="item" @click="clickSwitchMap">マップ切り替え</div>
     </div>
     <div class="hoverMenu hoverMenu6" v-show="menu['画像']" @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')">
-      <div class="item">ファイルアップローダー</div>
-      <div class="item">Webカメラ撮影</div>
+      <div class="item" @click="clickFileUploader">ファイルアップローダー</div>
       <hr>
-      <div class="item">タグ編集</div>
-      <div class="item">画像削除</div>
+      <div class="item" @click="clickTagEdit">タグ編集</div>
+      <div class="item" @click="clickDeleteImage">画像削除</div>
     </div>
     <div class="hoverMenu hoverMenu7" v-show="menu['ヘルプ']" @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')">
-      <div class="item">バージョン</div>
-      <div class="item">マニュアル</div>
+      <div class="item" @click="clickVersion">バージョン</div>
+      <div class="item" @click="clickManual">マニュアル</div>
       <hr>
-      <div class="item">チュートリアル動画</div>
-      <div class="item">オフィシャルサイトへ</div>
+      <div class="item" @click="clickOfficialSite">オフィシャルサイトへ</div>
     </div>
     <div class="hoverMenu hoverMenu8" v-show="menu['ウィンドウ']" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, '表示', 'ウィンドウ')">
       <BooleanItem property="chatWindow">チャット表示</BooleanItem>
@@ -83,6 +80,10 @@
       <hr>
       <BooleanItem property="chatpaletteWindow">チャットパレット表示</BooleanItem>
       <BooleanItem property="counterRemoConWindow">カウンターリモコン表示</BooleanItem>
+    </div>
+    <div class="hoverMenu hoverMenu9" v-show="menu['デモ']" @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')">
+      <div class="item" @click="clickDevHistory">開発履歴</div>
+      <div class="item" @click="clickViewFunction">現時点の仕様</div>
     </div>
   </div>
 </template>
@@ -108,13 +109,16 @@ export default {
         'マップ': false,
         '画像': false,
         'ヘルプ': false,
-        'ウィンドウ': false
+        'ウィンドウ': false,
+        'デモ': false
       }
     }
   },
   methods: {
     ...mapMutations([
-      'windowOpen'
+      'windowOpen',
+      'setProperty',
+      'doResetWindowLocate'
     ]),
     changeBooleanAndClose: function (target) {
       console.log(`  [methods] change boolean by menu => ${target}`)
@@ -128,18 +132,32 @@ export default {
         this.menu[target] = flg
       }
     },
-    clickConnect: function () {
-      alert('接続は未実装')
-    },
-    clickRoomInfo: function () {
-      alert('ルーム情報は未実装')
-    },
-    clickPublicMemo: function () {
-      alert('共有メモは未実装')
-    },
-    clickLogout: function () {
-      alert('ログアウトは未実装')
-    }
+    clickConnect: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '接続'}); this.windowOpen('unSupportWindow') },
+    clickRoomInfo: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'プレイルーム情報表示'}); this.windowOpen('unSupportWindow') },
+    clickPublicMemo: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '共有メモ'}); this.windowOpen('unSupportWindow') },
+    clickExport: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'セーブ'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ファイル') },
+    clickImport: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'ロード'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ファイル') },
+    clickLogOut: function () { alert('未実装の機能です。'); this.menuHover(false, 'ファイル') },
+    clickSettingFontSize: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'フォントサイズ変更'}); this.windowOpen('unSupportWindow'); this.menuHover(false, '表示') },
+    clickResetWindowLocate: function () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
+    clickAddCharacter: function () { this.windowOpen('addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
+    clickAddRange: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '範囲追加'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickAddChit: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'チット追加'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickGraveyard: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '墓地'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickWaitingRoom: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '待合室'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickChangeMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マップ変更'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickFloorTileMode: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'フロアタイルモード'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickCreateEasyMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '簡易マップ'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSaveMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マップ保存'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSwitchMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マップ切り替え'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickFileUploader: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'ファイルアップローダー'}); this.windowOpen('unSupportWindow'); this.menuHover(false, '画像') },
+    clickTagEdit: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '画像タグ編集'}); this.windowOpen('unSupportWindow'); this.menuHover(false, '画像') },
+    clickDeleteImage: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '画像削除'}); this.windowOpen('unSupportWindow'); this.menuHover(false, '画像') },
+    clickVersion: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'バージョン'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickManual: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マニュアル'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickOfficialSite: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '公式サイト'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickDevHistory: function () { this.windowOpen('devLogWindow'); this.menuHover(false, 'デモ') },
+    clickViewFunction: function () { this.windowOpen('functionListWindow'); this.menuHover(false, 'デモ') }
   },
   computed: {
     ...mapGetters([]),
@@ -149,7 +167,8 @@ export default {
     hover4: function () { return this.menuHoverNum === 4 },
     hover5: function () { return this.menuHoverNum === 5 },
     hover6: function () { return this.menuHoverNum === 6 },
-    hover7: function () { return this.menuHoverNum === 7 }
+    hover7: function () { return this.menuHoverNum === 7 },
+    hover8: function () { return this.menuHoverNum === 8 }
   }
 }
 </script>
@@ -216,13 +235,14 @@ export default {
 .hoverMenu > .item:hover {
   background: lightblue;
 }
-.hoverMenu2 { left: 88px; }
-.hoverMenu3 { left: 159px; }
-.hoverMenu4 { left: 205px; }
-.hoverMenu5 { left: 250px; }
-.hoverMenu6 { left: 309px; }
-.hoverMenu7 { left: 354px; }
-.hoverMenu8 { left: 385px; }
+.hoverMenu2 { left: 87px; }
+.hoverMenu3 { left: 158px; }
+.hoverMenu4 { left: 204px; }
+.hoverMenu5 { left: 249px; }
+.hoverMenu6 { left: 308px; }
+.hoverMenu7 { left: 353px; }
+.hoverMenu8 { left: 384px; }
+.hoverMenu9 { left: 412px; }
 
 .item {
   position: relative;

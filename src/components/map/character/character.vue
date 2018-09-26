@@ -10,23 +10,15 @@
 </template>
 
 <script>
-// !mapMask.isLock
-import { mapMutations, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import PieceMixin from '../../PieceMixin'
 
 export default {
-  name: 'mapMask',
+  name: 'character',
   mixins: [PieceMixin],
-  data () {
-    return {}
-  },
-  props: {},
-  methods: {
-    ...mapMutations([])
-  },
   computed: {
     ...mapGetters([]),
-    mapMaskStyle: function () {
+    characterStyle: function () {
       const storeObj = this.storeObj
       let obj = this.style
       obj['background-color'] = storeObj.color
@@ -44,8 +36,8 @@ export default {
   position: fixed;
   cursor: default;
   /*
- box-sizing: border-box;
-   */
+  box-sizing: border-box;
+  */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,6 +58,4 @@ export default {
 }
 .character.isLock:hover { border-color: blue; }
 .character.isUnLock:hover { border-color: yellow; }
-/*
-*/
 </style>

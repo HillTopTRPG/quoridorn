@@ -14,6 +14,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "bcdice-js": "^0.9.1",
     "vue": "^2.5.2",
     "vuex": "^3.0.1"
   },

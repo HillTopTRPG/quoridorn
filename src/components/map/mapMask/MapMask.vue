@@ -5,8 +5,9 @@
     @click.right.prevent="(e) => openContext(e, 'mapMaskContext')"
     @mousedown.left="leftDown" @mouseup.left="leftUp"
     @mousedown.right="rightDown" @mouseup.right="rightUp"
-    @contextmenu.prevent
-  >{{storeObj.name}}<br>({{storeObj.key}})</div>
+    @contextmenu.prevent>
+    {{storeObj.name}}<br>({{storeObj.key}})
+  </div>
 </template>
 
 <script>
@@ -46,8 +47,8 @@ export default {
   position: fixed;
   cursor: default;
   /*
- box-sizing: border-box;
-   */
+   box-sizing: border-box;
+  */
   display: flex;
   justify-content: center;
   align-items: center;
