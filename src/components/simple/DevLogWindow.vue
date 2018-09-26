@@ -1,6 +1,6 @@
 <template>
   <WindowFrame title="開発履歴 on Twitter   「みんなありがとう！！！！！」" display-property="devLogWindow" align="left-top" fixSize="385, 600">
-    <div class="contents" tabindex="-1">
+    <div class="contents">
       <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">ご本家様にお助けいただいて大変助かりました…<br><br>1000ファボくらいしたい……</p>&mdash; HillTop＠プロット2 (@HillTop_TRPG) <a href="https://twitter.com/HillTop_TRPG/status/1044903560842903552?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
       <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr"><a href="https://t.co/dFKjJJKKBY">https://t.co/dFKjJJKKBY</a><br>このあたり、参考になるでしょうか？</p>&mdash; うか/エスニヤ (@y_esnya) <a href="https://twitter.com/y_esnya/status/1044902405727383552?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
       <blockquote class="twitter-tweet" data-lang="ja"><p lang="ja" dir="ltr">あれは、どどんとふに組み込んであるB&amp;Cってダイスボットをそのまま提供してるんですよ。だからどどんとふと全く同じロールが何も考えずにサポートできるという。</p>&mdash; たいたい竹流 (@torgtaitai) <a href="https://twitter.com/torgtaitai/status/1044892506830192641?ref_src=twsrc%5Etfw">2018年9月26日</a></blockquote>
@@ -55,8 +55,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  ._contents {
+    display: block;
+  }
   .contents {
-    position: relative;
+    position: absolute;
     height: 710px;
     overflow-y: scroll;
     width: 450px;
