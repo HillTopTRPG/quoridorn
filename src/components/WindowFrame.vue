@@ -1,10 +1,10 @@
 
 <template>
-  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown.stop @mouseup.stop>
+  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown.stop @mouseup.stop @mousedown="windowActive(displayProperty)">
     <div class="_contents" @wheel.stop>
       <slot></slot>
     </div>
-    <div class="title" :class="{fix : isFix}" @mousedown.left.prevent="move(true)" @mouseup.left.prevent="move(false)">{{title}}</div>
+    <div class="title" :class="{fix : isFix}" @mousedown.left.prevent="move(true)" @mouseup.left.prevent="move(false)">{{titleText}}</div>
     <div class="corner-left-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-top', true)" @mouseup.left.prevent="resize('corner-left-top', false)"></div>
     <div class="corner-left-bottom" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-bottom', true)" @mouseup.left.prevent="resize('corner-left-bottom', false)"></div>
     <div class="corner-right-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-right-top', true)" @mouseup.left.prevent="resize('corner-right-top', false)"></div>
@@ -22,7 +22,7 @@ import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   props: {
-    'title': { type: String, required: true },
+    'titleText': { type: String, required: true },
     'displayProperty': { type: String, required: true },
     'align': { type: String, required: true },
     'baseSize': String,
@@ -30,56 +30,55 @@ export default {
   },
   data () {
     return {
-      windowBase: {
-        isOpen: true,
-        moveMode: '',
-        mouse: {
-          x: 0,
-          y: 0,
-          saveX: 0,
-          saveY: 0
-        },
-        windowFactor: {
-          l: 0, // left
-          r: 0, // right
-          t: 0, // top
-          b: 0, // bottom
-          w: 0, // width
-          h: 0, // height
-          draggingX: 0,
-          draggingY: 0
-        }
+      isOpen: true,
+      moveMode: '',
+      mouse: {
+        x: 0,
+        y: 0,
+        saveX: 0,
+        saveY: 0
+      },
+      windowFactor: {
+        l: 0, // left
+        r: 0, // right
+        t: 0, // top
+        b: 0, // bottom
+        w: 0, // width
+        h: 0, // height
+        draggingX: 0,
+        draggingY: 0
       }
     }
   },
   mounted: function () {
-    const _this = this
     document.body.addEventListener('mousemove', function (e) {
-      _this.windowBase.mouse.x = e.pageX
-      _this.windowBase.mouse.y = e.pageY
-      _this.reflesh(e.pageX, e.pageY)
-    })
+      this.mouse.x = e.pageX
+      this.mouse.y = e.pageY
+      this.reflesh(e.pageX, e.pageY)
+    }.bind(this))
     document.body.addEventListener('mouseup', function (e) {
-      _this.resize(null, false)
-    })
+      this.resize(null, false)
+    }.bind(this))
+    this.addEventForIFrame()
   },
   methods: {
     ...mapMutations([
-      'changeDisplay',
-      'setProperty'
+      'windowClose',
+      'setProperty',
+      'windowActive'
     ]),
     closeWindow: function () {
       console.log(`  [methods] closeWindow(click [x]button)`)
-      this.changeDisplay(this.displayProperty)
+      this.windowClose(this.displayProperty)
     },
     resize: function (direct, flg) {
       if (flg) {
-        this.windowBase.mouse.saveX = this.windowBase.mouse.x
-        this.windowBase.mouse.saveY = this.windowBase.mouse.y
+        this.mouse.saveX = this.mouse.x
+        this.mouse.saveY = this.mouse.y
       } else {
-        const moveMode = this.windowBase.moveMode
-        const winFac = this.windowBase.windowFactor
-        // console.log(this.windowBase.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
+        const moveMode = this.moveMode
+        const winFac = this.windowFactor
+        // console.log(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
         if (moveMode.indexOf('right') >= 0) {
           winFac.r -= winFac.draggingX
           winFac.w += winFac.draggingX
@@ -99,13 +98,13 @@ export default {
         winFac.draggingX = 0
         winFac.draggingY = 0
       }
-      // console.log(this.windowBase.moveMode, this.windowBase.windowFactor.x, this.windowBase.windowFactor.y, this.windowBase.windowFactor.w, this.windowBase.windowFactor.h, this.windowBase.windowFactor.draggingX, this.windowBase.windowFactor.draggingY)
-      this.windowBase.moveMode = (flg ? direct : '')
+      // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+      this.moveMode = (flg ? direct : '')
     },
     reflesh: function (x, y) {
-      const moveX = x - this.windowBase.mouse.saveX
-      const moveY = y - this.windowBase.mouse.saveY
-      switch (this.windowBase.moveMode) {
+      const moveX = x - this.mouse.saveX
+      const moveY = y - this.mouse.saveY
+      switch (this.moveMode) {
         case 'side-top':
         case 'side-bottom':
         case 'corner-left-top':
@@ -113,9 +112,9 @@ export default {
         case 'corner-right-top':
         case 'corner-right-bottom':
         case 'move':
-          this.windowBase.windowFactor.draggingY = moveY
+          this.windowFactor.draggingY = moveY
       }
-      switch (this.windowBase.moveMode) {
+      switch (this.moveMode) {
         case 'side-left':
         case 'side-right':
         case 'corner-left-top':
@@ -123,36 +122,78 @@ export default {
         case 'corner-right-top':
         case 'corner-right-bottom':
         case 'move':
-          this.windowBase.windowFactor.draggingX = moveX
+          this.windowFactor.draggingX = moveX
       }
-      // console.log(this.windowBase.moveMode, this.windowBase.windowFactor.x, this.windowBase.windowFactor.y, this.windowBase.windowFactor.w, this.windowBase.windowFactor.h, this.windowBase.windowFactor.draggingX, this.windowBase.windowFactor.draggingY)
+      // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     },
     move: function (flg) {
       if (flg) {
-        this.windowBase.mouse.saveX = this.windowBase.mouse.x
-        this.windowBase.mouse.saveY = this.windowBase.mouse.y
+        this.mouse.saveX = this.mouse.x
+        this.mouse.saveY = this.mouse.y
       } else {
-        this.windowBase.windowFactor.r -= this.windowBase.windowFactor.draggingX
-        this.windowBase.windowFactor.t += this.windowBase.windowFactor.draggingY
-        this.windowBase.windowFactor.l += this.windowBase.windowFactor.draggingX
-        this.windowBase.windowFactor.b -= this.windowBase.windowFactor.draggingY
-        this.windowBase.windowFactor.draggingX = 0
-        this.windowBase.windowFactor.draggingY = 0
+        this.windowFactor.r -= this.windowFactor.draggingX
+        this.windowFactor.t += this.windowFactor.draggingY
+        this.windowFactor.l += this.windowFactor.draggingX
+        this.windowFactor.b -= this.windowFactor.draggingY
+        this.windowFactor.draggingX = 0
+        this.windowFactor.draggingY = 0
       }
-      this.windowBase.moveMode = flg ? 'move' : ''
+      this.moveMode = flg ? 'move' : ''
+    },
+    addEventForIFrame: function () {
+      const elms = document.getElementsByTagName('iframe')
+      for (let i = 0; i < elms.length; i++) {
+        const iframeElm = elms[i]
+        if (!iframeElm.onload) {
+          iframeElm.onload = function () {
+            const bodyElm = elms[i].contentDocument.body
+            if (!bodyElm.onmousemove) {
+              bodyElm.onmousemove = function (event) {
+                const iframeRect = iframeElm.getBoundingClientRect()
+                const address = {
+                  clientX: event.pageX + iframeRect.left,
+                  clientY: event.pageY + iframeRect.top
+                }
+                let evt = new MouseEvent('mousemove', address)
+                document.body.dispatchEvent(evt)
+              }
+            }
+            if (!bodyElm.onclick) {
+              bodyElm.onclick = function (event) {
+                let evt = document.createEvent('HTMLEvents')
+                evt.initEvent('mousedown', true, true) // event type, bubbling, cancelable
+                iframeElm.dispatchEvent(evt)
+              }
+            }
+          }
+        }
+        if (!iframeElm.onmousemove) {
+          iframeElm.onmousemove = function (event) {
+            const iframeRect = iframeElm.getBoundingClientRect()
+            const address = {
+              clientX: event.pageX + iframeRect.left,
+              clientY: event.pageY + iframeRect.top
+            }
+            let evt = new MouseEvent('mousemove', address)
+            document.body.dispatchEvent(evt)
+          }
+        }
+      }
     }
   },
   watch: {
     isDisplay: function (newValue, oldValue) {
       if (newValue) {
         console.log(`    [watch] window open => ${this.displayProperty}`)
-        this.windowBase.windowFactor.l = 0
-        this.windowBase.windowFactor.r = 0
-        this.windowBase.windowFactor.t = 0
-        this.windowBase.windowFactor.b = 0
-        this.windowBase.windowFactor.w = 0
-        this.windowBase.windowFactor.h = 0
+        this.windowFactor.l = 0
+        this.windowFactor.r = 0
+        this.windowFactor.t = 0
+        this.windowFactor.b = 0
+        this.windowFactor.w = 0
+        this.windowFactor.h = 0
         this.$emit('open')
+
+        setTimeout(this.addEventForIFrame, 0)
       } else {
         console.log(`    [watch] window close => ${this.displayProperty}`)
         this.$emit('close')
@@ -161,12 +202,12 @@ export default {
     isResetPosition: function (newValue, oldValue) {
       if (newValue) {
         console.log(`    [watch] window reset => ${this.displayProperty}`)
-        this.windowBase.windowFactor.l = 0
-        this.windowBase.windowFactor.r = 0
-        this.windowBase.windowFactor.t = 0
-        this.windowBase.windowFactor.b = 0
-        this.windowBase.windowFactor.w = 0
-        this.windowBase.windowFactor.h = 0
+        this.windowFactor.l = 0
+        this.windowFactor.r = 0
+        this.windowFactor.t = 0
+        this.windowFactor.b = 0
+        this.windowFactor.w = 0
+        this.windowFactor.h = 0
         this.setProperty({property: `display.${this.displayProperty}.doResetPosition`, value: false})
         this.$emit('reset')
       } else {
@@ -189,44 +230,40 @@ export default {
       // console.log(`isResetPosition ${isResetPosition} ${this.displayProperty}`)
       return isResetPosition
     },
+    zIndex: function () {
+      return this.$store.state.display[this.displayProperty].zIndex
+    },
     isFix: function () {
-      if (this.fixSize) {
-        return true
-      } else {
-        return false
-      }
+      if (this.fixSize) { return true }
+      return false
     },
     fixW: function () {
-      if (!this.isFix) {
-        return -1
-      }
+      if (!this.isFix) { return -1 }
       let width = this.fixSize.split(',')[0].trim()
       return parseInt(width)
     },
     fixH: function () {
-      if (!this.isFix) {
-        return -1
-      }
+      if (!this.isFix) { return -1 }
       let height = this.fixSize.split(',')[1].trim()
       return parseInt(height)
     },
-    baseW: function () {
-      if (!this.baseSize) {
-        return 0
+    base: function () {
+      if (!this.baseSize) { return 0 }
+      return {
+        w: parseInt(this.baseSize.split(',')[0].trim()),
+        h: parseInt(this.baseSize.split(',')[1].trim())
       }
-      let width = this.baseSize.split(',')[0].trim()
-      return parseInt(width)
     },
-    baseH: function () {
-      if (!this.baseSize) {
-        return 0
+    min: function () {
+      if (!this.minSize) { return 0 }
+      return {
+        w: parseInt(this.minSize.split(',')[0].trim()),
+        h: parseInt(this.minSize.split(',')[1].trim())
       }
-      let height = this.baseSize.split(',')[1].trim()
-      return parseInt(height)
     },
     windowStyle: function () {
-      const moveMode = this.windowBase.moveMode
-      const winFac = this.windowBase.windowFactor
+      const moveMode = this.moveMode
+      const winFac = this.windowFactor
 
       let left = winFac.l
       let bottom = winFac.b
@@ -267,7 +304,8 @@ export default {
         left: this.align.indexOf('left') >= 0 ? left + 'px' : undefined,
         right: this.align.indexOf('right') >= 0 ? right + 'px' : undefined,
         top: this.align.indexOf('top') >= 0 ? top + 37 + 'px' : undefined,
-        bottom: this.align.indexOf('bottom') >= 0 ? bottom + 'px' : undefined
+        bottom: this.align.indexOf('bottom') >= 0 ? bottom + 'px' : undefined,
+        'z-index': this.zIndex + 10000
       }
       if (this.align.indexOf('left') < 0 &&
           this.align.indexOf('right') < 0 &&
@@ -278,32 +316,16 @@ export default {
           obj.left = `calc(50% - ${this.fixW / 2 - left}px)`
           obj.top = `calc(50% - ${this.fixH / 2 - top}px)`
         } else {
-          if (this.baseW > 0) {
-            obj.left = `calc(50% - ${this.baseW / 2 - left}px)`
-          } else {
-            obj.left = `calc(${-this.baseW / 2 + left}px)`
-          }
-          if (this.baseH > 0) {
-            obj.top = `calc(50% - ${this.baseH / 2 + top}px)`
-          } else {
-            obj.top = `calc(${-this.baseH / 2 + top}px)`
-          }
+          obj.left = this.base.w > 0 ? `calc(50% - ${this.base.w / 2 - left}px)` : `calc(${-this.base.w / 2 + left}px)`
+          obj.top = this.base.h > 0 ? `calc(50% - ${this.base.h / 2 - top}px)` : `calc(${-this.base.h / 2 + top}px)`
         }
       }
       if (this.isFix) {
         obj.width = this.fixW + 'px'
         obj.height = this.fixH + 'px'
       } else {
-        if (this.baseW > 0) {
-          obj.width = `${this.baseW + width}px`
-        } else {
-          obj.width = `calc(100% - ${-this.baseW - width + 10}px)`
-        }
-        if (this.baseH > 0) {
-          obj.height = `${this.baseH + height}px`
-        } else {
-          obj.height = `calc(100% - ${-this.baseH - height - 10}px)`
-        }
+        obj.width = this.base.w > 0 ? `${this.base.w + width}px` : `calc(100% - ${-this.base.w - width + 10}px)`
+        obj.height = this.base.h > 0 ? `${this.base.h + height}px` : `calc(100% - ${-this.base.h - height - 10}px)`
       }
       return obj
     }
@@ -315,7 +337,7 @@ export default {
 <style>
 .window {
   position: fixed;
-  z-index: 90;
+  display: inline-block;
   padding: 22px 8px 8px 8px;
   overflow: visible;
   min-height: 50px;
@@ -332,17 +354,13 @@ export default {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-.window:focus,
-.window:active {
-  z-index: 91;
-}
 
 ._contents {
   position: relative;
   overflow: hidden;
   width: 100%;
   height: 100%;
-  display: flex;
+  display: inline-block;
   display: -webkit-box;
   display: -ms-flexbox;
   flex-direction: column;
@@ -426,4 +444,9 @@ export default {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
+/*
+input, button, textarea, select {
+  background-color: rgba(50, 50, 50, .2)
+}
+*/
 </style>

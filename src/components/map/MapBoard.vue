@@ -15,9 +15,7 @@ export default {
     this.paint()
   },
   methods: {
-    ...mapMutations([
-      'changeDisplay'
-    ]),
+    ...mapMutations([]),
     paint: function () {
       const ctx = document.getElementById('map-canvas').getContext('2d')
       // console.log('paint')
@@ -44,6 +42,7 @@ export default {
 
           // マウス下のマスを強調表示
           ctx.strokeStyle = this.gridColor
+          ctx.strokeStyle = 'red'
           ctx.globalAlpha = 1
           ctx.rect((this.grid.c - 1) * this.gridSize, (this.grid.r - 1) * this.gridSize, this.gridSize, this.gridSize)
           ctx.stroke()

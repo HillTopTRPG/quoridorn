@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame title="バグ報告状況" display-property="bugFormWindow" align="center" fixSize="800, 800">
+  <WindowFrame titleText="バグ報告状況" display-property="bugFormWindow" align="center" fixSize="800, 800">
     <iframe src="https://9224.teacup.com/quoridorn_bug/bbs?"></iframe>
   </WindowFrame>
 </template>

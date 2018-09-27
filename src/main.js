@@ -5,6 +5,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
 import defaultImage from './assets/background-default.jpg'
+import charBlue from './assets/char-blue.png'
+import charCyan from './assets/char-cyan.png'
+import charGray from './assets/char-gray.png'
+import charGreen from './assets/char-green.png'
+import charMagenta from './assets/char-magenta.png'
+import charRed from './assets/char-red.png'
+import charWhite from './assets/char-white.png'
+import charYellow from './assets/char-yellow.png'
 
 Vue.use(Vuex)
 
@@ -28,26 +36,45 @@ const store = new Vuex.Store({
       isFitGrid: true,
       pieceRotateMarker: true,
       standImageAutoResize: true,
-      unSupportWindow: { isDisplay: false, doResetPosition: false, title: 'default' },
-      chatWindow: { isDisplay: true, doResetPosition: false },
-      initiativeWindow: { isDisplay: true, doResetPosition: false },
-      resourceWindow: { isDisplay: true, doResetPosition: false },
-      chatpaletteWindow: { isDisplay: true, doResetPosition: false },
-      counterRemoConWindow: { isDisplay: true, doResetPosition: false },
-      addMapMaskWindow: { isDisplay: false, doResetPosition: false },
-      editMapMaskWindow: { isDisplay: false, doResetPosition: false, key: -1 },
-      mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1 },
-      gameTableContext: { isDisplay: false, doResetPosition: false },
-      addCharacterSettingWindow: { isDisplay: false, doResetPosition: false },
-      devLogWindow: { isDisplay: false, doResetPosition: false },
-      publicMemoWindow: { isDisplay: false, doResetPosition: false, key: -1 },
-      secretDiceWindow: { isDisplay: false, doResetPosition: false },
-      functionListWindow: { isDisplay: true, doResetPosition: false },
-      bugFormWindow: { isDisplay: false, doResetPosition: false }
+      unSupportWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, title: 'default' },
+      chatWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      initiativeWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      resourceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      chatpaletteWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      counterRemoConWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      addCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      functionListWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      addMapMaskWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      editMapMaskWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
+      mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
+      gameTableContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0 },
+      addCharacterSettingWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      devLogWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      publicMemoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
+      secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      bugFormWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 }
     },
     images: {
       background: [
         { data: defaultImage }
+      ],
+      tags: [
+        { key: 0, name: '(全て)' },
+        { key: 1, name: 'マップ' },
+        { key: 2, name: 'キャラクター' },
+        { key: 3, name: 'フロアタイル' },
+        { key: 4, name: '立ち絵画像' }
+      ],
+      data: [
+        { key: 0, tag: 'マップ', data: defaultImage },
+        { key: 1, tag: 'キャラクター', data: charBlue },
+        { key: 2, tag: 'キャラクター', data: charCyan },
+        { key: 3, tag: 'キャラクター', data: charGray },
+        { key: 4, tag: 'キャラクター', data: charGreen },
+        { key: 5, tag: 'キャラクター', data: charMagenta },
+        { key: 6, tag: 'キャラクター', data: charRed },
+        { key: 7, tag: 'キャラクター', data: charWhite },
+        { key: 8, tag: 'キャラクター', data: charYellow }
       ]
     },
     mouse: {
@@ -125,6 +152,72 @@ const store = new Vuex.Store({
         state.display[property].isDisplay = !state.display[property].isDisplay
       }
     },
+    onMount (state) {
+      store._mutations.windowOpen[0]('chatWindow')
+      store._mutations.windowOpen[0]('initiativeWindow')
+      store._mutations.windowOpen[0]('resourceWindow')
+      store._mutations.windowOpen[0]('chatpaletteWindow')
+      store._mutations.windowOpen[0]('counterRemoConWindow')
+      store._mutations.windowOpen[0]('functionListWindow')
+      store._mutations.windowOpen[0]('addCharacterSettingWindow')
+    },
+    windowActive (state, property) {
+      let current = 0
+      let maxIndex = 0
+      for (const key in state.display) {
+        const value = state.display[key]
+        if (!value.isDisplay) { continue }
+        if (key === property) {
+          current = value.zIndex
+        }
+        if (maxIndex < value.zIndex) {
+          maxIndex = value.zIndex
+        }
+      }
+      for (const key in state.display) {
+        const value = state.display[key]
+        if (!value.isDisplay) { continue }
+        if (key === property) {
+          value.zIndex = maxIndex
+        } else {
+          if (current <= value.zIndex) {
+            value.zIndex--
+          }
+        }
+      }
+      for (const key in state.display) {
+        const value = state.display[key]
+        if (!value.isDisplay) { continue }
+        // console.log(`${key}:${value.zIndex}`)
+      }
+      // console.log(`windowActive:${property} max:${maxIndex}`)
+    },
+    windowOpen (state, property) {
+      if (state.display[property].isDisplay) {
+        state.display[property].doResetPosition = true
+      } else {
+        state.display[property].isDisplay = true
+      }
+      let maxIndex = 0
+      for (const key in state.display) {
+        if (key === property) { continue }
+        const value = state.display[key]
+        if (!value.isDisplay) { continue }
+        if (maxIndex < value.zIndex) { maxIndex = value.zIndex }
+      }
+      state.display[property].zIndex = maxIndex + 1
+    },
+    windowClose (state, property) {
+      state.display[property].isDisplay = false
+      for (const key in state.display) {
+        const value = state.display[key]
+        if (!value.isDisplay) { continue }
+        if (value.zIndex > state.display[property].zIndex) { value.zIndex-- }
+      }
+    },
+    doResetWindowLocate (state) {
+      alert('未実装の機能です。')
+    },
     setProperty (state, payload) {
       let propStr = payload.property
       let value = payload.value
@@ -150,19 +243,6 @@ const store = new Vuex.Store({
       if (!isLogOff) {
         console.log(`${propStr} = ${value}`)
       }
-    },
-    windowOpen (state, property) {
-      if (state.display[property].isDisplay) {
-        state.display[property].doResetPosition = true
-      } else {
-        state.display[property].isDisplay = true
-      }
-    },
-    doResetWindowLocate (state) {
-      alert('未実装の機能です。')
-    },
-    windowClose (state, property) {
-      state.display[property].isDisplay = false
     },
     /**
      * マップマスク情報を追加する

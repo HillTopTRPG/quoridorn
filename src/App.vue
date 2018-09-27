@@ -15,10 +15,12 @@
     <FunctionListWindow/>
     <PublicMemoWindow/>
     <BugFormWindow/>
+    <AddCharacterWindow/>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import Menu from './components/menu/Menu'
 import ChatWindow from './components/chat/ChatWindow'
 import AddMapMaskWindow from './components/map/mapMask/AddMapMaskWindow'
@@ -31,6 +33,7 @@ import DevLogWindow from './components/simple/DevLogWindow'
 import FunctionListWindow from './components/simple/FunctionListWindow'
 import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
 import BugFormWindow from './components/simple/BugFormWindow'
+import AddCharacterWindow from './components/map/character/AddCharacterWindow'
 
 export default {
   name: 'App',
@@ -46,9 +49,16 @@ export default {
     DevLogWindow: DevLogWindow,
     FunctionListWindow: FunctionListWindow,
     PublicMemoWindow: PublicMemoWindow,
-    BugFormWindow: BugFormWindow
+    BugFormWindow: BugFormWindow,
+    AddCharacterWindow: AddCharacterWindow
+  },
+  mounted: function () {
+    this.onMount()
   },
   methods: {
+    ...mapMutations([
+      'onMount'
+    ]),
     onWheel: function (e) {
       this.$refs['gameTable'].onWheel(e.wheelDelta)
     }

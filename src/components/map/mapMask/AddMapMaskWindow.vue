@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame title="マスク作成" display-property="addMapMaskWindow" align="center" fixSize="285, 195">
+  <WindowFrame titleText="マスク作成" display-property="addMapMaskWindow" align="center" fixSize="285, 195">
     <table>
       <tbody>
         <tr>

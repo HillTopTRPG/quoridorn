@@ -29,7 +29,6 @@ export default {
     },
     contextStyle: function () {
       const obj = {
-        display: this.isDisplay ? 'block' : 'none',
         top: this.$store.state.display[this.displayProperty].y - 5 + 'px',
         left: this.$store.state.display[this.displayProperty].x - 5 + 'px'
       }

@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame title="マスク変更" display-property="editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow" @close="closeWindow">
+  <WindowFrame titleText="マスク変更" display-property="editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow" @close="closeWindow">
     <table>
       <tbody>
         <tr>
@@ -56,7 +56,6 @@ export default {
       'changeMapMaskInfo'
     ]),
     closeWindow: function () {
-      console.log('★★★ override closeWindow!!!!')
       this.setProperty({property: 'display.editMapMaskWindow.key', value: -1})
       this.windowClose('editMapMaskWindow')
     },

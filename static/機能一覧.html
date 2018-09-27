@@ -7,64 +7,17 @@
     <meta name="description" content="TRPGオンラインセッションツールの一種「Quoridorn（コリドーン）」です。">
     <meta name="author" content="@HillTop_TRPG at Twitter">
     <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-    }
-    .contents {
-      height: calc(100% - 5px);
-      white-space: normal;
-      word-break: break-all;
-      -moz-user-select: text;
-      -webkit-user-select: text;
-      -ms-user-select: text;
-    }
-    h4 {
-      margin: 0;
-      color: blue;
-      display: inline;
-    }
-    ul {
-      margin: 0;
-      padding-left: 0px;
-      font-size: 12px;
-      display: block;
-    }
-    ol {
-      padding-left: 0px;
-      counter-reset: item;
-      list-style-type: none;
-      display: block;
-      margin-top: 5px;
-      margin-bottom: 0;
-      margin-left: 15px;
-    }
-    label {
-      font-size: 12px;
-      font-weight: bold;
-      display: block;
-      margin-left: 20px;
-    }
-    ol > li {
-      text-indent: -1.3em;
-      padding-left: 1.3em;
-    }
-    ol > li:not(:last-child) {
-      margin-bottom: 20px;
-    }
-    ol > li:before {
-      counter-increment: item;
-      content: counter(item)'. ';
-      color: blue;
-    }
-    ul > li {
-      color: rgb(60, 60, 60);
-      text-indent: 0;
-    }
-    b {
-      font-weight: normal;
-      color: red;
-    }
+      html, body { margin: 0; padding: 0; }
+      .contents { height: calc(100% - 5px); white-space: normal; word-break: break-all; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: text; }
+      h4 { margin: 0; color: blue; display: inline; }
+      ul { margin: 0; padding-left: 0px; font-size: 12px; display: block; }
+      ol { padding-left: 0px; counter-reset: item; list-style-type: none; display: block; margin-top: 5px; margin-bottom: 0; margin-left: 15px; }
+      label { font-size: 12px; font-weight: bold; display: block; margin-left: 20px; }
+      ol > li { text-indent: -1.3em; padding-left: 1.3em; }
+      ol > li:not(:last-child) { margin-bottom: 20px; }
+      ol > li:before { counter-increment: item; content: counter(item)'. '; color: blue; }
+      ul > li { color: rgb(60, 60, 60); text-indent: 0; }
+      b { font-weight: normal; color: red; }
     </style>
   </head>
   <body>
@@ -75,12 +28,13 @@
         <ul>
           <li>マップオブジェクトをドラッグで移動中にマウスカーソルが飛んで、マウスオーバー状態でなくなると、ずっと掴んだ状態となってオブジェクトがマウスに追従する（マウスカーソルがオブジェクトの上にまだあれば、クリックで解除可能）</li>
           <li>マップオブジェクトをドラッグで移動中に「マスク作成」などの子画面上でドラッグ解除すると、ずっと掴んだ状態となってオブジェクトがマウスに追従する（マウスカーソルがオブジェクトの上にまだあれば、クリックで解除可能）</li>
-          <li>子画面の表示順序の制御がない（常に操作した子画面を手前に表示させたい）</li>
+          <li><del>子画面の表示順序の制御がない（常に操作した子画面を手前に表示させたい）</del>2018/09/27 23:00 改善</li>
           <li>チャット欄の「ダイスボットの設定」の画像がリンク切れ</li>
           <li>チャット欄の「送信」ボタンが反応しない（未実装）</li>
           <li>マップマスク作成にて「複数作成」オプションが効かない（未実装）</li>
           <li>「マス目にキャラクターを合わせる」オプションを外した際のマップマスクの移動先が、常にマウス位置を左上とした座標になってしまう</li>
-          <li>子画面の上にマウスカーソルを移動させると、謎のツールチップが表示される（title属性を制御に使ってるせい）</li>
+          <li><del>子画面の上にマウスカーソルを移動させると、謎のツールチップが表示される（title属性を制御に使ってるせい）</del>2018/09/27 23:00 改善</li>
+          <li><del>「開発履歴」子画面と「現時点の仕様」子画面、「不具合報告」子画面で、縦方向の移動がマウスについていけない。これによりずっと掴んだ状態になることが頻発する</del>2018/09/27 23:00 改善</li>
         </ul>
       </li>
       <li>
@@ -91,6 +45,7 @@
           <li>「表示」>「座標表示」</li>
           <li>「表示」>「マス目表示」</li>
           <li>「表示」>「マス目にキャラクターを合わせる」</li>
+          <li>「コマ」>「キャラクター追加」(コマ設定画面まで実装済み)</li>
           <li>「マップ」>「マップマスク追加」</li>
           <li>「デモ」>「開発履歴」</li>
           <li>「デモ」>「現時点の仕様」（このウィンドウの表示）</li>

@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame title="隠しダイスロール結果" display-property="secretDiceWindow" align="center" baseSize="300, 10">
+  <WindowFrame titleText="隠しダイスロール結果" display-property="secretDiceWindow" align="center" baseSize="300, 10">
     <div class="result" v-for="(obj, index) in results">
       <textarea v-model="obj.text"></textarea>
       <button @click="clickOpen(obj.key)">結果公開</button>

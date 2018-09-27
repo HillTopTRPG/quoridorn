@@ -12,7 +12,7 @@ export default {
   mounted: function () {},
   methods: {
     ...mapMutations([
-      'changeDisplay',
+      'windowOpen',
       'setProperty'
     ]),
     leftDown: function () {
@@ -62,7 +62,7 @@ export default {
       this.setProperty({property: `display.${contextProperty}.key`, value: this.objKey})
       this.setProperty({property: `display.${contextProperty}.x`, value: pageX})
       this.setProperty({property: `display.${contextProperty}.y`, value: pageY})
-      this.changeDisplay(contextProperty)
+      this.windowOpen(contextProperty)
       console.log(`  [methods] open context => ${contextProperty}(${this.objKey})`)
     }
   },
@@ -70,7 +70,7 @@ export default {
     mouseOnTable: {
       handler: function (mouseOnTable) {
         if (this.storeObj.isDraggingLeft) {
-          this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.x`, value: mouseOnTable.x - this.storeObj.move.from.x, logOff: false})
+          this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.x`, value: mouseOnTable.x - this.storeObj.move.from.x, logOff: true})
           this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.y`, value: mouseOnTable.y - this.storeObj.move.from.y, logOff: true})
         }
 

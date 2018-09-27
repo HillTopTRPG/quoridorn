@@ -47,7 +47,7 @@ export default {
   methods: {
     ...mapMutations([
       'addMapMaskInfo',
-      'changeDisplay',
+      'windowOpen',
       'setProperty'
     ]),
     dragging: function () {
@@ -89,15 +89,14 @@ export default {
         this.setProperty({property: 'map.angle.total', value: this.angle.total + Math.round(this.angle.dragging / 15) * 15})
         this.setProperty({property: 'map.angle.dragging', value: 0})
         this.setProperty({property: 'map.isDraggingRight', value: false})
-      } else {
-        let pageX = event.pageX
-        let pageY = event.pageY
-
-        console.log(`  [methods] open context => gameTableContext`)
-        this.setProperty({property: `display.gameTableContext.x`, value: pageX})
-        this.setProperty({property: `display.gameTableContext.y`, value: pageY})
-        this.changeDisplay(`gameTableContext`)
       }
+      let pageX = event.pageX
+      let pageY = event.pageY
+
+      console.log(`  [methods] open context => gameTableContext`)
+      this.setProperty({property: `display.gameTableContext.x`, value: pageX})
+      this.setProperty({property: `display.gameTableContext.y`, value: pageY})
+      this.windowOpen(`gameTableContext`)
     },
     mouseMove: function (event) {
       // console.log('$$$$$$$$$  mouseMove', event)
