@@ -14,6 +14,7 @@
     <DevLogWindow/>
     <FunctionListWindow/>
     <PublicMemoWindow/>
+    <BugFormWindow/>
   </div>
 </template>
 
@@ -29,6 +30,7 @@ import GameTableContext from './components/map/GameTableContext'
 import DevLogWindow from './components/simple/DevLogWindow'
 import FunctionListWindow from './components/simple/FunctionListWindow'
 import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
+import BugFormWindow from './components/simple/BugFormWindow'
 
 export default {
   name: 'App',
@@ -43,7 +45,8 @@ export default {
     GameTableContext: GameTableContext,
     DevLogWindow: DevLogWindow,
     FunctionListWindow: FunctionListWindow,
-    PublicMemoWindow: PublicMemoWindow
+    PublicMemoWindow: PublicMemoWindow,
+    BugFormWindow: BugFormWindow
   },
   methods: {
     onWheel: function (e) {

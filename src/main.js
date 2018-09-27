@@ -42,7 +42,8 @@ const store = new Vuex.Store({
       devLogWindow: { isDisplay: false, doResetPosition: false },
       publicMemoWindow: { isDisplay: false, doResetPosition: false, key: -1 },
       secretDiceWindow: { isDisplay: false, doResetPosition: false },
-      functionListWindow: { isDisplay: true, doResetPosition: false }
+      functionListWindow: { isDisplay: true, doResetPosition: false },
+      bugFormWindow: { isDisplay: false, doResetPosition: false }
     },
     images: {
       background: [

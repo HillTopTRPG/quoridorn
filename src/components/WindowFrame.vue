@@ -1,6 +1,6 @@
 
 <template>
-  <div class="window" :style="windowStyle" v-show="isDisplay" @mousedown.stop @mouseup.stop>
+  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown.stop @mouseup.stop>
     <div class="_contents" @wheel.stop>
       <slot></slot>
     </div>

@@ -1,6 +1,6 @@
 <template>
-  <WindowFrame title="現時点の仕様" display-property="functionListWindow" align="center" fixSize="500, 600">
-    <iframe src="./static/機能一覧.html"></iframe>
+  <WindowFrame title="バグ報告状況" display-property="bugFormWindow" align="center" fixSize="800, 800">
+    <iframe src="https://9224.teacup.com/quoridorn_bug/bbs?"></iframe>
   </WindowFrame>
 </template>
 

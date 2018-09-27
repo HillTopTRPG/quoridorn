@@ -84,6 +84,8 @@
     <div class="hoverMenu hoverMenu9" v-show="menu['デモ']" @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')">
       <div class="item" @click="clickDevHistory">開発履歴</div>
       <div class="item" @click="clickViewFunction">現時点の仕様</div>
+      <hr>
+      <div class="item" @click="clickBufForm">不具合の報告</div>
     </div>
   </div>
 </template>
@@ -157,7 +159,8 @@ export default {
     clickManual: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マニュアル'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ヘルプ') },
     clickOfficialSite: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '公式サイト'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ヘルプ') },
     clickDevHistory: function () { this.windowOpen('devLogWindow'); this.menuHover(false, 'デモ') },
-    clickViewFunction: function () { this.windowOpen('functionListWindow'); this.menuHover(false, 'デモ') }
+    clickViewFunction: function () { this.windowOpen('functionListWindow'); this.menuHover(false, 'デモ') },
+    clickBufForm: function () { this.windowOpen('bugFormWindow'); this.menuHover(false, 'デモ') }
   },
   computed: {
     ...mapGetters([]),

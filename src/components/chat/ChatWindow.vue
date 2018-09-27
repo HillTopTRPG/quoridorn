@@ -11,7 +11,7 @@
       <span class="label">名前</span>
       <input type="text" v-model="name" :tabindex="chatTabList.length + 2">
       <select :tabindex="chatTabList.length + 5"></select>
-      <select :tabindex="chatTabList.length + 6" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>
+      <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>
       <img src="../../assets/dice.png" alt='ダイスボット' title='ダイスボットの設定' @click="settingDiceBot" :tabindex="chatTabList.length + 7">
       <img src="../../assets/font.png" alt='フォント' title='フォントの設定' @click="settingFont" :tabindex="chatTabList.length + 8">
     </div>
@@ -38,9 +38,25 @@ export default {
     return {
       diceBotSystems: [],
       currentMessage: '',
-      currentDiceBotSystem: '',
+      currentDiceBotSystem: 'DiceBot',
       bcDice: new BCDice(),
-      name: ''
+      name: '',
+      baseHelpMessage:
+        '【ダイスボット】チャットにダイス用の文字を入力するとダイスロールが可能\n' +
+        '入力例）2d6+1 攻撃！\n' +
+        '上記のようにダイス文字の後ろに空白を入れて発信することも可能\n' +
+        '以下、使用例\n' +
+        '　3D6+1>=9 ：3d6+1で目標値9以上かの判定\n' +
+        '　1D100<=50 ：D100で50%目標の下方ロールの例\n' +
+        '　3U6[5] ：3d6のダイス目が5以上の場合に振り足しして合計する(上方無限)\n' +
+        '　3B6 ：3d6のダイス目をバラバラのまま出力する（合計しない）\n' +
+        '　10B6>=4 ：10d6を振り4以上のダイス目の個数を数える\n' +
+        '　(8/2)D(4+6)<=(5*3) ：個数・ダイス・達成値には四則演算も使用可能\n' +
+        '　C(10-4*3/2+2) ：C(計算式)で計算だけの実行も可能\n' +
+        '　choice[a,b,c] ：列挙した要素から一つを選択表示。ランダム攻撃対象決定などに\n' +
+        '　S3d6 ：各コマンドの先頭に「S」を付けると他人から結果が見えないシークレットロール\n' +
+        '　3d6/2 ：ダイス出目を割り算（切り捨て）。切り上げは /2U、四捨五入は /2R。\n' +
+        '　D66 ：D66ダイス。順序はゲームに依存。D66N：そのまま、D66S：昇順\n'
     }
   },
   created () {
@@ -48,13 +64,24 @@ export default {
 
     this.diceBotSystems.push({
       name: 'ダイスボット(指定なし)',
-      value: ''
+      value: 'DiceBot',
+      helpMessage:
+        this.baseHelpMessage +
+        `==【ダイスボット(指定なし)専用】====================\n` +
+        'ゲーム固有の判定がある場合はこの場所に記載されます。'
     })
     setTimeout(function () {
+      console.log(`bcdice-js ダイスボット一覧`)
       DiceBotLoader.collectDiceBots().forEach(function (diceBot) {
+        console.log(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
         this.diceBotSystems.push({
           name: diceBot.gameName(),
-          value: diceBot.gameType()
+          value: diceBot.gameType(),
+          diceBot: diceBot,
+          helpMessage:
+            this.baseHelpMessage +
+            `==【${diceBot.gameName()}専用】====================\n` +
+            diceBot.getHelpMessage()
         })
       }.bind(this))
 
@@ -101,14 +128,14 @@ export default {
       const isSecret = resultObj[1]
       if (diceResult !== '1') {
         this.addChatLog({
-          name: this.name,
+          name: this.currentDiceBotSystem,
           text: diceResult,
           color: 'black'
         })
       }
       if (isSecret) {
         this.addChatLog({
-          name: this.name,
+          name: this.currentDiceBotSystem,
           text: `シークレットダイス`,
           color: 'black'
         })
@@ -130,7 +157,9 @@ export default {
   watch: {
     currentDiceBotSystem: function () {
       console.log(`ダイスボットシステムを${this.currentDiceBotSystem}に変更`)
-      this.bcDice.setGameByTitle(this.currentDiceBotSystem)
+      const currentDiceBotSystem = this.currentDiceBotSystem
+      const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
+      this.bcDice.setDiceBot(diceObj.diceBot)
     }
   },
   computed: {
@@ -142,6 +171,11 @@ export default {
     },
     currentCount: function () {
       return this.$store.state.count
+    },
+    helpMessage: function () {
+      const currentDiceBotSystem = this.currentDiceBotSystem
+      const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
+      return diceObj.helpMessage
     }
   }
 }
@@ -218,9 +252,11 @@ export default {
   height: 26px;
   min-height: 26px;
   padding: 3px 0;
+  vertical-align: middle;
 }
 .oneLine * {
   vertical-align: middle;
+  padding: 2px
 }
 .sendLine {
 }
@@ -234,13 +270,16 @@ textarea {
   width: calc(100% - 85px);
   resize: none;
 }
+.diceBotSystem {
+  margin-right: 10px;
+}
 img {
   width:auto;
   height:auto;
-  max-width:100%;
-  max-height:100%;
+  max-width:20px;
+  max-height:20px;
   cursor: pointer;
-  margin: 0 10px;
+  margin: 0 2px;
   border: solid rgba(0, 0, 0, 0) 1px;
 }
 img:hover {
