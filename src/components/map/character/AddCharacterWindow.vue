@@ -1,9 +1,9 @@
 <template>
-  <WindowFrame titleText="キャラクター追加" display-property="addCharacterSettingWindow" align="center" fixSize="637, 402" baseSize="500, 400" @open="open">
+  <WindowFrame titleText="キャラクター追加" display-property="addCharacterWindow" align="center" fixSize="637, 402" baseSize="500, 400" @open="open">
     <div class="container">
-      <div class="viewImage"><img :src="currentImage"/></div>
+      <div class="viewImage"><img v-img="currentImage"/></div>
       <div class="choseImage">
-        <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" :src="image.data" @click="selectTagImage(image.key)"/></div>
+        <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" v-img="image.data" @click="selectTagImage(image.key)"/></div>
       </div>
       <div class="imageInfo">
         <div class="selectedImage"><label>タグ名：</label><select class="tagSelect" v-model="currentImageTag"><option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option></select><span>{{selectedTagIndexText}}</span></div>
@@ -12,7 +12,7 @@
       </div>
       <div class="switchImageArea">
         <button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</button>
-        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey}" :key="switchObj.key" :src="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0"/></span>
+        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0"/></span>
         <button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</button>
         <button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</button>
       </div>

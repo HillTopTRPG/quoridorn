@@ -3,6 +3,7 @@
     id="map-canvas"
     :width="canvasSize.w"
     :height="canvasSize.h"
+    v-bg-img="getBackgroundImage"
     @contextmenu.prevent />
 </template>
 
@@ -20,8 +21,10 @@ export default {
       const ctx = document.getElementById('map-canvas').getContext('2d')
       // console.log('paint')
 
+      /*
+       */
       var img = new Image()
-      img.src = '.' + this.getBackgroundImage
+      img.src = this.getBackgroundImage
       img.onload = function () {
         ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
 
@@ -87,6 +90,8 @@ export default {
             }
           }
         }
+      /*
+      */
       }.bind(this)
     },
     drawLine: function (ctx, x, y, width, height) {

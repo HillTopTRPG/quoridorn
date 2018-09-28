@@ -15,6 +15,7 @@
     <FunctionListWindow/>
     <PublicMemoWindow/>
     <BugFormWindow/>
+    <AddCharacterSettingWindow/>
     <AddCharacterWindow/>
   </div>
 </template>
@@ -33,6 +34,7 @@ import DevLogWindow from './components/simple/DevLogWindow'
 import FunctionListWindow from './components/simple/FunctionListWindow'
 import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
 import BugFormWindow from './components/simple/BugFormWindow'
+import AddCharacterSettingWindow from './components/map/character/AddCharacterSettingWindow'
 import AddCharacterWindow from './components/map/character/AddCharacterWindow'
 
 export default {
@@ -50,6 +52,7 @@ export default {
     FunctionListWindow: FunctionListWindow,
     PublicMemoWindow: PublicMemoWindow,
     BugFormWindow: BugFormWindow,
+    AddCharacterSettingWindow: AddCharacterSettingWindow,
     AddCharacterWindow: AddCharacterWindow
   },
   mounted: function () {
@@ -74,6 +77,13 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+
+img { opacity: 0; }
+canvas { opacity: 0; }
+img.loaded,
+canvas.loaded {
+  opacity: 0;
 }
 
 #app {

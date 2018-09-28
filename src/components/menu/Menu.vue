@@ -30,8 +30,8 @@
       <div class="item"></div>
       <BooleanItem property="cutIn">カットイン表示</BooleanItem>
       <hr>
-      <BooleanItem property="gridLine">座標表示</BooleanItem>
-      <BooleanItem property="gridId">マス目表示</BooleanItem>
+      <BooleanItem property="gridId">座標表示</BooleanItem>
+      <BooleanItem property="gridLine">マス目表示</BooleanItem>
       <hr>
       <BooleanItem property="isFitGrid">マス目にキャラクターを合わせる</BooleanItem>
       <BooleanItem property="standImageAutoResize">立ち絵のサイズを自動調整する</BooleanItem>

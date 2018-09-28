@@ -1,5 +1,5 @@
 <template>
-  <div class="item" @click="changeDisplay(property)"><img :src="propValue ? checkImg : ''" class="check" alt=""><span><slot></slot></span></div>
+  <div class="item" @click="changeDisplay(property)"><img v-img="propValue ? checkImg : ''" class="check" alt=""><span><slot></slot></span></div>
 </template>
 
 <script>

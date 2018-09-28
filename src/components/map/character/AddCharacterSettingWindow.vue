@@ -1,9 +1,9 @@
 <template>
   <WindowFrame titleText="キャラクター追加" display-property="addCharacterSettingWindow" align="center" fixSize="637, 402" baseSize="500, 400" @open="open">
     <div class="container">
-      <div class="viewImage"><img :src="currentImage"/></div>
+      <div class="viewImage"><img v-img="currentImage"/></div>
       <div class="choseImage">
-        <div class="tagImages"><img v-for="image in imageList" :key="image.key" :src="image.data" @click="selectTagImage(image.key)"/></div>
+        <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" v-img="image.data" @click="selectTagImage(image.key)"/></div>
       </div>
       <div class="imageInfo">
         <div class="selectedImage"><label>タグ名：</label><select class="tagSelect" v-model="currentImageTag"><option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option></select><span>{{selectedTagIndexText}}</span></div>
@@ -12,13 +12,13 @@
       </div>
       <div class="switchImageArea">
         <button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</button>
-        <span v-show="isOpenSwitch" class="switchImage"></span>
+        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0"/></span>
         <button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</button>
-        <button v-show="isOpenSwitch" @click.prevent="deleteSwitch">削除</button>
+        <button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</button>
       </div>
       <div class="initiativeTable">
       </div>
-      <div class="nameArea"><label>名前：</label><input type="text" class="name" placeholder="必ず入力してください"/></div>
+      <div class="nameArea"><label>名前：</label><input type="text" class="name" placeholder="必ず入力してください" v-model="name"/></div>
       <div class="pieceOptions">
         <label>サイズ：</label><input type="number" class="size" min="1" v-model="size"/>
         <label><input type="checkbox" class="hide" v-model="isHide"/><span>マップマスクの下に隠す<br>(イニシアティブ表で非表示)</span></label>
@@ -39,7 +39,6 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
-const defaultImg = require('../../../assets/char-blue.png')
 
 export default {
   name: 'addMapMask',
@@ -51,7 +50,10 @@ export default {
       useImageList: '',
       isOpenSwitch: false,
       currentImageTag: '(全て)',
-      currentImage: defaultImg,
+      switchImageList: [
+        { key: 0, imgKey: 1 }
+      ],
+      switchCurrentKey: 0,
       name: '',
       size: 1,
       isHide: false,
@@ -61,48 +63,121 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([]),
-    open: function () {
-      this.isOpenSwitch = false
-      this.currentImageTag = '(全て)'
-      this.currentImage = defaultImg
-      this.name = ''
-      this.size = 1
-      this.isHide = false
-      this.url = ''
-      this.text = ''
-      this.selectedTagIndexText = '0/0'
+    ...mapMutations([
+      'setProperty',
+      'windowOpen',
+      'windowClose'
+    ]),
+    addSwitch: function () {
+      let nextKey = -1
+      let isFind
+      do {
+        nextKey++
+        isFind = false
+        for (const switchImage of this.switchImageList) {
+          if (switchImage.key === nextKey) {
+            isFind = true
+            break
+          }
+        }
+      } while (isFind)
+
+      console.log(`addSwitch(${nextKey})`)
+
+      this.switchImageList.push({
+        key: nextKey,
+        imgKey: 1
+      })
+      this.switchCurrentKey = nextKey
+    },
+    getImage: function (key) {
+      return this.getKeyObj(this.storeImages, key).data
+    },
+    getKeyObj: function (list, key) {
+      const filteredList = list.filter(obj => obj.key === key)
+      if (filteredList.length === 0) {
+        console.error(`key:"${key}" is not find.`)
+        return null
+      }
+      if (filteredList.length > 1) {
+        console.log(`key:"(${key})" is duplicate.`)
+        return null
+      }
+      return filteredList[0]
+    },
+    selectSwitchImage: function (key) {
+      this.switchCurrentKey = key
     },
     selectTagImage: function (key) {
-      const selectedList = this.imageList.filter(obj => obj.key === key)
-      if (selectedList.length === 0) {
-        console.log(`選ばれた画像(${key})は存在しなかった`)
-        return
+      const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
+      switchImageObj.imgKey = key
+      const index = this.switchImageList.indexOf(switchImageObj)
+      this.switchImageList.splice(index, 1, switchImageObj)
+    },
+    deleteSwitch: function () {
+      const switchObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
+      const index = this.switchImageList.indexOf(switchObj)
+      // 削除
+      this.switchImageList.splice(index, 1)
+      if (index < this.switchImageList.length) {
+        this.switchCurrentKey = this.switchImageList[index].key
+      } else {
+        this.switchCurrentKey = this.switchImageList[this.switchImageList.length - 1].key
       }
-      if (selectedList.length > 1) {
-        console.log(`選ばれた画像(${key})は複数ある`)
-        return
-      }
-      const selectImageObj = selectedList[0]
-      this.currentImage = selectImageObj.data
     },
     commit: function () {
       if (this.name === '') {
         alert(`名前を入力してください。`)
         return
       }
-      this.setProperty({property: `display.addCharacterWindow.y`, value: pageY})
-      this.windowOpen('unSupportWindow')
+      /*
+      this.setProperty({property: `display.addCharacterWindow.name`, value: this.name})
+      this.setProperty({property: `display.addCharacterWindow.size`, value: this.size})
+      this.setProperty({property: `display.addCharacterWindow.useImageList`, value: this.useImageList})
+      this.setProperty({property: `display.addCharacterWindow.isHide`, value: this.isHide})
+      this.setProperty({property: `display.addCharacterWindow.url`, value: this.url})
+      this.setProperty({property: `display.addCharacterWindow.text`, value: this.text})
+      this.setProperty({property: `display.addCharacterWindow.currentImage`, value: 'TODO'})
+      this.setProperty({property: `display.addCharacterWindow.currentImageTag`, value: this.currentImageTag})
+      this.windowOpen('addCharacterWindow')
+      */
+      this.setProperty({property: 'display.unSupportWindow.title', value: 'キャラクター置き場'}); this.windowOpen('unSupportWindow')
       this.windowClose('addCharacterSettingWindow')
     },
     cancel: function () {
-
+      this.windowClose('addCharacterSettingWindow')
+    },
+    open: function () {
+      this.isOpenSwitch = false
+      this.currentImageTag = '(全て)'
+      this.switchImageList.splice(0, this.switchImageList.length)
+      this.switchImageList.push({ key: 0, imgKey: 1 })
+      this.switchCurrentKey = 0
+      this.name = ''
+      this.size = 1
+      this.isHide = false
+      this.url = ''
+      this.text = ''
+      this.selectedTagIndexText = '0/0'
     }
   },
   computed: {
     ...mapGetters([
       'parseColor'
     ]),
+    isCanSwitchDelete: function () {
+      return this.switchImageList.length > 1
+    },
+    storeImages: function () {
+      return this.$store.state.images.data
+    },
+    currentImage: function () {
+      return this.getImage(this.currentImageKey)
+    },
+    currentImageKey: function () {
+      const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
+      return switchImageObj.imgKey
+    },
     tagList: function () {
       return this.$store.state.images.tags
     },
@@ -129,7 +204,7 @@ export default {
   grid-template-areas:
       "viewImage       choseImage      choseImage"
       "viewImage       imageInfo       imageInfo"
-      "switchImageArea switchImageArea switchImageArea"
+      "viewImage       switchImageArea switchImageArea"
       "initiativeTable initiativeTable initiativeTable"
       "nameArea        nameArea        otherTextLabel"
       "pieceOptions    pieceOptions    otherText"
@@ -151,6 +226,10 @@ export default {
 .tagImages img {
   width: 50px;
   height: 50px;
+  box-sizing: border-box;
+}
+.tagImages img.active {
+  border:solid blue 1px;
 }
 .container > * { padding: 1px 0; }
 .viewImage { grid-area: viewImage; }
@@ -162,8 +241,10 @@ export default {
 .imageInfo .selectedImage select { flex: 1; }
 .imageInfo > button { margin-left: 10px; }
 .switchImageArea { grid-area: switchImageArea; display: flex; }
-.switchImageArea .switchImage { display: inline-block; flex: 1; height: 70px; }
-.switchImageArea button:not(.switchButton) { height: 70px; display: inline-block; margin-left: 10px; }
+.switchImageArea .switchImage { display: inline-block; flex: 1; height: 50px; }
+.switchImageArea .switchImage img { width: 50px; height: 50px; box-sizing: border-box; }
+.switchImageArea .switchImage img.active { border:solid blue 1px; }
+.switchImageArea button:not(.switchButton) { height: 50px; display: inline-block; margin-left: 10px; }
 .initiativeTable { grid-area: initiativeTable; }
 .nameArea { grid-area: nameArea; }
 .viewImage { grid-area: viewImage; }

@@ -1,24 +1,26 @@
 <template>
   <WindowFrame titleText="チャット" display-property="chatWindow" align="left-bottom" baseSize="-300, 240">
-    <div class="tabs">
-      <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @mousedown.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/0</span><!--
-    --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">＋</span>
-    </div>
-    <ul id="chatLog" @wheel.stop>
-      <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
-    </ul>
-    <div class="oneLine">
-      <span class="label">名前</span>
-      <input type="text" v-model="name" :tabindex="chatTabList.length + 2">
-      <select :tabindex="chatTabList.length + 5"></select>
-      <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>
-      <img src="../../assets/dice.png" alt='ダイスボット' title='ダイスボットの設定' @click="settingDiceBot" :tabindex="chatTabList.length + 7">
-      <img src="../../assets/font.png" alt='フォント' title='フォントの設定' @click="settingFont" :tabindex="chatTabList.length + 8">
-    </div>
-    <div class="sendLine">
-      <span class="label">発言</span>
-      <textarea v-model="currentMessage" @keydown.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
-      <button :tabindex="chatTabList.length + 4">送信</button>
+    <div class="container">
+      <div class="tabs">
+        <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @mousedown.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/0</span><!--
+      --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">＋</span>
+      </div>
+      <ul id="chatLog" @wheel.stop>
+        <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
+      </ul>
+      <div class="oneLine">
+        <span class="label">名前</span>
+        <input type="text" v-model="name" :tabindex="chatTabList.length + 2">
+        <select :tabindex="chatTabList.length + 5"></select>
+        <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>
+        <img v-img="require('../../assets/dice.png')" alt='ダイスボット' title='ダイスボットの設定' @click="settingDiceBot" :tabindex="chatTabList.length + 7">
+        <img v-img="require('../../assets/font.png')" alt='フォント' title='フォントの設定' @click="settingFont" :tabindex="chatTabList.length + 8">
+      </div>
+      <div class="sendLine">
+        <span class="label">発言</span>
+        <textarea v-model="currentMessage" @keydown.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
+        <button :tabindex="chatTabList.length + 4">送信</button>
+      </div>
     </div>
   </WindowFrame>
 </template>
@@ -131,18 +133,19 @@ export default {
       const diceResult = resultObj[0].replace(/(^: )/g, '').replace(/＞/g, '→')
       const isSecret = resultObj[1]
       if (diceResult !== '1') {
-        this.addChatLog({
-          name: this.currentDiceBotSystem,
-          text: diceResult,
-          color: 'black'
-        })
-      }
-      if (isSecret) {
-        this.addChatLog({
-          name: this.currentDiceBotSystem,
-          text: `シークレットダイス`,
-          color: 'black'
-        })
+        if (isSecret) {
+          this.addChatLog({
+            name: this.currentDiceBotSystem,
+            text: `シークレットダイス`,
+            color: 'black'
+          })
+        } else {
+          this.addChatLog({
+            name: this.currentDiceBotSystem,
+            text: diceResult,
+            color: 'black'
+          })
+        }
       }
       this.currentMessage = ''
 
@@ -187,6 +190,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  flex-direction: column;
+}
 .tabs {
   display: inline-block;
 }

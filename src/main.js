@@ -18,6 +18,32 @@ Vue.use(Vuex)
 
 Vue.config.productionTip = false
 
+Vue.directive('img', function (el, binding, compornent) {
+  const imgData = binding.value
+  var img = new Image()
+  img.src = imgData
+
+  img.onload = function () {
+    el.src = imgData
+    el.style.opacity = 1
+    el.classList.add('loaded')
+    el.style.transition = 'all 0.5s ease'
+  }
+})
+
+Vue.directive('bg-img', function (el, binding, compornent) {
+  const imgData = binding.value
+  var img = new Image()
+  img.src = imgData
+
+  img.onload = function () {
+    el.style['background-image'] = imgData
+    el.style.opacity = 1
+    el.classList.add('loaded')
+    el.style.transition = 'all 0.5s ease'
+  }
+})
+
 /**
  * Store
  * @type {Vuex}

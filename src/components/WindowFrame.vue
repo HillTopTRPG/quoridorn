@@ -13,7 +13,7 @@
     <div class="side-left" v-if="!isFix" @mousedown.left.prevent="resize('side-left', true)" @mouseup.left.prevent="resize('side-left', false)"></div>
     <div class="side-right" v-if="!isFix" @mousedown.left.prevent="resize('side-right', true)" @mouseup.left.prevent="resize('side-right', false)"></div>
     <div class="side-bottom" v-if="!isFix" @mousedown.left.prevent="resize('side-bottom', true)" @mouseup.left.prevent="resize('side-bottom', false)"></div>
-    <img class="close" src="../assets/window_close.png" @click.left.prevent="closeWindow">
+    <img class="close" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow">
   </div>
 </template>
 
@@ -337,7 +337,7 @@ export default {
 <style>
 .window {
   position: fixed;
-  display: inline-block;
+  display: block;
   padding: 22px 8px 8px 8px;
   overflow: visible;
   min-height: 50px;
@@ -360,10 +360,7 @@ export default {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  display: inline-block;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  flex-direction: column;
+  display: block;
 }
 
 .title {
