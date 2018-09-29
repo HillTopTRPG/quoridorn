@@ -82,8 +82,13 @@ export default {
       console.log(`  [methods] mouseup right on GameTable`)
       const isDraggingRight = this.isDraggingRight
       this.setProperty({property: 'map.isMouseDownRight', value: false})
+      let isRoll = false
       if (isDraggingRight) {
-        this.setProperty({property: 'map.angle.total', value: this.arrangeAngle(this.angle.total + Math.round(this.angle.dragging / 15) * 15)})
+        const nextAngle = this.arrangeAngle(this.angle.total + Math.round(this.angle.dragging / 15) * 15)
+        if (this.angle.total !== nextAngle) {
+          isRoll = true
+        }
+        this.setProperty({property: 'map.angle.total', value: nextAngle})
         this.setProperty({property: 'map.angle.dragging', value: 0})
         this.setProperty({property: 'map.isDraggingRight', value: false})
       }
@@ -91,10 +96,13 @@ export default {
       let pageY = event.pageY
 
       if (!this.isOverEvent) {
-        this.setProperty({property: `display.gameTableContext.x`, value: pageX})
-        this.setProperty({property: `display.gameTableContext.y`, value: pageY})
-        this.windowOpen(`gameTableContext`)
-        console.log(`  [methods] open context => gameTableContext`)
+        if (!isRoll) {
+          // 右ドラッグが解除されたのが子画面上でなく、調整後に回転していない場合のみ右コンテキストメニューを表示する
+          this.setProperty({property: `display.gameTableContext.x`, value: pageX})
+          this.setProperty({property: `display.gameTableContext.y`, value: pageY})
+          this.windowOpen(`gameTableContext`)
+          console.log(`  [methods] open context => gameTableContext`)
+        }
       } else {
         this.setProperty({property: `map.isOverEvent`, value: false})
       }
@@ -211,28 +219,13 @@ export default {
       'pieceList',
       'isFitGrid'
     ]),
-    isDraggingLeft: function () {
-      return this.$store.state.map.isDraggingLeft
-    },
-    isMouseDownRight: function () {
-      return this.$store.state.map.isMouseDownRight
-    },
-    isOverEvent: function () {
-      console.log(`isOverEvent:${this.$store.state.map.isOverEvent}`)
-      return this.$store.state.map.isOverEvent
-    },
-    isDraggingRight: function () {
-      return this.$store.state.map.isDraggingRight
-    },
-    move: function () {
-      return this.$store.state.map.move
-    },
-    angle: function () {
-      return this.$store.state.map.angle
-    },
-    currentAngle: function () {
-      return this.arrangeAngle(this.angle.total + this.angle.dragging)
-    },
+    isDraggingLeft: function () { return this.$store.state.map.isDraggingLeft },
+    isMouseDownRight: function () { return this.$store.state.map.isMouseDownRight },
+    isOverEvent: function () { return this.$store.state.map.isOverEvent },
+    isDraggingRight: function () { return this.$store.state.map.isDraggingRight },
+    move: function () { return this.$store.state.map.move },
+    angle: function () { return this.$store.state.map.angle },
+    currentAngle: function () { return this.arrangeAngle(this.angle.total + this.angle.dragging) },
     sizeW: function () { return (this.columns + this.marginGridNum) * this.gridSize + 0 },
     sizeH: function () { return (this.rows + this.marginGridNum) * this.gridSize + 0 },
     gameTableStyle: function () {

@@ -155,7 +155,7 @@ export default {
     clickOfficialSite: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '公式サイト'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ヘルプ') },
     clickDevHistory: function () { this.windowOpen('devLogWindow'); this.menuHover(false, 'デモ') },
     clickViewFunction: function () { this.windowOpen('functionListWindow'); this.menuHover(false, 'デモ') },
-    clickBufForm: function () { this.windowOpen('bugFormWindow'); this.menuHover(false, 'デモ') }
+    clickBufForm: function () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuHover(false, 'デモ') }
   },
   computed: {
     ...mapGetters([]),

@@ -6,7 +6,7 @@
     </div>
     <div class="title" :class="{fix : isFix}"
       @mousedown.left.prevent="(e) => move(e, true)" @mouseup.left.prevent="(e) => move(e, false)"
-      @touchstart.prevent="(e) => move(e, true, true)" @touchend.prevent="(e) => move(e, false, true)" @touchcancel.prevent="(e) => move(e, false, true)"><span>{{titleText}}</span><img class="close" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow"/></div>
+      @touchstart.prevent="(e) => move(e, true, true)" @touchend.prevent="(e) => move(e, false, true)" @touchcancel.prevent="(e) => move(e, false, true)"><span>{{titleText}}</span></div>
     <div class="corner-left-top" v-if="!isFix"
       @mousedown.left.prevent="(e) => resize(e, 'corner-left-top', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-left-top', false)"
       @touchstart.prevent="(e) => resize(e, 'corner-left-top', true, true)" @touchend.prevent="(e) => resize(e, 'corner-left-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-left-top', false, true)"></div>
@@ -31,6 +31,7 @@
     <div class="side-bottom" v-if="!isFix"
       @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
       @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
+    <img class="close" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow"/>
   </div>
 </template>
 
@@ -92,7 +93,9 @@ export default {
     },
     mouseup: function (event) {
       const evtObj = { clientX: event.pageX, clientY: event.pageY, button: event.button }
-      this.setProperty({property: `map.isOverEvent`, value: true})
+      if (event.button === 2) {
+        this.setProperty({property: `map.isOverEvent`, value: true})
+      }
       document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
     },
     resize: function (event, direct, flg, isTouch) {
@@ -195,7 +198,9 @@ export default {
         const mouseupListener = function (event) {
           const iframeRect = iframeElm.getBoundingClientRect()
           const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top, button: event.button }
-          this.setProperty({property: `map.isOverEvent`, value: true})
+          if (event.button === 2) {
+            this.setProperty({property: `map.isOverEvent`, value: true})
+          }
           document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
         }.bind(this)
         // コンテキストメニュー防止
@@ -442,6 +447,7 @@ export default {
   position: absolute;
   width: 13px;
   height: 13px;
+  top: 7px;
   right: 8px;
   cursor: pointer;
   white-space: nowrap;

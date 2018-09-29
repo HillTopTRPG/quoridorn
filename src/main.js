@@ -81,8 +81,7 @@ const store = new Vuex.Store({
       addCharacterSettingWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       devLogWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       publicMemoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
-      secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      bugFormWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 }
+      secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 }
     },
     images: {
       background: [
@@ -190,7 +189,7 @@ const store = new Vuex.Store({
       store._mutations.windowOpen[0]('chatpaletteWindow')
       store._mutations.windowOpen[0]('counterRemoConWindow')
       store._mutations.windowOpen[0]('functionListWindow')
-      store._mutations.windowOpen[0]('addCharacterSettingWindow')
+      // store._mutations.windowOpen[0]('addCharacterSettingWindow')
     },
     windowActive (state, property) {
       let current = 0

@@ -3,16 +3,18 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Quoridorn - TRPGオンラインセッションツール</title>
-    <meta name="description" content="TRPGオンラインセッションツールの一種「Quoridorn（コリドーン）」です。">
+    <title>Quoridorn - 機能一覧</title>
+    <meta name="description" content="TRPGオンラインセッションツールの一種「Quoridorn（コリドーン）」の機能一覧です。">
     <meta name="author" content="@HillTop_TRPG at Twitter">
+    <script type="text/javascript" src="./jquery.js"></script>
     <style>
       html, body { margin: 0; padding: 0; }
       .contents { height: calc(100% - 5px); white-space: normal; word-break: break-all; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: text; }
       h4 { margin: 0; color: blue; display: inline; }
       ul { margin: 0; padding-left: 0px; font-size: 12px; display: block; }
       ol { padding-left: 0px; counter-reset: item; list-style-type: none; display: block; margin-top: 5px; margin-bottom: 0; margin-left: 15px; }
-      label { font-size: 12px; font-weight: bold; display: block; margin-left: 20px; }
+      label { font-size: 12px; margin-left: 20px; }
+      span { font-size: 12px; font-weight: bold; display: block; margin-left: 20px; }
       ol > li { text-indent: -1.3em; padding-left: 1.3em; }
       ol > li:not(:last-child) { margin-bottom: 20px; }
       ol > li:before { counter-increment: item; content: counter(item)'. '; color: blue; }
@@ -24,12 +26,10 @@
   <body>
     <ol class="contents">
       <li>
-        <h4>既知の不具合</h4>
-        <label></label>
+        <h4>既知の不具合</h4><label><input type="checkbox"/>改善済を表示</label>
         <ul>
-          <li>チャット欄の「ダイスボットの設定」の画像がリンク切れ</li>
-          <li>マップオブジェクトをドラッグで移動中にマウスカーソルが飛んで、マウスオーバー状態でなくなると、ずっと掴んだ状態となってオブジェクトがマウスに追従する（マウスカーソルがオブジェクトの上にまだあれば、クリックで解除可能）</li>
-          <li>マップオブジェクトをドラッグで移動中に「マスク作成」などの子画面上でドラッグ解除すると、ずっと掴んだ状態となってオブジェクトがマウスに追従する（マウスカーソルがオブジェクトの上にまだあれば、クリックで解除可能）</li>
+          <li><del>マップオブジェクトをドラッグで移動中に（マウスの接続が寸断するなどして）マウスカーソルが飛んで、マウスオーバー状態でなくなると、ずっと掴んだ状態となってオブジェクトがマウスに追従する（マウスカーソルがオブジェクトの上にまだあれば、クリックで解除可能）</del><p>2018/09/29 11:10 改善</p></li>
+          <li><del>マップオブジェクトをドラッグで移動中に「マスク作成」などの子画面上でドラッグ解除すると、ずっと掴んだ状態となってオブジェクトがマウスに追従する（マウスカーソルがオブジェクトの上にまだあれば、クリックで解除可能）</del><p>2018/09/29 11:10 改善</p></li>
           <li><del>子画面の表示順序の制御がない（常に操作した子画面を手前に表示させたい）</del><p>2018/09/28 01:00 改善</p></li>
           <li><del>チャット欄の「ダイスボットの設定」の画像がリンク切れ</del><p>2018/09/28 19:30 改善</p></li>
           <li><del>キャラクター追加画面のマップタグの画像がリンク切れ</del><p>2018/09/28 19:30 改善</p></li>
@@ -40,16 +40,16 @@
           <li><del>「開発履歴」子画面と「現時点の仕様」子画面、「不具合報告」子画面で、縦方向の移動がマウスについていけない。これによりずっと掴んだ状態になることが頻発する</del><p>2018/09/28 01:00 改善</p></li>
           <li><del>チャットを入力すると、スクロールしないで画面内部で崩れてしまう<b>←はやく直す</b></del><p>2018/09/28 16:40 改善</p></li>
           <li><del>シークレットダイスの結果も素で出力してしまう</del><p>2018/09/28 01:00 改善</p></li>
-          <li>[外部報告] 「デモ」系メニューの画面を右クリックでブラウザ本来のメニューが出てしまう（マップ回転中でも出る）</li>
+          <li>[外部報告] <del>「デモ」系メニューの画面を右クリックでブラウザ本来のメニューが出てしまう（マップ回転中でも出る）</del><p>2018/09/29 11:10 改善</p></li>
           <li>[外部報告] <del>「座標表示」と「マス目表示」のメニューの挙動が逆</del><p>2018/09/28 16:40 改善</p></li>
           <li>[外部報告] <del>キャラクター追加画面のキャンセルボタンが無反応（未実装）</del><p>2018/09/28 16:40 改善</p></li>
-          <li>[外部報告] メニューのチェックをクリックしてもチェックが外れない（機能はしてる）</li>
-          <li>タッチイベント実装中につき頻繁に移動や画面リサイズの挙動がおかしくなります！</li>
+          <li>[外部報告] <del>メニューのチェックをクリックしてもチェックが外れない（機能はしてる）</del><p>2018/09/28 19:30 改善</p></li>
+          <li>マップ回転中にマップマスク上にマウスカーソルが来た状態で右ドラッグを解除すると、右ドラッグしていないのにマップ回転中の状態のままになる（再度右クリックで解除可能）</li>
         </ul>
       </li>
       <li>
         <h4>メニュー</h4>
-        <label>[実装済みメニュー]</label>
+        <span>[実装済みメニュー]</span>
         <ul>
           <li>「表示」>「ウィンドウ」>「チャット表示」</li>
           <li>「表示」>「座標表示」</li>
@@ -64,7 +64,7 @@
       </li>
       <li>
         <h4>マップ</h4>
-        <label>[操作方法]</label>
+        <span>[操作方法]</span>
         <ul>
           <li>左クリック：何もしない</li>
           <li>左ドラッグ：マップを上下左右に移動</li>
@@ -73,7 +73,7 @@
           <li>右クリック：メニュー表示</li>
           <li>右ドラッグ：マップを回転</li>
         </ul>
-        <label>[ポイント]</label>
+        <span>[ポイント]</span>
         <ul>
           <li>右ドラッグによる回転は15度単位で調整します。</li>
           <li>「座標表示」オプション（画面上部メニュー >「表示」>「座標表示」）</li>
@@ -83,17 +83,17 @@
       </li>
       <li>
         <h4>マップマスク</h4>
-        <label>[表示方法1]</label>
+        <span>[表示方法1]</span>
         <ul>
           <li>画面上部メニュー >「マップ」>「マップマスク追加」</li>
           <li>マスク情報を入力して、右側に表示されているマスクをマップにドロップイン</li>
         </ul>
-        <label>[表示方法2]</label>
+        <span>[表示方法2]</span>
         <ul>
           <li>マップ右クリック >「マップマスク追加」</li>
           <li>マスク情報を入力して、右側に表示されているマスクをマップにドロップイン</li>
         </ul>
-        <label>[ポイント]</label>
+        <span>[ポイント]</span>
         <ul>
           <li>マップ上のマスクはドラッグで移動可能</li>
           <li>マップマスクは回転しない</li>
@@ -101,17 +101,17 @@
       </li>
       <li>
         <h4>チャット</h4>
-        <label>[表示方法]</label>
+        <span>[表示方法]</span>
         <ul>
           <li>（消してしまったら…）</li>
           <li>画面上部メニュー >「表示」>「ウィンドウ」>「チャット表示」</li>
         </ul>
-        <label>[できること]</label>
+        <span>[できること]</span>
         <ul>
           <li><b>ダイスボットが使えます(重要)</b></li>
           <li>タブの切り替えが可能（タブの追加はまだ）</li>
         </ul>
-        <label>[実装予定]</label>
+        <span>[実装予定]</span>
         <ul>
           <li>タブ追加機能</li>
           <li>ダイスボット表追加・管理機能</li>
@@ -129,5 +129,18 @@
         </ul>
       </li>
     </ol>
+    <script>
+      $(function() {
+        $('.contents li:first-child del').parent().hide()
+        $('.contents input[type="checkbox"]').change(function(event) {
+          console.log('changed', $(event.target).prop('checked'))
+          if($(event.target).prop('checked')) {
+            $('.contents li:first-child del').parent().show()
+          } else {
+            $('.contents li:first-child del').parent().hide()
+          }
+        })
+      })
+    </script>
   </body>
 </html>

@@ -14,7 +14,6 @@
     <DevLogWindow/>
     <FunctionListWindow/>
     <PublicMemoWindow/>
-    <BugFormWindow/>
     <AddCharacterSettingWindow/>
     <AddCharacterWindow/>
   </div>
@@ -33,7 +32,6 @@ import GameTableContext from './components/map/GameTableContext'
 import DevLogWindow from './components/simple/DevLogWindow'
 import FunctionListWindow from './components/simple/FunctionListWindow'
 import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
-import BugFormWindow from './components/simple/BugFormWindow'
 import AddCharacterSettingWindow from './components/map/character/AddCharacterSettingWindow'
 import AddCharacterWindow from './components/map/character/AddCharacterWindow'
 
@@ -51,7 +49,6 @@ export default {
     DevLogWindow: DevLogWindow,
     FunctionListWindow: FunctionListWindow,
     PublicMemoWindow: PublicMemoWindow,
-    BugFormWindow: BugFormWindow,
     AddCharacterSettingWindow: AddCharacterSettingWindow,
     AddCharacterWindow: AddCharacterWindow
   },
