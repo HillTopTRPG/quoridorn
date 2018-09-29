@@ -54,7 +54,7 @@
     <div class="hoverMenu hoverMenu5" v-show="menu['マップ']" @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')">
       <div class="item" @click="clickChangeMap">マップ変更</div>
       <div class="item" @click="clickFloorTileMode">フロアタイル変更モード</div>
-      <div class="item" @click="changeBooleanAndClose('addMapMaskWindow')">マップマスク追加</div>
+      <div class="item" @click="clickAddMapMask">マップマスク追加</div>
       <div class="item" @click="clickCreateEasyMap">簡易マップ作成</div>
       <hr>
       <div class="item" @click="clickSaveMap">マップ状態保存</div>
@@ -119,16 +119,10 @@ export default {
   methods: {
     ...mapMutations([
       'windowOpen',
+      'changeDisplay',
       'setProperty',
       'doResetWindowLocate'
     ]),
-    changeBooleanAndClose: function (target) {
-      console.log(`  [methods] change boolean by menu => ${target}`)
-      for (let m in this.menu) {
-        this.menu[m] = false
-      }
-      this.windowOpen(target)
-    },
     menuHover: function (flg, ...targets) {
       for (let target of targets) {
         this.menu[target] = flg
@@ -149,6 +143,7 @@ export default {
     clickWaitingRoom: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '待合室'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'コマ') },
     clickChangeMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マップ変更'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
     clickFloorTileMode: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'フロアタイルモード'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickAddMapMask: function (target) { this.windowOpen('addMapMaskWindow'); this.menuHover(false, 'マップ') },
     clickCreateEasyMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '簡易マップ'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
     clickSaveMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マップ保存'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
     clickSwitchMap: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'マップ切り替え'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'マップ') },
@@ -187,7 +182,7 @@ export default {
   border-bottom: solid gray 1px;
   padding: 0px 10px;
   font-size: 16px;
-  z-index: 100;
+  z-index: 10100;
 }
 #menu > * {
   margin: 5px;

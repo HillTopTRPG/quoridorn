@@ -58,8 +58,7 @@ export default {
       size: 1,
       isHide: false,
       url: '',
-      text: '',
-      selectedTagIndexText: '0/0'
+      text: ''
     }
   },
   methods: {
@@ -82,8 +81,6 @@ export default {
         }
       } while (isFind)
 
-      console.log(`addSwitch(${nextKey})`)
-
       this.switchImageList.push({
         key: nextKey,
         imgKey: 1
@@ -96,7 +93,7 @@ export default {
     getKeyObj: function (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.error(`key:"${key}" is not find.`)
+        console.log(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
@@ -158,13 +155,18 @@ export default {
       this.isHide = false
       this.url = ''
       this.text = ''
-      this.selectedTagIndexText = '0/0'
     }
   },
   computed: {
     ...mapGetters([
       'parseColor'
     ]),
+    selectedTagIndexText: function () {
+      const imageList = this.imageList
+      const keyObj = this.getKeyObj(imageList, this.currentImageKey)
+      const index = keyObj ? imageList.indexOf(keyObj) + 1 : 0
+      return `${index}/${imageList.length}`
+    },
     isCanSwitchDelete: function () {
       return this.switchImageList.length > 1
     },
@@ -226,7 +228,7 @@ export default {
 .tagImages img {
   width: 50px;
   height: 50px;
-  box-sizing: border-box;
+  border: solid rgba(0, 0, 0, 0) 1px;
 }
 .tagImages img.active {
   border:solid blue 1px;
@@ -242,14 +244,14 @@ export default {
 .imageInfo > button { margin-left: 10px; }
 .switchImageArea { grid-area: switchImageArea; display: flex; }
 .switchImageArea .switchImage { display: inline-block; flex: 1; height: 50px; }
-.switchImageArea .switchImage img { width: 50px; height: 50px; box-sizing: border-box; }
+.switchImageArea .switchImage img { width: 50px; height: 50px; border: solid rgba(0, 0, 0, 0) 1px; }
 .switchImageArea .switchImage img.active { border:solid blue 1px; }
 .switchImageArea button:not(.switchButton) { height: 50px; display: inline-block; margin-left: 10px; }
 .initiativeTable { grid-area: initiativeTable; }
 .nameArea { grid-area: nameArea; }
 .viewImage { grid-area: viewImage; }
-.otherTextLabel { display: inline-block; grid-area: otherTextLabel; vertical-align: bottom; }
-.otherTextLabel span { display: inline; vertical-align: bottom; }
+.otherTextLabel { display: flex; grid-area: otherTextLabel; vertical-align: bottom; }
+.otherTextLabel span { display: inline; vertical-align: bottom; flex: 1; }
 .pieceOptions { grid-area: pieceOptions; }
 .pieceOptions input[type=number] { width: 35px; }
 .pieceOptions span { display: inline-block; vertical-align: middle; margin-right: 10px; }

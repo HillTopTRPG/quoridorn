@@ -5,7 +5,7 @@
         <tr>
           <th>文字：</th>
           <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" draggable="true" :style="mapMaskStyle" @dragstart="dragStart">{{name}}</div></td>
+          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" draggable="true" :style="mapMaskStyle" @dragstart="dragStart" @mousedown.stop="windowActive('addMapMaskWindow')">{{name}}</div></td>
         </tr>
         <tr>
           <th>色：</th>
@@ -51,7 +51,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([]),
+    ...mapMutations(['windowActive']),
     dragStart: function (event) {
       event.dataTransfer.setData('kind', 'mapMask')
       event.dataTransfer.setData('name', this.name)

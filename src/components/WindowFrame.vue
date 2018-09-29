@@ -1,19 +1,36 @@
 
 <template>
-  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown.stop @mouseup.stop @mousedown="windowActive(displayProperty)">
-    <div class="_contents" @wheel.stop>
+  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown="windowActive(displayProperty)" @touchstart="windowActive(displayProperty)" @mouseup="mouseup" @touchend="mouseup" @touchcancel="mouseup">
+    <div class="_contents" @wheel.stop @contextmenu.prevent>
       <slot></slot>
     </div>
-    <div class="title" :class="{fix : isFix}" @mousedown.left.prevent="move(true)" @mouseup.left.prevent="move(false)">{{titleText}}</div>
-    <div class="corner-left-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-top', true)" @mouseup.left.prevent="resize('corner-left-top', false)"></div>
-    <div class="corner-left-bottom" v-if="!isFix" @mousedown.left.prevent="resize('corner-left-bottom', true)" @mouseup.left.prevent="resize('corner-left-bottom', false)"></div>
-    <div class="corner-right-top" v-if="!isFix" @mousedown.left.prevent="resize('corner-right-top', true)" @mouseup.left.prevent="resize('corner-right-top', false)"></div>
-    <div class="corner-right-bottom" v-if="!isFix" @mousedown.left.prevent="resize('corner-right-bottom', true)" @mouseup.left.prevent="resize('corner-right-bottom', false)"></div>
-    <div class="side-top" v-if="!isFix" @mouseup.left.prevent="resize('side-top', false)" @mousedown.left.prevent="resize('side-top', true)"></div>
-    <div class="side-left" v-if="!isFix" @mousedown.left.prevent="resize('side-left', true)" @mouseup.left.prevent="resize('side-left', false)"></div>
-    <div class="side-right" v-if="!isFix" @mousedown.left.prevent="resize('side-right', true)" @mouseup.left.prevent="resize('side-right', false)"></div>
-    <div class="side-bottom" v-if="!isFix" @mousedown.left.prevent="resize('side-bottom', true)" @mouseup.left.prevent="resize('side-bottom', false)"></div>
-    <img class="close" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow">
+    <div class="title" :class="{fix : isFix}"
+      @mousedown.left.prevent="(e) => move(e, true)" @mouseup.left.prevent="(e) => move(e, false)"
+      @touchstart.prevent="(e) => move(e, true, true)" @touchend.prevent="(e) => move(e, false, true)" @touchcancel.prevent="(e) => move(e, false, true)"><span>{{titleText}}</span><img class="close" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow"/></div>
+    <div class="corner-left-top" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-left-top', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-left-top', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-left-top', true, true)" @touchend.prevent="(e) => resize(e, 'corner-left-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-left-top', false, true)"></div>
+    <div class="corner-left-bottom" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-left-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-left-bottom', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-left-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'corner-left-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-left-bottom', false, true)"></div>
+    <div class="corner-right-top" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-right-top', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-right-top', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-right-top', true, true)" @touchend.prevent="(e) => resize(e, 'corner-right-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-right-top', false, true)"></div>
+    <div class="corner-right-bottom" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'corner-right-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-right-bottom', false)"
+      @touchstart.prevent="(e) => resize(e, 'corner-right-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'corner-right-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-right-bottom', false, true)"></div>
+    <div class="side-top" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-top', true)" @mouseup.left.prevent="(e) => resize(e, 'side-top', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-top', true, true)" @touchend.prevent="(e) => resize(e, 'side-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-top', false, true)"></div>
+    <div class="side-left" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-left', true)" @mouseup.left.prevent="(e) => resize(e, 'side-left', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-left', true, true)" @touchend.prevent="(e) => resize(e, 'side-left', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-left', false, true)"></div>
+    <div class="side-right" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-right', true)" @mouseup.left.prevent="(e) => resize(e, 'side-right', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-right', true, true)" @touchend.prevent="(e) => resize(e, 'side-right', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-right', false, true)"></div>
+    <div class="side-bottom" v-if="!isFix"
+      @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
+      @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
   </div>
 </template>
 
@@ -51,13 +68,15 @@ export default {
     }
   },
   mounted: function () {
-    document.body.addEventListener('mousemove', function (e) {
-      this.mouse.x = e.pageX
-      this.mouse.y = e.pageY
-      this.reflesh(e.pageX, e.pageY)
+    document.addEventListener('mousemove', function (event) {
+      this.mouse.x = event.pageX
+      this.mouse.y = event.pageY
+      this.reflesh()
     }.bind(this))
-    document.body.addEventListener('mouseup', function (e) {
-      this.resize(null, false)
+    document.addEventListener('touchmove', function (event) {
+      this.mouse.x = event.changedTouches[0].pageX
+      this.mouse.y = event.changedTouches[0].pageY
+      this.reflesh()
     }.bind(this))
     this.addEventForIFrame()
   },
@@ -71,10 +90,15 @@ export default {
       console.log(`  [methods] closeWindow(click [x]button)`)
       this.windowClose(this.displayProperty)
     },
-    resize: function (direct, flg) {
+    mouseup: function (event) {
+      const evtObj = { clientX: event.pageX, clientY: event.pageY, button: event.button }
+      this.setProperty({property: `map.isOverEvent`, value: true})
+      document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
+    },
+    resize: function (event, direct, flg, isTouch) {
       if (flg) {
-        this.mouse.saveX = this.mouse.x
-        this.mouse.saveY = this.mouse.y
+        this.mouse.saveX = isTouch ? event.changedTouches[0].pageX : event.pageX
+        this.mouse.saveY = isTouch ? event.changedTouches[0].pageY : event.pageY
       } else {
         const moveMode = this.moveMode
         const winFac = this.windowFactor
@@ -97,11 +121,15 @@ export default {
         }
         winFac.draggingX = 0
         winFac.draggingY = 0
+        console.log(`$$$$$  resize`)
+        this.mouseup(event)
       }
       // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
       this.moveMode = (flg ? direct : '')
     },
-    reflesh: function (x, y) {
+    reflesh: function () {
+      const x = this.mouse.x
+      const y = this.mouse.y
       const moveX = x - this.mouse.saveX
       const moveY = y - this.mouse.saveY
       switch (this.moveMode) {
@@ -126,10 +154,10 @@ export default {
       }
       // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     },
-    move: function (flg) {
+    move: function (event, flg, isTouch) {
       if (flg) {
-        this.mouse.saveX = this.mouse.x
-        this.mouse.saveY = this.mouse.y
+        this.mouse.saveX = isTouch ? event.changedTouches[0].pageX : event.pageX
+        this.mouse.saveY = isTouch ? event.changedTouches[0].pageY : event.pageY
       } else {
         this.windowFactor.r -= this.windowFactor.draggingX
         this.windowFactor.t += this.windowFactor.draggingY
@@ -137,47 +165,69 @@ export default {
         this.windowFactor.b -= this.windowFactor.draggingY
         this.windowFactor.draggingX = 0
         this.windowFactor.draggingY = 0
+        console.log(`$$$$$  move`)
+        this.mouseup(event)
       }
       this.moveMode = flg ? 'move' : ''
     },
     addEventForIFrame: function () {
       const elms = document.getElementsByTagName('iframe')
-      for (let i = 0; i < elms.length; i++) {
-        const iframeElm = elms[i]
+      for (const iframeElm of elms) {
+        // マウス移動
+        const mouseMoveListener = function (event) {
+          const iframeRect = iframeElm.getBoundingClientRect()
+          const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top }
+          document.dispatchEvent(new MouseEvent('mousemove', evtObj))
+        }
+        // タッチ移動
+        const touchMoveListener = function (event) {
+          const iframeRect = iframeElm.getBoundingClientRect()
+          const evtObj = { changedTouches: [{ clientX: event.changedTouches[0].pageX + iframeRect.left, clientY: event.changedTouches[0].pageY + iframeRect.top }] }
+          document.dispatchEvent(new MouseEvent('touchmove', evtObj))
+        }
+        // クリック
+        const clickListener = function (event) {
+          const iframeRect = iframeElm.getBoundingClientRect()
+          const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top, button: event.button }
+          document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('click', evtObj))
+        }
+        // マウス離す
+        const mouseupListener = function (event) {
+          const iframeRect = iframeElm.getBoundingClientRect()
+          const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top, button: event.button }
+          this.setProperty({property: `map.isOverEvent`, value: true})
+          document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
+        }.bind(this)
+        // コンテキストメニュー防止
+        const contextmenuListener = function (event) {
+          return false
+        }
         if (!iframeElm.onload) {
           iframeElm.onload = function () {
-            const bodyElm = elms[i].contentDocument.body
-            if (!bodyElm.onmousemove) {
-              bodyElm.onmousemove = function (event) {
-                const iframeRect = iframeElm.getBoundingClientRect()
-                const address = {
-                  clientX: event.pageX + iframeRect.left,
-                  clientY: event.pageY + iframeRect.top
-                }
-                let evt = new MouseEvent('mousemove', address)
-                document.body.dispatchEvent(evt)
-              }
+            console.log(iframeElm)
+            const bodyElm = iframeElm.contentWindow.document
+            if (!bodyElm.onmousemove) { bodyElm.onmousemove = mouseMoveListener }
+            if (!bodyElm.ontouchmove) { bodyElm.ontouchmove = touchMoveListener }
+            if (!bodyElm.onmouseup) { bodyElm.onmouseup = mouseupListener }
+            if (!bodyElm.oncontextmenu) { bodyElm.oncontextmenu = contextmenuListener }
+            if (!bodyElm.onclick) { bodyElm.onclick = clickListener }
+            /*
+            const aElms = bodyElm.getElementsByTagName('a')
+            for (const aElm of aElms) {
+              if (!aElm.onmousemove) { aElm.onmousemove = mouseMoveListener }
+              if (!aElm.ontouchmove) { aElm.ontouchmove = touchMoveListener }
+              if (!aElm.oncontextmenu) { aElm.oncontextmenu = contextmenuListener }
+              if (!aElm.onclick) { aElm.onclick = clickListener }
             }
-            if (!bodyElm.onclick) {
-              bodyElm.onclick = function (event) {
-                let evt = document.createEvent('HTMLEvents')
-                evt.initEvent('mousedown', true, true) // event type, bubbling, cancelable
-                iframeElm.dispatchEvent(evt)
-              }
-            }
+            */
           }
         }
-        if (!iframeElm.onmousemove) {
-          iframeElm.onmousemove = function (event) {
-            const iframeRect = iframeElm.getBoundingClientRect()
-            const address = {
-              clientX: event.pageX + iframeRect.left,
-              clientY: event.pageY + iframeRect.top
-            }
-            let evt = new MouseEvent('mousemove', address)
-            document.body.dispatchEvent(evt)
-          }
-        }
+        /*
+        */
+        if (!iframeElm.onmousemove) { iframeElm.onmousemove = mouseMoveListener }
+        if (!iframeElm.ontouchmove) { iframeElm.ontouchmove = touchMoveListener }
+        if (!iframeElm.onmouseup) { iframeElm.onmouseup = mouseupListener }
+        if (!iframeElm.onclick) { iframeElm.onclick = clickListener }
       }
     }
   },
@@ -338,7 +388,7 @@ export default {
 .window {
   position: fixed;
   display: block;
-  padding: 22px 8px 8px 8px;
+  padding: 29px 8px 8px 8px;
   overflow: visible;
   min-height: 50px;
   border-radius: 8px 8px 0 0;
@@ -365,9 +415,11 @@ export default {
 
 .title {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: calc(100% - 4px);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 25px;
+  border-radius: 8px 8px 0 0;
   border-bottom: solid rgba(0, 0, 0, 0.2) 1px;
   cursor: move;
   font-size: 10px;
@@ -376,9 +428,26 @@ export default {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+  display: flex; align-items: center; justify-content: center;
 }
 .title.fix {
   background: linear-gradient(rgba(170, 233, 203, 1), rgba(142, 226, 186, 1));
+}
+.title span {
+  position: absolute;
+  left: 5px;
+}
+
+.close {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  right: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
 .side-left,
@@ -428,19 +497,6 @@ export default {
 .corner-left-bottom { cursor: sw-resize; }
 .corner-right-top { cursor: ne-resize; border-radius: 0 8px 0 0; }
 .corner-right-bottom { cursor: se-resize; }
-
-.close {
-  position: absolute;
-  width: 13px;
-  height: 13px;
-  top: 2px;
-  right: 8px;
-  cursor: pointer;
-  white-space: nowrap;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-}
 /*
 input, button, textarea, select {
   background-color: rgba(50, 50, 50, .2)

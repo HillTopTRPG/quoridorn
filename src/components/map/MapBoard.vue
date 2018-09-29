@@ -21,8 +21,6 @@ export default {
       const ctx = document.getElementById('map-canvas').getContext('2d')
       // console.log('paint')
 
-      /*
-       */
       var img = new Image()
       img.src = this.getBackgroundImage
       img.onload = function () {
@@ -31,6 +29,7 @@ export default {
         ctx.globalAlpha = 1
         ctx.drawImage(img, 0, 0, this.canvasSize.w, this.canvasSize.h)
 
+        // マス目の描画
         if (this.isDrawGridLine) {
           ctx.strokeStyle = this.gridColor
           ctx.globalAlpha = 1
@@ -51,9 +50,9 @@ export default {
           ctx.stroke()
         }
 
+        // 中心点の描画
         ctx.strokeStyle = 'red'
         ctx.globalAlpha = 1
-        // 中心点
         const center = {
           x: this.canvasSize.w / 2,
           y: this.canvasSize.h / 2
@@ -64,7 +63,7 @@ export default {
         this.drawLine(ctx, center.x, center.y - 5, 0, 10)
 
         /*
-        // マウス座標
+        // マウス座標の描画
         const mouseMark = {
           x: this.mouseOnCanvas.x - 10,
           y: this.mouseOnCanvas.y - 10
@@ -74,7 +73,7 @@ export default {
         // console.log(this.mouseOnCanvas)
         */
 
-        // console.log(`isDrawGridId:${this.isDrawGridId}`)
+        // マス座標の描画
         if (this.isDrawGridId) {
           ctx.fillStyle = this.gridColor
           ctx.globalAlpha = 1
@@ -90,8 +89,6 @@ export default {
             }
           }
         }
-      /*
-      */
       }.bind(this)
     },
     drawLine: function (ctx, x, y, width, height) {

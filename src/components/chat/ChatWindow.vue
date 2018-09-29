@@ -2,7 +2,7 @@
   <WindowFrame titleText="チャット" display-property="chatWindow" align="left-bottom" baseSize="-300, 240">
     <div class="container">
       <div class="tabs">
-        <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @mousedown.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/0</span><!--
+        <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @click.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/0</span><!--
       --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">＋</span>
       </div>
       <ul id="chatLog" @wheel.stop>

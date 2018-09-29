@@ -7,9 +7,10 @@
     @contextmenu.prevent
     :style="gameTableStyle">
 
-    <div class="mapBoardFrame"
+    <div id="mapBoardFrame"
       @mousedown.left.prevent="leftDown" @mouseup.left.prevent="leftUp"
-      @mousedown.right.prevent="rightDown" @mouseup.right.prevent="rightUp">
+      @mousedown.right.prevent="rightDown" @mouseup.right.prevent="rightUp"
+      @touchstart.prevent="leftDown" @touchend.prevent="leftUp" @touchcancel.prevent="leftUp">
       <MapBoard/>
     </div>
 
@@ -36,13 +37,9 @@ export default {
     MapMask: MapMask,
     Character: Character
   },
-  data () {
-    return {
-    }
-  },
   mounted: function () {
-    document.body.addEventListener('mousemove', this.mouseMove)
-    document.body.addEventListener('drag', this.mouseMove)
+    document.addEventListener('mousemove', this.mouseMove)
+    document.addEventListener('touchmove', this.touchMove)
   },
   methods: {
     ...mapMutations([
@@ -86,28 +83,33 @@ export default {
       const isDraggingRight = this.isDraggingRight
       this.setProperty({property: 'map.isMouseDownRight', value: false})
       if (isDraggingRight) {
-        this.setProperty({property: 'map.angle.total', value: this.angle.total + Math.round(this.angle.dragging / 15) * 15})
+        this.setProperty({property: 'map.angle.total', value: this.arrangeAngle(this.angle.total + Math.round(this.angle.dragging / 15) * 15)})
         this.setProperty({property: 'map.angle.dragging', value: 0})
         this.setProperty({property: 'map.isDraggingRight', value: false})
       }
       let pageX = event.pageX
       let pageY = event.pageY
 
-      console.log(`  [methods] open context => gameTableContext`)
-      this.setProperty({property: `display.gameTableContext.x`, value: pageX})
-      this.setProperty({property: `display.gameTableContext.y`, value: pageY})
-      this.windowOpen(`gameTableContext`)
+      if (!this.isOverEvent) {
+        this.setProperty({property: `display.gameTableContext.x`, value: pageX})
+        this.setProperty({property: `display.gameTableContext.y`, value: pageY})
+        this.windowOpen(`gameTableContext`)
+        console.log(`  [methods] open context => gameTableContext`)
+      } else {
+        this.setProperty({property: `map.isOverEvent`, value: false})
+      }
     },
     mouseMove: function (event) {
-      // console.log('$$$$$$$$$  mouseMove', event)
-      // const f = this.f
-
-      if (this.isMouseDownRight) {
+      this.setMouseLocateOnPage(event.pageX, event.pageY)
+    },
+    touchMove: function (event) {
+      this.setMouseLocateOnPage(event.changedTouches[0].pageX, event.changedTouches[0].pageY)
+    },
+    setMouseLocateOnPage: function (pageX, pageY) {
+      if (this.isMouseDownRight && !this.isDraggingRight) {
         this.setProperty({property: 'map.isDraggingRight', value: true})
       }
 
-      let pageX = event.pageX
-      let pageY = event.pageY
       this.setProperty({property: 'mouse.x', value: pageX, logOff: true})
       this.setProperty({property: 'mouse.y', value: pageY, logOff: true})
 
@@ -198,7 +200,7 @@ export default {
         if (this.isDraggingRight) {
           const angle = this.calcCoordinate(mouseLocate.x, mouseLocate.y, this.currentAngle).angle
           let angleDiff = this.arrangeAngle(angle - this.angle.dragStart)
-          this.setProperty({property: 'map.angle.dragging', value: angleDiff})
+          this.setProperty({property: 'map.angle.dragging', value: angleDiff, logOff: true})
         }
       },
       deep: true
@@ -214,6 +216,10 @@ export default {
     },
     isMouseDownRight: function () {
       return this.$store.state.map.isMouseDownRight
+    },
+    isOverEvent: function () {
+      console.log(`isOverEvent:${this.$store.state.map.isOverEvent}`)
+      return this.$store.state.map.isOverEvent
     },
     isDraggingRight: function () {
       return this.$store.state.map.isDraggingRight
@@ -286,7 +292,7 @@ export default {
             rgba(255, 255, 255, .1) 81%, rgba(255, 255, 255, .1) 82%, transparent 83%, transparent);
   background-size:48px 48px;
 }
-.mapBoardFrame {
+#mapBoardFrame {
   position: fixed;
   left: 0;
   top: 0;

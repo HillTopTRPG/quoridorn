@@ -1,7 +1,7 @@
 <template>
   <WindowFrame titleText="共有メモ" display-property="publicMemoWindow" align="center" baseSize="300, 240" @open="open">
     <div class="tabs">
-      <span class="tab" v-for="(textObj, index) in texts" :key="index" @mousedown.prevent="selectTab(textObj.tab)">{{textObj.tab}}</span><!--
+      <span class="tab" v-for="(textObj, index) in texts" :key="index" @click.prevent="selectTab(textObj.tab)">{{textObj.tab}}</span><!--
     --><span class="tab addButton" @click="addTab">＋</span>
     </div>
     <div class="sendLine">

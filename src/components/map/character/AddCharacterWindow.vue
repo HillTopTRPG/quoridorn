@@ -17,6 +17,7 @@
         <button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</button>
       </div>
       <div class="initiativeTable">
+        <!-- TODO イニシアティブ表画面を作ったら実装 -->
       </div>
       <div class="nameArea"><label>名前：</label><input type="text" class="name" placeholder="必ず入力してください" v-model="name"/></div>
       <div class="pieceOptions">
@@ -58,8 +59,7 @@ export default {
       size: 1,
       isHide: false,
       url: '',
-      text: '',
-      selectedTagIndexText: '0/0'
+      text: ''
     }
   },
   methods: {
@@ -158,13 +158,18 @@ export default {
       this.isHide = false
       this.url = ''
       this.text = ''
-      this.selectedTagIndexText = '0/0'
     }
   },
   computed: {
     ...mapGetters([
       'parseColor'
     ]),
+    selectedTagIndexText: function () {
+      const imageList = this.imageList
+      const keyObj = this.getKeyObj(imageList, this.currentImageKey)
+      const index = keyObj ? imageList.indexOf(keyObj) + 1 : 0
+      return `${index}/${imageList.length}`
+    },
     isCanSwitchDelete: function () {
       return this.switchImageList.length > 1
     },

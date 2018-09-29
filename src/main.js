@@ -20,6 +20,10 @@ Vue.config.productionTip = false
 
 Vue.directive('img', function (el, binding, compornent) {
   const imgData = binding.value
+  if (imgData === '') {
+    el.src = ''
+    return
+  }
   var img = new Image()
   img.src = imgData
 
@@ -125,6 +129,7 @@ const store = new Vuex.Store({
       isDraggingLeft: false,
       isMouseDownRight: false,
       isDraggingRight: false,
+      isOverEvent: false,
       move: {
         from: { x: 0, y: 0 },
         total: { x: 0, y: 0 },
@@ -267,7 +272,7 @@ const store = new Vuex.Store({
 
       propProc(target, props, value, isLogOff)
       if (!isLogOff) {
-        console.log(`${propStr} = ${value}`)
+        console.log(`# ${propStr} = ${value}`)
       }
     },
     /**

@@ -5,6 +5,7 @@
     @click.right.prevent="(e) => openContext(e, 'mapMaskContext')"
     @mousedown.left="leftDown" @mouseup.left="leftUp"
     @mousedown.right="rightDown" @mouseup.right="rightUp"
+    @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
     @contextmenu.prevent>
     {{storeObj.name}}<br>({{storeObj.key}})
   </div>

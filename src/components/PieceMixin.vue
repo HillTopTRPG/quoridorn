@@ -54,7 +54,12 @@ export default {
       this.setProperty({property: `map.${this.type}.${this.storeIndex}.isDraggingLeft`, value: false})
     },
     rightDown: function () { if (this.storeObj.isLock) { this.$emit('rightDown') } },
-    rightUp: function () { if (this.storeObj.isLock) { this.$emit('rightUp') } },
+    rightUp: function () {
+      this.setProperty({property: `map.isOverEvent`, value: true})
+      if (this.storeObj.isLock) {
+        this.$emit('rightUp')
+      }
+    },
     openContext: function (event, contextProperty) {
       let pageX = event.pageX
       let pageY = event.pageY

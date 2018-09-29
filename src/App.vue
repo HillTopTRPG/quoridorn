@@ -4,10 +4,10 @@
     <img src="./assets/logo.png">
     -->
     <GameTable ref="gameTable"/>
-    <ChatWindow title="ChatWindow"/>
+    <ChatWindow/>
     <Menu/>
-    <AddMapMaskWindow title="AddMapMaskWindow"/>
-    <EditMapMaskWindow title="EditMapMaskWindow"/>
+    <AddMapMaskWindow/>
+    <EditMapMaskWindow/>
     <MapMaskContext/>
     <UnSupportWindo/>
     <GameTableContext/>
