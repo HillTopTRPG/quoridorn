@@ -1,13 +1,14 @@
 <template>
   <div class="mapMask"
-    :class="[storeObj.isLock ? 'isLock' : 'isUnLock']"
+    :class="[storeObj.isLock ? 'isLock' : 'isUnLock', isHover ? 'hover' : '']"
     :style="mapMaskStyle"
+    @mouseover="mouseover" @mouseout="mouseout"
     @click.right.prevent="(e) => openContext(e, 'mapMaskContext')"
-    @mousedown.left="leftDown" @mouseup.left="leftUp"
-    @mousedown.right="rightDown" @mouseup.right="rightUp"
-    @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
+    @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
+    @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
+    @touchstart.stop="leftDown" @touchend.stop="leftUp" @touchcancel.stop="leftUp"
     @contextmenu.prevent>
-    {{storeObj.name}}<br>({{storeObj.key}})
+    {{storeObj.name}}
   </div>
 </template>
 
@@ -23,7 +24,13 @@ export default {
       'parseColor'
     ]),
     mapMaskStyle: function () {
-      let obj = this.style
+      let obj = {}
+      const baseStyle = this.style
+      for (let key in baseStyle) {
+        obj[key] = baseStyle[key]
+      }
+      const translate = this.isHover ? -2 : 0
+      obj.transform = obj.transform.replace(/ translate[XY]\([^)]+\)/g, '') + ` translateX(${translate}px) translateY(${translate}px)`
       let colorObj = this.parseColor(this.storeObj.color)
       if (this.storeObj.isDraggingLeft) {
         const plus = 1.5
@@ -63,11 +70,10 @@ export default {
   font-size: 12px;
   cursor: crosshair;
 }
-.mapMask:hover {
+.mapMask.hover {
   border-width: 2px;
   z-index: 1000;
-  transform: translate(-2px, -2px);
 }
-.mapMask.isLock:hover { border-color: blue; }
-.mapMask.isUnLock:hover { border-color: yellow; }
+.mapMask.isLock.hover { border-color: blue; }
+.mapMask.isUnLock.hover { border-color: yellow; }
 </style>

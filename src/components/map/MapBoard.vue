@@ -1,6 +1,7 @@
 <template>
   <canvas
     id="map-canvas"
+    class="anime"
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
@@ -26,8 +27,8 @@ export default {
       img.onload = function () {
         ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
 
-        ctx.globalAlpha = 1
-        ctx.drawImage(img, 0, 0, this.canvasSize.w, this.canvasSize.h)
+        // ctx.globalAlpha = 1
+        // ctx.drawImage(img, 0, 0, this.canvasSize.w, this.canvasSize.h)
 
         // マス目の描画
         if (this.isDrawGridLine) {

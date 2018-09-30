@@ -16,6 +16,7 @@
     <PublicMemoWindow/>
     <AddCharacterSettingWindow/>
     <AddCharacterWindow/>
+    <CharacterContext/>
   </div>
 </template>
 
@@ -34,6 +35,7 @@ import FunctionListWindow from './components/simple/FunctionListWindow'
 import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
 import AddCharacterSettingWindow from './components/map/character/AddCharacterSettingWindow'
 import AddCharacterWindow from './components/map/character/AddCharacterWindow'
+import CharacterContext from './components/map/character/CharacterContext'
 
 export default {
   name: 'App',
@@ -50,7 +52,8 @@ export default {
     FunctionListWindow: FunctionListWindow,
     PublicMemoWindow: PublicMemoWindow,
     AddCharacterSettingWindow: AddCharacterSettingWindow,
-    AddCharacterWindow: AddCharacterWindow
+    AddCharacterWindow: AddCharacterWindow,
+    CharacterContext: CharacterContext
   },
   mounted: function () {
     this.onMount()
@@ -76,12 +79,11 @@ html, body {
   overflow: hidden;
 }
 
-img { opacity: 0; }
-canvas { opacity: 0; }
-img.loaded,
-canvas.loaded {
-  opacity: 0;
-}
+/* サイズ調整（コンテンツを比率を変えずに内側にフィット） */
+img { object-fit: contain; }
+div.img { opacity: 0; background-size: contain; background-repeat: no-repeat; background-position: center; }
+
+.anime { opacity: 0; }
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

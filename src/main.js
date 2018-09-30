@@ -5,14 +5,16 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
 import defaultImage from './assets/background-default.jpg'
-import charBlue from './assets/char-blue.png'
-import charCyan from './assets/char-cyan.png'
-import charGray from './assets/char-gray.png'
-import charGreen from './assets/char-green.png'
-import charMagenta from './assets/char-magenta.png'
-import charRed from './assets/char-red.png'
-import charWhite from './assets/char-white.png'
-import charYellow from './assets/char-yellow.png'
+import pawnBlack from './assets/pawnBlack.png'
+import pawnBlue from './assets/pawnBlue.png'
+import pawnGreen from './assets/pawnGreen.png'
+import pawnLightBlue from './assets/pawnLightBlue.png'
+import pawnOrange from './assets/pawnOrange.png'
+import pawnPink from './assets/pawnPink.png'
+import pawnPurple from './assets/pawnPurple.png'
+import pawnRed from './assets/pawnRed.png'
+import pawnWhite from './assets/pawnWhite.png'
+import pawnYellow from './assets/pawnYellow.png'
 
 Vue.use(Vuex)
 
@@ -31,7 +33,9 @@ Vue.directive('img', function (el, binding, compornent) {
     el.src = imgData
     el.style.opacity = 1
     el.classList.add('loaded')
-    el.style.transition = 'all 0.5s ease'
+    if (el.className.indexOf('anime') >= 0) {
+      el.style.transition = 'all 0.5s ease'
+    }
   }
 })
 
@@ -41,10 +45,12 @@ Vue.directive('bg-img', function (el, binding, compornent) {
   img.src = imgData
 
   img.onload = function () {
-    el.style['background-image'] = imgData
+    el.style['background-image'] = `url(${imgData})`
     el.style.opacity = 1
     el.classList.add('loaded')
-    el.style.transition = 'all 0.5s ease'
+    if (el.className.indexOf('anime') >= 0) {
+      el.style.transition = 'all 0.5s ease'
+    }
   }
 })
 
@@ -72,16 +78,32 @@ const store = new Vuex.Store({
       resourceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       chatpaletteWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       counterRemoConWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      addCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       functionListWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       addMapMaskWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       editMapMaskWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
       mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
+      characterContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       gameTableContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0 },
-      addCharacterSettingWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       devLogWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       publicMemoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
-      secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 }
+      secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      addCharacterSettingWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      editCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      addCharacterWindow: {
+        isDisplay: false,
+        doResetPosition: false,
+        zIndex: 1,
+        name: '',
+        size: 1,
+        useImageList: '',
+        isHide: false,
+        url: '',
+        text: '',
+        useImageIndex: 0,
+        currentImageTag: '',
+        isContinuous: false,
+        continuousNum: 1
+      }
     },
     images: {
       background: [
@@ -96,14 +118,16 @@ const store = new Vuex.Store({
       ],
       data: [
         { key: 0, tag: 'マップ', data: defaultImage },
-        { key: 1, tag: 'キャラクター', data: charBlue },
-        { key: 2, tag: 'キャラクター', data: charCyan },
-        { key: 3, tag: 'キャラクター', data: charGray },
-        { key: 4, tag: 'キャラクター', data: charGreen },
-        { key: 5, tag: 'キャラクター', data: charMagenta },
-        { key: 6, tag: 'キャラクター', data: charRed },
-        { key: 7, tag: 'キャラクター', data: charWhite },
-        { key: 8, tag: 'キャラクター', data: charYellow }
+        { key: 1, tag: 'キャラクター', data: pawnBlack },
+        { key: 2, tag: 'キャラクター', data: pawnBlue },
+        { key: 3, tag: 'キャラクター', data: pawnGreen },
+        { key: 4, tag: 'キャラクター', data: pawnLightBlue },
+        { key: 5, tag: 'キャラクター', data: pawnOrange },
+        { key: 6, tag: 'キャラクター', data: pawnPink },
+        { key: 7, tag: 'キャラクター', data: pawnPurple },
+        { key: 8, tag: 'キャラクター', data: pawnRed },
+        { key: 9, tag: 'キャラクター', data: pawnWhite },
+        { key: 10, tag: 'キャラクター', data: pawnYellow }
       ]
     },
     mouse: {
@@ -118,12 +142,11 @@ const store = new Vuex.Store({
       id: '1a2b3c4d5e6f', member: []
     },
     map: {
-      grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(25, 25, 25, .4)' },
+      grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(0, 0, 0, 1)' },
       mouse: { onScreen: { x: 0, y: 0 }, onTable: { x: 0, y: 0 }, onCanvas: { x: 0, y: 0 } },
       imageIndex: 0,
       mapMasks: [],
       characters: [],
-      draggingMapMask: null,
       marginGridNum: 60,
       isDraggingLeft: false,
       isMouseDownRight: false,
@@ -138,6 +161,11 @@ const store = new Vuex.Store({
         total: 0,
         dragging: 0,
         dragStart: 0
+      },
+      rollObj: {
+        isRolling: false,
+        propName: '',
+        key: 0
       },
       wheel: 0,
       borderWidth: 60
@@ -279,7 +307,7 @@ const store = new Vuex.Store({
      * @param {object} state   state of Vuex
      * @param {object} payload payload of Vuex
      */
-    addMapMaskInfo (state, payload) {
+    addPieceInfo (state, payload) {
       const obj = {
         isDraggingLeft: false,
         move: {
@@ -304,18 +332,18 @@ const store = new Vuex.Store({
       do {
         key++
         isFind = false
-        for (let mapMaskObj of state.map.mapMasks) {
-          if (mapMaskObj.key === key) {
+        for (let pieceObj of state.map[payload.propName]) {
+          if (pieceObj.key === `${payload.kind}-${key}`) {
             isFind = true
             break
           }
         }
       } while (isFind)
-      obj.key = key
+      obj.key = `${payload.kind}-${key}`
 
-      console.log(`[mutations] add mapMask => {key:${key}, name:"${obj.name}", locate(${obj.top}, ${obj.left}), CsRs(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
+      console.log(`[mutations] add ${payload.kind} => {key:${obj.key}, name:"${obj.name}", locate(${obj.top}, ${obj.left}), CsRs(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
 
-      state.map.mapMasks.push(obj)
+      state.map[payload.propName].push(obj)
     },
     /**
      * ストアされているマップマスク情報を変更する
@@ -339,12 +367,12 @@ const store = new Vuex.Store({
     /**
      * マップマスク情報の削除
      * @param {object} state state of Vuex
-     * @param {number} key   マップマスクのキー
+     * @param {object} payload state of Vuex
      */
-    deleteMapMaskInfo (state, key) {
-      const obj = this.getters.getPieceObj('mapMasks', key)
-      const index = state.map.mapMasks.indexOf(obj)
-      state.map.mapMasks.splice(index, 1)
+    deletePieceInfo (state, payload) {
+      const obj = this.getters.getPieceObj(payload.propName, payload.key)
+      const index = state.map[payload.propName].indexOf(obj)
+      state.map[payload.propName].splice(index, 1)
     },
     /**
      * チャットのタブの構成を変更する

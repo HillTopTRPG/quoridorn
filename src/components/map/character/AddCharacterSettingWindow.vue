@@ -1,9 +1,9 @@
 <template>
   <WindowFrame titleText="キャラクター追加" display-property="addCharacterSettingWindow" align="center" fixSize="637, 402" baseSize="500, 400" @open="open">
     <div class="container">
-      <div class="viewImage"><img v-img="currentImage"/></div>
+      <div class="viewImage"><img v-img="currentImage" draggable="false"/></div>
       <div class="choseImage">
-        <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" v-img="image.data" @click="selectTagImage(image.key)"/></div>
+        <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" v-img="image.data" @click="selectTagImage(image.key)" draggable="false"/></div>
       </div>
       <div class="imageInfo">
         <div class="selectedImage"><label>タグ名：</label><select class="tagSelect" v-model="currentImageTag"><option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option></select><span>{{selectedTagIndexText}}</span></div>
@@ -12,7 +12,7 @@
       </div>
       <div class="switchImageArea">
         <button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</button>
-        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0"/></span>
+        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0" draggable="false"/></span>
         <button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</button>
         <button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</button>
       </div>
@@ -28,7 +28,7 @@
       <textarea class="otherText" v-model="text"></textarea>
       <div class="buttonArea">
         <div>
-          <button @click="commit">変更</button>
+          <button @click="commit">追加</button>
           <button @click="cancel">キャンセル</button>
         </div>
       </div>
@@ -41,7 +41,7 @@ import { mapMutations, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
 
 export default {
-  name: 'addMapMask',
+  name: 'addMapMaskSetting',
   components: {
     WindowFrame: WindowFrame
   },
@@ -51,7 +51,7 @@ export default {
       isOpenSwitch: false,
       currentImageTag: '(全て)',
       switchImageList: [
-        { key: 0, imgKey: 1 }
+        { key: 0, imgKey: 1, isReverse: false }
       ],
       switchCurrentKey: 0,
       name: '',
@@ -127,19 +127,26 @@ export default {
         alert(`名前を入力してください。`)
         return
       }
-      /*
+      let useImageList = ''
+      this.switchImageList.forEach(function (imgObj, index) {
+        const isReverseStr = imgObj.isReverse ? ':R' : ''
+        const imgStr = imgObj.imgKey + isReverseStr
+        useImageList += imgStr + '|'
+      })
+      useImageList = useImageList.substr(0, useImageList.length - 1)
       this.setProperty({property: `display.addCharacterWindow.name`, value: this.name})
       this.setProperty({property: `display.addCharacterWindow.size`, value: this.size})
-      this.setProperty({property: `display.addCharacterWindow.useImageList`, value: this.useImageList})
+      this.setProperty({property: `display.addCharacterWindow.useImageList`, value: useImageList})
       this.setProperty({property: `display.addCharacterWindow.isHide`, value: this.isHide})
       this.setProperty({property: `display.addCharacterWindow.url`, value: this.url})
       this.setProperty({property: `display.addCharacterWindow.text`, value: this.text})
-      this.setProperty({property: `display.addCharacterWindow.currentImage`, value: 'TODO'})
+      this.setProperty({property: `display.addCharacterWindow.useImageIndex`, value: 0}) // TODO
       this.setProperty({property: `display.addCharacterWindow.currentImageTag`, value: this.currentImageTag})
       this.windowOpen('addCharacterWindow')
-      */
+      /*
       this.setProperty({property: 'display.unSupportWindow.title', value: 'キャラクター置き場'}); this.windowOpen('unSupportWindow')
       this.windowClose('addCharacterSettingWindow')
+       */
     },
     cancel: function () {
       this.windowClose('addCharacterSettingWindow')
@@ -155,6 +162,7 @@ export default {
       this.isHide = false
       this.url = ''
       this.text = ''
+      this.windowClose('addCharacterWindow')
     }
   },
   computed: {
@@ -235,7 +243,7 @@ export default {
 }
 .container > * { padding: 1px 0; }
 .viewImage { grid-area: viewImage; }
-.viewImage img { display: inline-block; width: 200px; height: 200px; object-fit: fill; }
+.viewImage img { display: inline-block; width: 200px; height: 200px; }
 .choseImage { grid-area: choseImage; }
 .imageInfo { grid-area: imageInfo; display: flex; }
 .imageInfo .selectedImage { flex: 1; display: flex; }

@@ -21,7 +21,7 @@ export default {
       'windowOpen',
       'setProperty',
       'changeMapMaskInfo',
-      'deleteMapMaskInfo',
+      'deletePieceInfo',
       'windowClose'
     ]),
     viewEditMapMask: function () {
@@ -40,7 +40,10 @@ export default {
     },
     deleteMapMask: function () {
       console.log(`  [methods] select context item => MapMask(${this.objKey}).deleteMapMask`)
-      this.deleteMapMaskInfo(this.objKey)
+      this.deletePieceInfo({
+        propName: 'mapMasks',
+        key: this.objKey
+      })
       this.windowClose('mapMaskContext')
     }
   },

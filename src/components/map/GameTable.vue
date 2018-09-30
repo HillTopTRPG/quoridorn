@@ -43,9 +43,10 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'addMapMaskInfo',
+      'addPieceInfo',
       'windowOpen',
-      'setProperty'
+      'setProperty',
+      'windowClose'
     ]),
     dragging: function () {
       console.log(`★★★★ dragging ★★★★`)
@@ -59,6 +60,26 @@ export default {
       }
       this.setProperty({property: 'map.wheel', value: wheel})
     },
+    getAngle: function (mouseOnTable, storeObj) {
+      const rectObj = {
+        top: storeObj.top + storeObj.move.dragging.y,
+        left: storeObj.left + storeObj.move.dragging.x,
+        width: storeObj.columns * this.gridSize,
+        height: storeObj.rows * this.gridSize
+      }
+      const center = {
+        x: rectObj.left + rectObj.width / 2,
+        y: rectObj.top + rectObj.height / 2
+      }
+      // 中心座標を基準としたマウス座標
+      const loc = {
+        x: (mouseOnTable.x - center.x),
+        y: (mouseOnTable.y - center.y)
+      }
+      // 中心点と指定された座標とを結ぶ線の角度を求める
+      const angle = Math.atan2(loc.y, loc.x) * 180 / Math.PI
+      return angle
+    },
     leftDown: function () {
       console.log(`  [methods] mousedown left on GameTable`)
       this.setProperty({property: 'map.move.from.x', value: this.mouseLocate.x})
@@ -67,11 +88,22 @@ export default {
     },
     leftUp: function () {
       console.log(`  [methods] mouseup left on GameTable`)
-      this.setProperty({property: 'map.move.total.x', value: this.move.total.x + this.move.dragging.x})
-      this.setProperty({property: 'map.move.total.y', value: this.move.total.y + this.move.dragging.y})
-      this.setProperty({property: 'map.move.dragging.x', value: 0})
-      this.setProperty({property: 'map.move.dragging.y', value: 0})
-      this.setProperty({property: 'map.isDraggingLeft', value: false})
+      if (this.rollObj.isRolling) { // TODO
+        const pieceObj = this.$store.state.map[this.rollObj.propName].filter(obj => obj.key === this.rollObj.key)[0]
+        const storeIndex = this.$store.state.map[this.rollObj.propName].indexOf(pieceObj)
+        this.setProperty({property: `map.rollObj.isRolling`, value: false})
+        const planeAngle = this.arrangeAngle(pieceObj.angle.dragging + pieceObj.angle.total)
+        const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30)
+        // console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+        this.setProperty({property: `map.${this.rollObj.propName}.${storeIndex}.angle.total`, value: total})
+        this.setProperty({property: `map.${this.rollObj.propName}.${storeIndex}.angle.dragging`, value: 0})
+      } else {
+        this.setProperty({property: 'map.move.total.x', value: this.move.total.x + this.move.dragging.x})
+        this.setProperty({property: 'map.move.total.y', value: this.move.total.y + this.move.dragging.y})
+        this.setProperty({property: 'map.move.dragging.x', value: 0})
+        this.setProperty({property: 'map.move.dragging.y', value: 0})
+        this.setProperty({property: 'map.isDraggingLeft', value: false})
+      }
     },
     rightDown: function () {
       console.log(`  [methods] mousedown right on GameTable`)
@@ -82,6 +114,7 @@ export default {
       console.log(`  [methods] mouseup right on GameTable`)
       const isDraggingRight = this.isDraggingRight
       this.setProperty({property: 'map.isMouseDownRight', value: false})
+
       let isRoll = false
       if (isDraggingRight) {
         const nextAngle = this.arrangeAngle(this.angle.total + Math.round(this.angle.dragging / 15) * 15)
@@ -147,6 +180,12 @@ export default {
 
       console.log(`  [methods] drop on GameTable(${canvasAddress.grid.column}, ${canvasAddress.grid.row}) => ${kind}`)
 
+      const pieceObj = {
+        kind: kind,
+        left: locateOnTable.x,
+        top: locateOnTable.y
+      }
+
       // マップマスクの作成
       if (kind === 'mapMask') {
         const name = event.dataTransfer.getData('name')
@@ -155,46 +194,52 @@ export default {
         const columns = parseInt(event.dataTransfer.getData('columns'))
         const rows = parseInt(event.dataTransfer.getData('rows'))
 
-        const mapMaskObj = {
-          name: name,
-          left: locateOnTable.x,
-          top: locateOnTable.y,
-          columns: columns,
-          rows: rows,
-          color: color,
-          fontColor: fontColor
-        }
+        // 必須項目
+        pieceObj.propName = 'mapMasks'
+        pieceObj.columns = columns
+        pieceObj.rows = rows
+        // 個別部
+        pieceObj.name = name
+        pieceObj.color = color
+        pieceObj.fontColor = fontColor
 
-        this.addMapMaskInfo(mapMaskObj)
+        this.addPieceInfo(pieceObj)
       }
 
       // キャラクターの作成
       if (kind === 'character') {
         const name = event.dataTransfer.getData('name')
-        const imgDataListStr = event.dataTransfer.getData('imgDataList')
-        const imgIndex = parseInt(event.dataTransfer.getData('imgIndex'))
-
-        const imgTag = event.dataTransfer.getData('imgTag')
-        const gridSize = parseInt(event.dataTransfer.getData('gridSize'))
+        const size = event.dataTransfer.getData('size')
+        const useImageList = event.dataTransfer.getData('useImageList')
+        const isHide = event.dataTransfer.getData('isHide')
         const url = event.dataTransfer.getData('url')
         const text = event.dataTransfer.getData('text')
+        const useImageIndex = event.dataTransfer.getData('useImageIndex')
+        const currentImageTag = event.dataTransfer.getData('currentImageTag')
 
-        const imgDataList = imgDataListStr.split(',')
+        // 必須項目
+        pieceObj.propName = 'characters'
+        pieceObj.columns = size
+        pieceObj.rows = size
+        // 個別部
+        pieceObj.name = name
+        pieceObj.useImageList = useImageList
+        pieceObj.isHide = isHide
+        pieceObj.url = url
+        pieceObj.text = text
+        pieceObj.useImageIndex = useImageIndex
+        pieceObj.currentImageTag = currentImageTag
 
-        const mapMaskObj = {
-          name: name,
-          left: locateOnTable.x,
-          top: locateOnTable.y,
-          columns: gridSize,
-          rows: gridSize,
-          imgDataList: imgDataList,
-          imgIndex: imgIndex,
-          imgTag: imgTag,
-          url: url,
-          text: text
+        if (this.$store.state.display.addCharacterWindow.isContinuous) {
+          const splits = name.split('_')
+          const continuousNum = parseInt(splits[splits.length - 1])
+          this.setProperty({property: 'display.addCharacterWindow.continuousNum', value: continuousNum + 1})
+        } else {
+          this.windowClose('addCharacterWindow')
+          this.setProperty({property: 'display.addCharacterWindow.continuousNum', value: 1})
         }
 
-        this.addMapMaskInfo(mapMaskObj)
+        this.addPieceInfo(pieceObj)
       }
     }
   },
@@ -219,6 +264,7 @@ export default {
       'pieceList',
       'isFitGrid'
     ]),
+    rollObj: function () { return this.$store.state.map.rollObj },
     isDraggingLeft: function () { return this.$store.state.map.isDraggingLeft },
     isMouseDownRight: function () { return this.$store.state.map.isMouseDownRight },
     isOverEvent: function () { return this.$store.state.map.isOverEvent },
