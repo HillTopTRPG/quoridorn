@@ -784,6 +784,9 @@ const store = new Vuex.Store({
     chatTabSelect (state, tab) {
       for (let tabObj of state.chat.tabs) {
         tabObj.isActive = tab === tabObj.name
+        if (tabObj.isActive) {
+          tabObj.unRead = 0
+        }
       }
     }
   },
