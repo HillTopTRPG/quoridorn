@@ -4,6 +4,7 @@
     :style="characterStyle"
     @click.right.prevent="(e) => openContext(e, 'characterContext')"
     @mouseover="mouseover" @mouseout="mouseout"
+    @dblclick="dblClick"
     @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
     @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
     @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
@@ -11,7 +12,7 @@
     <div class="border"/>
     <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
     <div class="name">{{name}}</div>
-    <img class="rotate" v-img="require('../../../assets/rotateArrow.png')" v-show="isHover" draggable="false"
+    <img class="rotate" v-img="require('../../../assets/rotateArrow.png')" v-show="isHover || isThisRolling" draggable="false"
       @mousedown.stop="rollStart" @mouseup.stop="rollEnd"
       @touchstart.stop="rollStart" @touchend.stop="rollEnd" @touchcancel.stop="rollEnd" />
   </div>
@@ -40,14 +41,20 @@ export default {
         return null
       }
       return filteredList[0]
+    },
+    dblClick: function () {
+      const maxIndex = this.useImageList.split('|').length - 1
+      let nextIndex = this.useImageIndex + 1
+      if (nextIndex > maxIndex) {
+        nextIndex = 0
+      }
+      this.setProperty({property: `map.${this.type}.${this.storeIndex}.useImageIndex`, value: nextIndex})
     }
   },
   computed: {
     ...mapGetters([]),
     characterStyle: function () {
       let obj = this.style
-      const translate = this.isHover ? -2 : -2
-      obj.transform += ` translate(${translate}px, ${translate}px)`
       if (this.storeObj.isDraggingLeft) {
         const plus = 1.5
         obj.left = this.rect.left - plus + 'px'
@@ -65,8 +72,8 @@ export default {
       if (this.useImageList === '') { return '' }
       const imageStr = this.useImageList.split('|')[this.useImageIndex]
       // console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
-      const isReverse = imageStr.indexOf(':r') >= 0
-      const imageKey = parseInt(imageStr.replace(':r', ''))
+      const isReverse = imageStr.indexOf(':R') >= 0
+      const imageKey = parseInt(imageStr.replace(':R', ''))
       return {
         isReverse: isReverse,
         data: this.getKeyObj(this.$store.state.images.data, imageKey).data
@@ -79,6 +86,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .character {
+  /*
+  box-sizing: border-box;
+  */
   position: fixed;
   cursor: default;
   display: flex;
@@ -90,12 +100,20 @@ export default {
   -ms-user-select: none;
   font-size: 12px;
   cursor: crosshair;
-  border: solid black 2px;
   border-radius: 3px;
 }
 .character.hover,
 .character.rolling {
   z-index: 1000;
+}
+.character:before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  top: -2px;
+  border: solid black 2px;
 }
 img.image {
   position: absolute;

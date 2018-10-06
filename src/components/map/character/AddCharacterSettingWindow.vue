@@ -1,18 +1,18 @@
 <template>
-  <WindowFrame titleText="キャラクター追加" display-property="addCharacterSettingWindow" align="center" fixSize="637, 402" baseSize="500, 400" @open="open">
+  <WindowFrame titleText="キャラクター追加" display-property="addCharacterSettingWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
     <div class="container">
-      <div class="viewImage"><img v-img="currentImage" draggable="false"/></div>
+      <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
       <div class="choseImage">
         <div class="tagImages"><img v-for="image in imageList" :class="{active : image.key === currentImageKey}" :key="image.key" v-img="image.data" @click="selectTagImage(image.key)" draggable="false"/></div>
       </div>
       <div class="imageInfo">
         <div class="selectedImage"><label>タグ名：</label><select class="tagSelect" v-model="currentImageTag"><option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option></select><span>{{selectedTagIndexText}}</span></div>
         <button>隠し画像</button>
-        <button>反</button>
+        <button @click="doReverse">反</button>
       </div>
       <div class="switchImageArea">
         <button v-show="!isOpenSwitch" @click="isOpenSwitch = true" class="switchButton">画像切替設定</button>
-        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0" draggable="false"/></span>
+        <span v-show="isOpenSwitch" class="switchImage"><img v-for="switchObj in switchImageList" :class="{active : switchObj.key === switchCurrentKey, isReverse : switchObj.isReverse}" :key="switchObj.key" v-img="getImage(switchObj.imgKey)" @click="selectSwitchImage(switchObj.key)" tabindex="0" draggable="false"/></span>
         <button v-show="isOpenSwitch" @click.prevent="addSwitch">追加</button>
         <button v-show="isOpenSwitch" @click.prevent="deleteSwitch" :disabled="!isCanSwitchDelete">削除</button>
       </div>
@@ -49,7 +49,7 @@ export default {
     return {
       useImageList: '',
       isOpenSwitch: false,
-      currentImageTag: '(全て)',
+      currentImageTag: 'キャラクター',
       switchImageList: [
         { key: 0, imgKey: 1, isReverse: false }
       ],
@@ -83,9 +83,17 @@ export default {
 
       this.switchImageList.push({
         key: nextKey,
-        imgKey: 1
+        imgKey: 1,
+        isReverse: false
       })
       this.switchCurrentKey = nextKey
+    },
+    doReverse: function () {
+      const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
+      console.log(`image(${this.switchCurrentKey}) isReverse: ${switchImageObj.isReverse} -> ${!switchImageObj.isReverse}`)
+      switchImageObj.isReverse = !switchImageObj.isReverse
+      const index = this.switchImageList.indexOf(switchImageObj)
+      this.switchImageList.splice(index, 1, switchImageObj)
     },
     getImage: function (key) {
       return this.getKeyObj(this.storeImages, key).data
@@ -108,6 +116,7 @@ export default {
     selectTagImage: function (key) {
       const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
       switchImageObj.imgKey = key
+      switchImageObj.isReverse = false
       const index = this.switchImageList.indexOf(switchImageObj)
       this.switchImageList.splice(index, 1, switchImageObj)
     },
@@ -153,9 +162,9 @@ export default {
     },
     open: function () {
       this.isOpenSwitch = false
-      this.currentImageTag = '(全て)'
+      this.currentImageTag = 'キャラクター'
       this.switchImageList.splice(0, this.switchImageList.length)
-      this.switchImageList.push({ key: 0, imgKey: 1 })
+      this.switchImageList.push({ key: 0, imgKey: 1, isReverse: false })
       this.switchCurrentKey = 0
       this.name = ''
       this.size = 1
@@ -174,6 +183,10 @@ export default {
       const keyObj = this.getKeyObj(imageList, this.currentImageKey)
       const index = keyObj ? imageList.indexOf(keyObj) + 1 : 0
       return `${index}/${imageList.length}`
+    },
+    isReverse: function () {
+      const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
+      return switchImageObj.isReverse
     },
     isCanSwitchDelete: function () {
       return this.switchImageList.length > 1
@@ -206,11 +219,10 @@ export default {
 .container {
   display: grid;
   width: 100%;
-  height: 100%;
   font-size: 12px;
   position: absolute;
   grid-template-columns: 200px auto 1fr;
-  grid-template-rows: 1fr auto auto auto auto auto auto auto;
+  grid-template-rows: 125px auto 1fr auto auto auto auto auto;
   grid-template-areas:
       "viewImage       choseImage      choseImage"
       "viewImage       imageInfo       imageInfo"
@@ -227,10 +239,9 @@ export default {
   justify-content: flex-start;
   align-content: flex-start;
   flex-wrap: wrap;
-  overflow-y: scroll;
-  height: 100%;
-  max-height: 100%;
-  min-width: 217px;
+  height: auto;
+  min-height: calc(100% - 2px);
+  box-sizing: border-box;
   border: solid gray 1px;
 }
 .tagImages img {
@@ -241,10 +252,13 @@ export default {
 .tagImages img.active {
   border:solid blue 1px;
 }
+.isReverse {
+  transform: scale(-1, 1);
+}
 .container > * { padding: 1px 0; }
 .viewImage { grid-area: viewImage; }
 .viewImage img { display: inline-block; width: 200px; height: 200px; }
-.choseImage { grid-area: choseImage; }
+.choseImage { grid-area: choseImage; overflow-y: scroll; max-height: 130px; }
 .imageInfo { grid-area: imageInfo; display: flex; }
 .imageInfo .selectedImage { flex: 1; display: flex; }
 .imageInfo .selectedImage > * { display: flex; align-items: center; justify-content: center; }
@@ -254,6 +268,7 @@ export default {
 .switchImageArea .switchImage { display: inline-block; flex: 1; height: 50px; }
 .switchImageArea .switchImage img { width: 50px; height: 50px; border: solid rgba(0, 0, 0, 0) 1px; }
 .switchImageArea .switchImage img.active { border:solid blue 1px; }
+.switchImageArea button.switchButton { height: 26px; }
 .switchImageArea button:not(.switchButton) { height: 50px; display: inline-block; margin-left: 10px; }
 .initiativeTable { grid-area: initiativeTable; }
 .nameArea { grid-area: nameArea; }

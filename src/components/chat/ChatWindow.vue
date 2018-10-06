@@ -101,7 +101,6 @@ export default {
       'setProperty'
     ]),
     onFocus: function () {
-      console.log(`@@focus!!!!`)
       this.$emit('onFocus')
     },
     addTab: function () {

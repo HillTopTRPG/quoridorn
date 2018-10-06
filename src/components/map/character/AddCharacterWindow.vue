@@ -2,7 +2,7 @@
   <WindowFrame titleText="キャラクター置き場" display-property="addCharacterWindow" align="center" fixSize="200, 200" @open="open">
     <div class="container">
       <div class="name">{{name}}</div>
-      <div class="image"><div class="img" v-bg-img="imageObj.data" @dragstart="dragStart" draggable="true" :class="{reverse : imageObj.isReverse}" @mousedown.stop/></div>
+      <div class="image"><img class="img" v-img="imageObj.data" @dragstart="dragStart" draggable="true" :class="{reverse : imageObj.isReverse}" @mousedown.stop/></div>
       <div class="controllArea">
         <label><input type="checkbox" v-model="is_Continuous"/>複数作成</label>
         <span>連番：</span><input type="number" min="0" v-model="continuous_Num" :disabled="!isContinuous"/>
@@ -96,7 +96,8 @@ export default {
       if (this.useImageList === '') { return '' }
       const imageStr = this.useImageList.split('|')[this.useImageIndex]
       console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
-      const isReverse = imageStr.indexOf(':r') >= 0
+      const isReverse = imageStr.indexOf(':R') >= 0
+      console.log(imageStr, isReverse)
       const imageKey = parseInt(imageStr.replace(':r', ''))
       return {
         isReverse: isReverse,
@@ -123,10 +124,7 @@ export default {
 .name {
 
 }
-.image {
-
-}
-.image div {
+.image img {
   display: block;
   width: 96px;
   height: 96px;
@@ -135,7 +133,7 @@ export default {
   border: solid yellow 3px;
   background-color: rgba(0, 0, 0, 0);
 }
-.image div.reverse {
+.image img.reverse {
   transform: scale(-1, 1);
 }
 .controllArea {

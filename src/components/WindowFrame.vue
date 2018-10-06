@@ -124,7 +124,6 @@ export default {
         }
         winFac.draggingX = 0
         winFac.draggingY = 0
-        console.log(`$$$$$  resize`)
         this.mouseup(event)
       }
       // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
@@ -168,7 +167,6 @@ export default {
         this.windowFactor.b -= this.windowFactor.draggingY
         this.windowFactor.draggingX = 0
         this.windowFactor.draggingY = 0
-        console.log(`$$$$$  move`)
         this.mouseup(event)
       }
       this.moveMode = flg ? 'move' : ''
@@ -209,7 +207,6 @@ export default {
         }
         if (!iframeElm.onload) {
           iframeElm.onload = function () {
-            console.log(iframeElm)
             const bodyElm = iframeElm.contentWindow.document
             if (!bodyElm.onmousemove) { bodyElm.onmousemove = mouseMoveListener }
             if (!bodyElm.ontouchmove) { bodyElm.ontouchmove = touchMoveListener }

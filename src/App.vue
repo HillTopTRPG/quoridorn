@@ -4,56 +4,17 @@
     <img src="./assets/logo.png">
     -->
     <GameTable ref="gameTable"/>
-    <ChatWindow/>
-    <Menu/>
-    <AddMapMaskWindow/>
-    <EditMapMaskWindow/>
-    <MapMaskContext/>
-    <UnSupportWindo/>
-    <GameTableContext/>
-    <DevLogWindow/>
-    <FunctionListWindow/>
-    <PublicMemoWindow/>
-    <AddCharacterSettingWindow/>
-    <AddCharacterWindow/>
-    <CharacterContext/>
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
-import Menu from './components/menu/Menu'
-import ChatWindow from './components/chat/ChatWindow'
-import AddMapMaskWindow from './components/map/mapMask/AddMapMaskWindow'
-import EditMapMaskWindow from './components/map/mapMask/EditMapMaskWindow'
-import MapMaskContext from './components/map/mapMask/MapMaskContext'
 import GameTable from './components/map/GameTable'
-import UnSupportWindo from './components/UnSupportWindow'
-import GameTableContext from './components/map/GameTableContext'
-import DevLogWindow from './components/simple/DevLogWindow'
-import FunctionListWindow from './components/simple/FunctionListWindow'
-import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
-import AddCharacterSettingWindow from './components/map/character/AddCharacterSettingWindow'
-import AddCharacterWindow from './components/map/character/AddCharacterWindow'
-import CharacterContext from './components/map/character/CharacterContext'
 
 export default {
   name: 'App',
   components: {
-    GameTable: GameTable,
-    Menu: Menu,
-    ChatWindow: ChatWindow,
-    AddMapMaskWindow: AddMapMaskWindow,
-    EditMapMaskWindow: EditMapMaskWindow,
-    MapMaskContext: MapMaskContext,
-    UnSupportWindo: UnSupportWindo,
-    GameTableContext: GameTableContext,
-    DevLogWindow: DevLogWindow,
-    FunctionListWindow: FunctionListWindow,
-    PublicMemoWindow: PublicMemoWindow,
-    AddCharacterSettingWindow: AddCharacterSettingWindow,
-    AddCharacterWindow: AddCharacterWindow,
-    CharacterContext: CharacterContext
+    GameTable: GameTable
   },
   mounted: function () {
     this.onMount()

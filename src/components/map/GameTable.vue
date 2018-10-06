@@ -204,6 +204,7 @@ export default {
         pieceObj.fontColor = fontColor
 
         this.addPieceInfo(pieceObj)
+        return
       }
 
       // キャラクターの作成
@@ -214,7 +215,7 @@ export default {
         const isHide = event.dataTransfer.getData('isHide')
         const url = event.dataTransfer.getData('url')
         const text = event.dataTransfer.getData('text')
-        const useImageIndex = event.dataTransfer.getData('useImageIndex')
+        const useImageIndex = parseInt(event.dataTransfer.getData('useImageIndex'))
         const currentImageTag = event.dataTransfer.getData('currentImageTag')
 
         // 必須項目
@@ -240,7 +241,100 @@ export default {
         }
 
         this.addPieceInfo(pieceObj)
+        return
       }
+
+      // ファイルがドロップされてる
+      const files = event.dataTransfer.files
+
+      // ファイルの種類に応じて振り分け
+      const imageFiles = []
+      for (const file of files) {
+        if (file.type.indexOf('image/') === 0) {
+          // 画像
+          imageFiles.push(file)
+        }
+      }
+
+      // 画像ファイルの処理
+      if (imageFiles.length > 0) {
+        // どこに使う画像ファイルなのかを選んでもらう
+        const thumbnailSize = { w: 96, h: 96 }
+        const promiseList = []
+        for (const file of imageFiles) {
+          promiseList.push(this.createBase64DataSet(file, thumbnailSize))
+        }
+        Promise.all([...promiseList]).then(function (values) {
+          values.forEach(function (valueObj, index) {
+            valueObj.key = index
+          })
+          this.setProperty({property: 'display.dropChooseWindow.imageDataList', value: values})
+        }.bind(this))
+        this.windowOpen('dropChooseWindow')
+      }
+    },
+    createBase64DataSet: function (imageFile, thumbnailSize) {
+      return new Promise(function (resolve, reject) {
+        const createPromise = function (isThumbnail) {
+          // eslint-disable-next-line
+          return new Promise(function (resolve2, reject2) {
+            // 画像の読み込み処理
+            try {
+              const reader = new FileReader()
+              reader.onload = function (event) {
+                if (isThumbnail) {
+                  // サムネイル画像作成の場合は小さくて決まったサイズの画像データに加工する（アニメGIFも最初の１コマの静止画になる）
+
+                  const image = new Image()
+                  image.onload = function () {
+                    const useSize = {
+                      w: image.width,
+                      h: image.height
+                    }
+
+                    // 大きい場合は、比率を保ったまま縮小する
+                    if (useSize.w > thumbnailSize.w || useSize.h > thumbnailSize.h) {
+                      const scale = Math.min(thumbnailSize.w / useSize.w, thumbnailSize.h / useSize.h)
+                      useSize.w = useSize.w * scale
+                      useSize.h = useSize.h * scale
+                    }
+
+                    // 画像を描画してデータを取り出す（Base64変換の実装）
+                    const canvas = document.createElement('canvas')
+                    const ctx = canvas.getContext('2d')
+                    canvas.width = thumbnailSize.w
+                    canvas.height = thumbnailSize.h
+                    const locate = {
+                      x: (canvas.width - useSize.w) / 2,
+                      y: (canvas.height - useSize.h) / 2
+                    }
+                    ctx.drawImage(image, locate.x, locate.y, useSize.w, useSize.h)
+
+                    // 非同期で返却
+                    resolve2(canvas.toDataURL())
+                  }
+                  image.src = event.target.result
+                } else {
+                  // サムネイル画像でない場合はプレーンな画像データからBase64データを取得する
+
+                  // 非同期で返却
+                  resolve2(reader.result)
+                }
+              }
+              reader.readAsDataURL(imageFile)
+            } catch (error) {
+              reject(error)
+            }
+          })
+        }
+        Promise.all([createPromise(true), createPromise(false)]).then(function (values) {
+          resolve({
+            name: imageFile.name,
+            thumbnail: values[0],
+            image: values[1]
+          })
+        })
+      })
     }
   },
   watch: {
