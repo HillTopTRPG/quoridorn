@@ -38,7 +38,9 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     connect: {
-      peerId: ''
+      peerId: '',
+      webRtcPeer: null,
+      playerName: ''
     },
     display: {
       gridLine: true,
@@ -66,6 +68,7 @@ const store = new Vuex.Store({
       secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       addCharacterSettingWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       editCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      roomInfoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       dropChooseWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, imageDataList: null },
       addCharacterWindow: {
         isDisplay: false,
@@ -131,7 +134,9 @@ const store = new Vuex.Store({
       }
     },
     room: {
-      id: '1a2b3c4d5e6f', member: []
+      id: '',
+      members: [],
+      webRtcRoom: null
     },
     map: {
       grid: { c: 0, r: 0, totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(0, 0, 0, 1)' },
@@ -162,10 +167,9 @@ const store = new Vuex.Store({
       wheel: 0,
       borderWidth: 60
     },
-    charactors: [],
     chat: {
       tabs: [
-        { text: 'メイン', isActive: true, isHover: false }
+        { name: 'メイン', isActive: true, isHover: false, unRead: 0 }
       ],
       logs: {
         'メイン': [
@@ -202,6 +206,63 @@ const store = new Vuex.Store({
         state.display[property].isDisplay = !state.display[property].isDisplay
       }
     },
+    joinRoom (state, roomName) {
+      if (!roomName) { return }
+      const room = state.connect.webRtcPeer.joinRoom(roomName)
+      room.on('open', function () {
+        state.room.webRtcRoom = room
+        store._mutations.connect[0](room)
+      })
+    },
+    closeRoom (state) {
+      state.room.webRtcRoom.close()
+    },
+    createPeer (state, peerId) {
+      // Connect to SkyWay, have server assign an ID instead of providing one
+      // Showing off some of the configs available with SkyWay :).
+      const options = {
+        // Set API key for cloud server (you don't need this if you're running your
+        // own.
+        key: window.__SKYWAY_KEY__,
+        // Set highest debug level (log everything!).
+        debug: 3,
+        // Set a logging function:
+        logFunction: args => {
+          const copy = [...args].join(' ')
+          console.log(copy)
+        }
+      }
+      console.log(state, peerId)
+      /* eslint no-undef: 0 */
+      const peer = peerId ? new Peer(peerId, options) : new Peer(options)
+      // Await connections from others
+      peer.on('connection', store._mutations.connect[0])
+
+      // Show this peer's ID.
+      peer.on('open', id => {
+        console.log(`Peer opened!!!! ${id}`)
+        state.connect.peerId = id
+        state.room.members.push({
+          peerId: id,
+          name: state.connect.playerName,
+          color: 'black'
+        })
+
+        store._mutations.joinRoom[0]('test_room_001')
+      })
+      peer.on('error', err => console.log(err))
+      if (!!state.connect.webRtcPeer && !state.connect.webRtcPeer.destroyed) {
+        state.connect.webRtcPeer.destroy()
+      }
+      state.connect.webRtcPeer = peer
+
+      // Make sure things clean up properly.
+      window.onunload = window.onbeforeunload = function (e) {
+        if (!!peer && !peer.destroyed) {
+          peer.destroy()
+        }
+      }
+    },
     onMount (state) {
       store._mutations.windowOpen[0]('chatWindow')
       store._mutations.windowOpen[0]('initiativeWindow')
@@ -210,6 +271,207 @@ const store = new Vuex.Store({
       store._mutations.windowOpen[0]('counterRemoConWindow')
       store._mutations.windowOpen[0]('functionListWindow')
       // store._mutations.windowOpen[0]('addCharacterSettingWindow')
+    },
+    /**
+     * チャットログを追加する（発言の記録）
+     * @param {object} state   state of Vuex
+     * @param {object} payload state of Vuex
+     */
+    addChatLog (state, payload) {
+      const peerId = payload.peerId ? payload.peerId : state.connect.peerId
+      const activeChatTab = store.getters.activeChatTab
+      let name = payload.name
+      let text = payload.text
+      let color = payload.color
+      let tab = payload.tab ? payload.tab : activeChatTab.name
+      let isChat = payload.isChat
+      let htmlText = '<span style="color: ' + color + '"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
+      let logObj = {
+        peerId: peerId,
+        viewHtml: htmlText
+      }
+      if (tab !== activeChatTab.name) {
+        console.log(tab, state.chat.tabs)
+        const tabObj = state.chat.tabs.filter(tabObj => tabObj.name === tab)[0]
+        tabObj.unRead++
+        const index = state.chat.tabs.indexOf(tabObj)
+        state.chat.tabs.splice(index, 1, tabObj)
+      }
+      state.chat.logs[tab].push(logObj)
+      if (isChat && !!state.room.webRtcRoom) {
+        state.room.webRtcRoom.send({
+          type: 'SEND_CHAT',
+          value: {
+            text: text,
+            tab: tab
+          }
+        })
+      }
+    },
+    // Handle a connection object.
+    connect: (state, room) => {
+      // Handle a chat connection.
+      const roomName = room.name.replace('sfu_text_', '')
+
+      const logName = 'SYSTEM'
+      const logColor = 'red'
+      const logTab = 'メイン'
+
+      console.log(`Room: ${roomName} に接続しました！！`)
+      state.room.id = roomName
+      store._mutations.addChatLog[0]({
+        name: logName,
+        text: `Room: ${roomName} に接続しました！！`,
+        color: logColor,
+        tab: logTab
+      })
+
+      /*
+      room.getLog()
+      room.once('log', logs => {
+        for (let i = 0; i < logs.length; i++) {
+          const log = JSON.parse(logs[i])
+          const peerId = log.message.src
+          const sendData = log.message.data
+          switch (log.messageType) {
+            case 'ROOM_DATA':
+              if (peerId === state.connect.webRtcPeer.id) { break }
+              store._mutations.addChatLog[0]({
+                name: logName,
+                text: `PeerId: ${peerId} からData: ${sendData} が送られてきたヨン。`,
+                color: logColor,
+                tab: logTab
+              })
+              break
+            case 'ROOM_USER_JOIN':
+              if (peerId === state.connect.webRtcPeer.id) { break }
+              store._mutations.addChatLog[0]({
+                name: logName,
+                text: `PeerId: ${peerId} が入室しましたヨン。`,
+                color: logColor,
+                tab: logTab
+              })
+              break
+            case 'ROOM_USER_LEAVE':
+              if (peerId === state.connect.webRtcPeer.id) { break }
+              store._mutations.addChatLog[0]({
+                name: logName,
+                text: `PeerId: ${peerId} が退室しましたヨン。`,
+                color: logColor,
+                tab: logTab
+              })
+              break
+          }
+        }
+      })
+      */
+
+      room.on('peerJoin', peerId => {
+        store._mutations.addChatLog[0]({
+          peerId: peerId,
+          name: logName,
+          text: `PeerId: ${peerId} が入室しました。`,
+          color: logColor,
+          tab: logTab
+        })
+        // 自分が親だったら、入ってきた人にメンバー一覧を教えてあげる
+        if (state.room.members[0].peerId === state.connect.peerId) {
+          store._mutations.sendRoomData[0]({
+            type: 'NOTICE_OTHER_PLAYER',
+            value: state.room.members,
+            targets: [peerId]
+          })
+        }
+        state.room.members.push({
+          peerId: peerId,
+          name: '',
+          color: 'black'
+        })
+      })
+
+      room.on('peerLeave', peerId => {
+        const memberObj = state.room.members.filter(member => member.peerId === peerId)[0]
+        const index = state.room.members.indexOf(memberObj)
+        store._mutations.addChatLog[0]({
+          peerId: peerId,
+          name: logName,
+          text: `PeerId: ${peerId} が退室しました。`,
+          color: logColor,
+          tab: logTab
+        })
+        state.room.members.splice(index, 1)
+      })
+
+      room.on('data', message => {
+        const peerId = message.src
+        const sendData = message.data
+        const memberObj = state.room.members.filter(member => member.peerId === peerId)[0]
+        const index = state.room.members.indexOf(memberObj)
+        if (sendData instanceof ArrayBuffer) {
+          const dataView = new Uint8Array(sendData)
+          const dataBlob = new Blob([dataView])
+          const url = URL.createObjectURL(dataBlob)
+          // messages.append('<div><span class="file">' +
+          //   message.src + ' has sent you a <a target="_blank" href="' + url + '">file</a>.</span></div>');
+          store._mutations.addChatLog[0]({
+            peerId: peerId,
+            name: memberObj.name,
+            text: url,
+            color: 'black',
+            tab: logTab
+          })
+        } else if (typeof sendData === 'string') {
+          store._mutations.addChatLog[0]({
+            peerId: peerId,
+            name: memberObj.name,
+            text: sendData,
+            color: 'black',
+            tab: logTab
+          })
+        } else {
+          const targets = sendData.targets
+          if (!targets || targets.length === 0 || targets.filter(target => target === state.connect.peerId).length > 0) {
+            const type = sendData.type
+            const value = sendData.value
+            switch (type) {
+              case 'NOTICE_OTHER_PLAYER':
+                value.push(state.room.members[0])
+                state.room.members = value
+                const me = state.room.members.filter(member => member.peerId === state.connect.peerId)[0]
+                store._mutations.sendRoomData[0]({
+                  type: 'NOTICE_MY_INFO',
+                  value: {
+                    name: me.name,
+                    color: me.color
+                  }
+                })
+                break
+              case 'CHANGE_PLAYER_NAME':
+                memberObj.name = value
+                state.room.members.splice(index, 1, memberObj)
+                break
+              case 'NOTICE_MY_INFO':
+                memberObj.name = value.name
+                memberObj.color = value.color
+                state.room.members.splice(index, 1, memberObj)
+                break
+              case 'SEND_CHAT':
+                store._mutations.addChatLog[0]({
+                  peerId: peerId,
+                  name: memberObj.name,
+                  text: value.text,
+                  color: memberObj.color,
+                  tab: value.tab
+                })
+                break
+              default:
+            }
+          }
+        }
+      })
+    },
+    sendRoomData (state, payload) {
+      state.room.webRtcRoom.send(payload)
     },
     windowActive (state, property) {
       let current = 0
@@ -478,7 +740,10 @@ const store = new Vuex.Store({
           isActive = true
         }
         let tabObj = {
-          name: tab, isActive: isActive
+          name: tab,
+          isActive: isActive,
+          isHover: false,
+          unRead: 0
         }
         state.chat.tabs.push(tabObj)
       }
@@ -510,23 +775,6 @@ const store = new Vuex.Store({
           state.chat.logs[tabsTab.name] = []
         }
       }
-    },
-    /**
-     * チャットログを追加する（発言の記録）
-     * @param {object} state   state of Vuex
-     * @param {object} payload state of Vuex
-     */
-    addChatLog (state, payload) {
-      let name = payload.name
-      let text = payload.text
-      let color = payload.color
-      let tab = store.getters.activeChatTab.name
-      let htmlText = '<span style="color: ' + color + '"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
-      let logObj = {
-        peerId: state.connect.peerId,
-        viewHtml: htmlText
-      }
-      state.chat.logs[tab].push(logObj)
     },
     /**
      * チャットタブの選択を記録する

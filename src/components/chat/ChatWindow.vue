@@ -2,7 +2,7 @@
   <WindowFrame titleText="チャット" display-property="chatWindow" align="left-bottom" baseSize="-300, 240">
     <div class="container">
       <div class="tabs">
-        <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @click.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/0</span><!--
+        <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive }" @click.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/{{tabObj.unRead}}</span><!--
       --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">＋</span>
       </div>
       <ul id="chatLog" @wheel.stop>
@@ -98,7 +98,8 @@ export default {
       'chatTabSelect',
       'addChatLog',
       'windowOpen',
-      'setProperty'
+      'setProperty',
+      'sendRoomData'
     ]),
     onFocus: function () {
       this.$emit('onFocus')
@@ -124,7 +125,8 @@ export default {
       this.addChatLog({
         name: this.name,
         text: this.currentMessage,
-        color: 'black'
+        color: 'black',
+        isChat: true
       })
 
       this.bcDice.setMessage(this.currentMessage)
@@ -136,22 +138,24 @@ export default {
           this.addChatLog({
             name: this.currentDiceBotSystem,
             text: `シークレットダイス`,
-            color: 'black'
+            color: 'black',
+            isChat: true
           })
         } else {
           this.addChatLog({
             name: this.currentDiceBotSystem,
             text: diceResult,
-            color: 'black'
+            color: 'black',
+            isChat: true
           })
         }
       }
       this.currentMessage = ''
 
-      setTimeout(function () {
-        var elm = document.getElementById('chatLog')
-        elm.scrollTop = elm.scrollHeight
-      }, 0)
+      // setTimeout(function () {
+      //   var elm = document.getElementById('chatLog')
+      //   elm.scrollTop = elm.scrollHeight
+      // }, 0)
     },
     tabSelect: function (tabObj) {
       this.currentTab = tabObj.text
@@ -166,6 +170,30 @@ export default {
       const currentDiceBotSystem = this.currentDiceBotSystem
       const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
       this.bcDice.setDiceBot(diceObj.diceBot)
+    },
+    chatLogList: function () {
+      setTimeout(function () {
+        var elm = document.getElementById('chatLog')
+        elm.scrollTop = elm.scrollHeight
+      }, 0)
+    },
+    name: function (newValue) {
+      this.setProperty({property: 'connect.playerName', value: newValue})
+      const members = this.$store.state.room.members
+      console.log(this.$store.state.connect.peerId, members)
+      const myPeerId = this.$store.state.connect.peerId
+      const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
+      console.log(myMemberObjList)
+      if (myMemberObjList.length > 0) {
+        const memberObj = myMemberObjList[0]
+        memberObj.name = newValue
+        const index = members.indexOf(memberObj)
+        members.splice(index, 1, memberObj)
+        this.sendRoomData({
+          type: 'CHANGE_PLAYER_NAME',
+          value: newValue
+        })
+      }
     }
   },
   computed: {

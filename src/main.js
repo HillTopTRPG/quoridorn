@@ -18,6 +18,7 @@ import AddCharacterSettingWindow from './components/map/character/AddCharacterSe
 import AddCharacterWindow from './components/map/character/AddCharacterWindow'
 import CharacterContext from './components/map/character/CharacterContext'
 import DropChooseWindow from './components/simple/DropChooseWindow'
+import RoomInfoWindow from './components/simple/RoomInfoWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -114,3 +115,6 @@ characterContext.$mount('#characterContext')
 
 const dropChooseWindow = new Vue({ store, components: { DropChooseWindow: DropChooseWindow }, template: `<DropChooseWindow/>` })
 dropChooseWindow.$mount('#dropChooseWindow')
+
+const roomInfoWindow = new Vue({ store, components: { RoomInfoWindow: RoomInfoWindow }, template: `<RoomInfoWindow/>` })
+roomInfoWindow.$mount('#roomInfoWindow')

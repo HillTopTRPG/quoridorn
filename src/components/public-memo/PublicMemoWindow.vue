@@ -32,7 +32,6 @@ export default {
   methods: {
     ...mapMutations([
       'chatTabSelect',
-      'addChatLog',
       'windowOpen',
       'setProperty'
     ]),

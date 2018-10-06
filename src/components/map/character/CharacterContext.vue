@@ -6,6 +6,8 @@
     <div class="item" @click.left.prevent="deleteCharacter">削除</div>
     <hr>
     <div class="item" @click.left.prevent="copyCharacter">複製</div>
+    <hr v-if="url">
+    <div class="item" @click.left.prevent="openRefURL" v-if="url">データ参照先URLを開く</div>
   </ContextFrame>
 </template>
 
@@ -43,6 +45,11 @@ export default {
       console.log(`  [methods] select context item => Character(${this.objKey}).copyCharacter`)
       this.windowClose('characterContext')
       alert('未実装の機能です。')
+    },
+    openRefURL: function () {
+      console.log(this.storeObj.url)
+      window.open(this.storeObj.url, '_blank')
+      this.windowClose('characterContext')
     }
   },
   computed: {
@@ -52,6 +59,12 @@ export default {
     ]),
     objKey: function () {
       return this.$store.state.display['characterContext'].key
+    },
+    url: function () {
+      if (this.objKey === -1) {
+        return null
+      }
+      return this.stopreObj.url
     },
     storeObj: function () {
       const type = 'characters'

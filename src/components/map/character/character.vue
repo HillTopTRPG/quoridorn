@@ -2,6 +2,7 @@
   <div class="character"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
+    :title="storeObj.text"
     @click.right.prevent="(e) => openContext(e, 'characterContext')"
     @mouseover="mouseover" @mouseout="mouseout"
     @dblclick="dblClick"

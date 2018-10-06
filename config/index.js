@@ -50,7 +50,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/quoridorn/dev/',
+    assetsPublicPath: '/quoridorn/dev2/',
 
     /**
      * Source Maps

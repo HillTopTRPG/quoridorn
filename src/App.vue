@@ -44,6 +44,10 @@ html, body {
 img { object-fit: contain; }
 div.img { opacity: 0; background-size: contain; background-repeat: no-repeat; background-position: center; }
 
+hr {
+  margin: 3px 0;
+}
+
 .anime { opacity: 0; }
 
 #app {

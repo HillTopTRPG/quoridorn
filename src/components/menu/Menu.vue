@@ -101,9 +101,7 @@ export default {
   },
   data () {
     return {
-      roomId: '0a1b2c3d4e5f',
       checkImg: require('../../assets/check.png'),
-      memberNum: 1,
       menu: {
         'ファイル': false,
         '表示': false,
@@ -121,15 +119,20 @@ export default {
       'windowOpen',
       'changeDisplay',
       'setProperty',
-      'doResetWindowLocate'
+      'doResetWindowLocate',
+      'createPeer'
     ]),
     menuHover: function (flg, ...targets) {
       for (let target of targets) {
         this.menu[target] = flg
       }
     },
-    clickConnect: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '接続'}); this.windowOpen('unSupportWindow') },
-    clickRoomInfo: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'プレイルーム情報表示'}); this.windowOpen('unSupportWindow') },
+    clickConnect: function () {
+      // this.setProperty({property: 'display.unSupportWindow.title', value: '接続'})
+      // this.windowOpen('unSupportWindow')
+      this.createPeer()
+    },
+    clickRoomInfo: function () { this.windowOpen('roomInfoWindow') },
     clickPublicMemo: function () { this.setProperty({property: 'display.unSupportWindow.title', value: '共有メモ'}); this.windowOpen('unSupportWindow') },
     clickExport: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'セーブ'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ファイル') },
     clickImport: function () { this.setProperty({property: 'display.unSupportWindow.title', value: 'ロード'}); this.windowOpen('unSupportWindow'); this.menuHover(false, 'ファイル') },
@@ -166,7 +169,13 @@ export default {
     hover5: function () { return this.menuHoverNum === 5 },
     hover6: function () { return this.menuHoverNum === 6 },
     hover7: function () { return this.menuHoverNum === 7 },
-    hover8: function () { return this.menuHoverNum === 8 }
+    hover8: function () { return this.menuHoverNum === 8 },
+    roomId: function () {
+      return this.$store.state.room.id
+    },
+    memberNum: function () {
+      return this.$store.state.room.members.length
+    }
   }
 }
 </script>
