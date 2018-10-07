@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="現時点の仕様" display-property="functionListWindow" align="center" fixSize="500, 600">
+  <WindowFrame titleText="現時点の仕様" display-property="private.display.functionListWindow" align="center" fixSize="500, 600">
     <iframe src="./static/機能一覧.html"></iframe>
   </WindowFrame>
 </template>

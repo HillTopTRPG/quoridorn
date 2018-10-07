@@ -117,19 +117,19 @@ export default {
       'getBackgroundImage'
     ]),
     isDrawGridLine: function () {
-      return this.$store.state.display.gridLine
+      return this.$store.state.public.setting.gridLine
     },
     isDrawGridId: function () {
-      return this.$store.state.display.gridId
+      return this.$store.state.public.setting.gridId
     },
     gridColor: function () {
-      return this.$store.state.map.grid.color
+      return this.$store.state.public.map.grid.color
     },
     columns: function () {
-      return this.$store.state.map.grid.totalColumn
+      return this.$store.state.public.map.grid.totalColumn
     },
     rows: function () {
-      return this.$store.state.map.grid.totalRow
+      return this.$store.state.public.map.grid.totalRow
     },
     grid: function () {
       return {
@@ -138,7 +138,7 @@ export default {
       }
     },
     gridSize: function () {
-      return this.$store.state.map.grid.size
+      return this.$store.state.public.map.grid.size
     },
     canvasSize: function () {
       return {

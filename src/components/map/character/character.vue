@@ -3,7 +3,7 @@
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
     :style="characterStyle"
     :title="storeObj.text"
-    @click.right.prevent="(e) => openContext(e, 'characterContext')"
+    @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
     @mouseover="mouseover" @mouseout="mouseout"
     @dblclick="dblClick"
     @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
@@ -49,7 +49,7 @@ export default {
       if (nextIndex > maxIndex) {
         nextIndex = 0
       }
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.useImageIndex`, value: nextIndex})
+      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.useImageIndex`, value: nextIndex, isNotice: true})
     }
   },
   computed: {
@@ -77,7 +77,7 @@ export default {
       const imageKey = parseInt(imageStr.replace(':R', ''))
       return {
         isReverse: isReverse,
-        data: this.getKeyObj(this.$store.state.images.data, imageKey).data
+        data: this.getKeyObj(this.$store.state.public.images.data, imageKey).data
       }
     }
   }

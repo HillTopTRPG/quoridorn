@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="画像データ登録" display-property="dropChooseWindow" align="center" fixSize="385, 660">
+  <WindowFrame titleText="画像データ登録" display-property="private.display.dropChooseWindow" align="center" fixSize="385, 660">
     <div class="contents">
       <div v-if="!imageList">画像読込中...</div>
       <fieldset v-if="imageList" v-for="imageObj in imageList" :key="imageObj.key">
@@ -50,10 +50,11 @@ export default {
       this.imageList.forEach(imageObj => {
         this.addImage({
           tag: imageObj.currentTag,
-          image: imageObj.image
+          image: imageObj.image,
+          isNotice: true
         })
       })
-      this.windowClose('dropChooseWindow')
+      this.windowClose('private.display.dropChooseWindow')
     },
     cancel: function () {
     },
@@ -71,7 +72,7 @@ export default {
     },
     changeTag: function (key) {
       this.imageList.forEach(imageObj => {
-        console.log(`@@@@  ` + imageObj.currentTag)
+        // console.log(`@@@@  ` + imageObj.currentTag)
       })
       this.imageTagChange({key: key, imageList: this.imageList})
     },
@@ -79,7 +80,7 @@ export default {
       const imgObj = this.getKeyObj(this.imageList, key)
       imgObj.currentTag = imgObj.selectTag
       this.imageList.forEach(imageObj => {
-        console.log(`++++++  ` + imageObj.currentTag)
+        // console.log(`++++++  ` + imageObj.currentTag)
       })
       this.imageTagChange({key: key, imageList: this.imageList})
     }
@@ -103,10 +104,10 @@ export default {
     ...mapGetters([
     ]),
     storeImageList: function () {
-      return this.$store.state.display.dropChooseWindow.imageDataList
+      return this.$store.state.private.display.dropChooseWindow.imageDataList
     },
     tagList: function () {
-      const result = this.$store.state.images.tags.concat()
+      const result = this.$store.state.public.images.tags.concat()
       result.shift()
       return result
     }

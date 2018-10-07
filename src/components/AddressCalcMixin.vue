@@ -157,13 +157,13 @@ export default {
       return this.$store.state.mouse
     },
     columns: function () {
-      return this.$store.state.map.grid.totalColumn
+      return this.$store.state.public.map.grid.totalColumn
     },
     rows: function () {
-      return this.$store.state.map.grid.totalRow
+      return this.$store.state.public.map.grid.totalRow
     },
     gridSize: function () {
-      return this.$store.state.map.grid.size
+      return this.$store.state.public.map.grid.size
     },
     canvasSize: function () {
       return {
@@ -199,13 +199,13 @@ export default {
       }
     },
     wheel: function () {
-      return this.$store.state.map.wheel
+      return this.$store.state.private.map.wheel
     },
     borderWidth: function () {
-      return this.$store.state.map.borderWidth
+      return this.$store.state.public.map.borderWidth
     },
     marginGridNum: function () {
-      return this.$store.state.map.marginGridNum
+      return this.$store.state.public.map.marginGridNum
     }
   }
 }

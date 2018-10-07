@@ -1,6 +1,6 @@
 
 <template>
-  <ContextFrame displayProperty="characterContext">
+  <ContextFrame displayProperty="private.display.characterContext">
     <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
     <hr>
     <div class="item" @click.left.prevent="deleteCharacter">削除</div>
@@ -29,48 +29,48 @@ export default {
     ]),
     viewEditCharacter: function () {
       console.log(`  [methods] select context item => Character(${this.objKey}).viewEditCharacter`)
-      this.setProperty({property: 'display.editCharacterWindow.key', value: this.objKey})
-      this.windowOpen('editCharacterWindow')
-      this.windowClose('characterContext')
+      this.setProperty({property: 'private.display.editCharacterWindow.key', value: this.objKey})
+      this.windowOpen('private.display.editCharacterWindow')
+      this.windowClose('private.display.characterContext')
     },
     deleteCharacter: function () {
       console.log(`  [methods] select context item => Character(${this.objKey}).deleteCharacter`)
       this.deletePieceInfo({
         propName: 'characters',
-        key: this.objKey
+        key: this.objKey,
+        isNotice: true
       })
-      this.windowClose('characterContext')
+      this.windowClose('private.display.characterContext')
     },
     copyCharacter: function () {
       console.log(`  [methods] select context item => Character(${this.objKey}).copyCharacter`)
-      this.windowClose('characterContext')
+      this.windowClose('private.display.characterContext')
       alert('未実装の機能です。')
     },
     openRefURL: function () {
-      console.log(this.storeObj.url)
+      // console.log(this.storeObj.url)
       window.open(this.storeObj.url, '_blank')
-      this.windowClose('characterContext')
+      this.windowClose('private.display.characterContext')
     }
   },
   computed: {
     ...mapGetters([
-      'isWindowOpen',
       'getPieceObj'
     ]),
     objKey: function () {
-      return this.$store.state.display['characterContext'].key
+      return this.$store.state.private.display['characterContext'].key
     },
     url: function () {
       if (this.objKey === -1) {
         return null
       }
-      return this.stopreObj.url
+      return this.storeObj.url
     },
     storeObj: function () {
       const type = 'characters'
       const key = this.objKey
-      console.log(`key:${key}`)
-      return this.getPieceObj(type, key)
+      // console.log(`key:${key}`)
+      return this.getPieceObj(type, key, true)
     }
   }
 }

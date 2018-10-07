@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="共有メモ" display-property="publicMemoWindow" align="center" baseSize="300, 240" @open="open">
+  <WindowFrame titleText="共有メモ" display-property="private.display.publicMemoWindow" align="center" baseSize="300, 240" @open="open">
     <div class="tabs">
       <span class="tab" v-for="(textObj, index) in texts" :key="index" @click.prevent="selectTab(textObj.tab)">{{textObj.tab}}</span><!--
     --><span class="tab addButton" @click="addTab">＋</span>
@@ -46,9 +46,9 @@ export default {
       })
       tabs = tabs.substr(0, tabs.length - 1)
 
-      this.setProperty({property: 'publicMemo.editTab', value: tabs})
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'タブ編集'})
-      this.windowOpen('unSupportWindow')
+      this.setProperty({property: 'public.publicMemo.editTab', value: tabs, isNotice: true})
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'タブ編集'})
+      this.windowOpen('private.display.unSupportWindow')
     },
     tabSelect: function (tabObj) {
       this.currentTab = tabObj.text
@@ -57,24 +57,23 @@ export default {
       }
     },
     clickAdd: function () {
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'ダイスボット用表管理'})
-      this.windowOpen('unSupportWindow')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理'})
+      this.windowOpen('private.display.unSupportWindow')
     },
     clickCancel: function () {
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'チャット文字設定'})
-      this.windowOpen('unSupportWindow')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チャット文字設定'})
+      this.windowOpen('private.display.unSupportWindow')
     }
   },
   computed: {
     ...mapGetters([
-      'isWindowOpen',
       'doResetPosition'
     ]),
     chatLogList: function () {
       return this.$store.state.publicMemo
     },
     chatTabList: function () {
-      return this.$store.state.chat.tabs
+      return this.$store.state.public.chat.tabs
     },
     currentCount: function () {
       return this.$store.state.count

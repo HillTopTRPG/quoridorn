@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="プレイルーム情報表示" display-property="roomInfoWindow" align="center" fixSize="400, 200">
+  <WindowFrame titleText="プレイルーム情報表示" display-property="private.display.roomInfoWindow" align="center" fixSize="400, 200">
     <div class="container">
       <div class="name">{{roomName}}</div>
       <ul>
@@ -23,8 +23,8 @@ export default {
   },
   computed: {
     ...mapGetters([]),
-    roomName: function () { return this.$store.state.room.id },
-    memberList: function () { return this.$store.state.room.members }
+    roomName: function () { return this.$store.state.public.room.id },
+    memberList: function () { return this.$store.state.public.room.members }
   }
 }
 </script>

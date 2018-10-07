@@ -1,11 +1,11 @@
 <template>
-  <WindowFrame titleText="マスク変更" display-property="editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow" @close="closeWindow">
+  <WindowFrame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow">
     <table>
       <tbody>
         <tr>
           <th>文字：</th>
           <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" :style="mapMaskStyle">{{name}}<br>({{this.key}})</div></td>
+          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" :style="mapMaskStyle">{{name}}</div></td>
         </tr>
         <tr>
           <th>色：</th>
@@ -55,10 +55,6 @@ export default {
       'setProperty',
       'changeMapMaskInfo'
     ]),
-    closeWindow: function () {
-      this.setProperty({property: 'display.editMapMaskWindow.key', value: -1})
-      this.windowClose('editMapMaskWindow')
-    },
     commitEdit: function () {
       const mapMaskObj = {
         key: this.key,
@@ -66,17 +62,17 @@ export default {
         columns: this.width,
         rows: this.height,
         color: this.rgba,
-        fontColor: this.fontColor
+        fontColor: this.fontColor,
+        isNotice: true
       }
-
       this.changeMapMaskInfo(mapMaskObj)
-      this.closeWindow()
+      this.windowClose('private.display.editMapMaskWindow')
     },
     cancelEdit: function () {
-      this.closeWindow()
+      this.windowClose('private.display.editMapMaskWindow')
     },
     initWindow: function () {
-      console.log(`initWindow`)
+      // console.log(`initWindow`)
       let mapMaskObj = this.getPieceObj('mapMasks', this.key)
       this.name = mapMaskObj.name
       this.width = mapMaskObj.columns
@@ -94,7 +90,7 @@ export default {
       'getPieceObj'
     ]),
     key: function () {
-      return this.$store.state.display['editMapMaskWindow'].key
+      return this.$store.state.private.display['editMapMaskWindow'].key
     },
     mapMaskStyle: function () {
       let width = this.width * this.gridSize
@@ -123,7 +119,7 @@ export default {
       return colorObj.getColorCodeReverse()
     },
     gridSize: function () {
-      return this.$store.state.map.grid.size
+      return this.$store.state.public.map.grid.size
     }
   }
 }

@@ -24,23 +24,32 @@ export default {
         this.$emit('leftDown')
         return
       }
-      console.log(`  [methods] mousedown left on ${this.type}`)
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.from.x`, value: this.mouseOnTable.x})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.from.y`, value: this.mouseOnTable.y})
+      // console.log(`  [methods] mousedown left on ${this.type}`)
       const offset = {
         w: this.mouseOnTable.x - this.rect.left,
         h: this.mouseOnTable.y - this.rect.top
       }
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.gridOffset.x`, value: Math.floor(offset.w / this.gridSize)})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.gridOffset.y`, value: Math.floor(offset.h / this.gridSize)})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.isDraggingLeft`, value: true})
+      const pieceObj = {
+        move: {
+          from: {
+            x: this.mouseOnTable.x,
+            y: this.mouseOnTable.y
+          },
+          gridOffset: {
+            x: Math.floor(offset.w / this.gridSize),
+            y: Math.floor(offset.h / this.gridSize)
+          }
+        },
+        isDraggingLeft: true
+      }
+      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}`, value: pieceObj, logOff: true})
     },
     leftUp: function () {
       if (this.storeObj.isLock || this.isRolling) {
         this.$emit('leftUp')
         return
       }
-      console.log(`  [methods] mouseup left on ${this.type}`)
+      // console.log(`  [methods] mouseup left on ${this.type}`)
       const locate = {
         x: this.mouseOnTable.x - this.storeObj.move.gridOffset.x * this.gridSize,
         y: this.mouseOnTable.y - this.storeObj.move.gridOffset.y * this.gridSize
@@ -49,13 +58,22 @@ export default {
         locate.x = (Math.ceil(locate.x / this.gridSize) - 1) * this.gridSize
         locate.y = (Math.ceil(locate.y / this.gridSize) - 1) * this.gridSize
       }
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.left`, value: locate.x})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.top`, value: locate.y})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.x`, value: 0})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.y`, value: 0})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.gridOffset.x`, value: 0})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.gridOffset.y`, value: 0})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.isDraggingLeft`, value: false})
+      const pieceObj = {
+        left: locate.x,
+        top: locate.y,
+        move: {
+          dragging: {
+            x: 0,
+            y: 0
+          },
+          gridOffset: {
+            x: 0,
+            y: 0
+          }
+        },
+        isDraggingLeft: false
+      }
+      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}`, value: pieceObj, logOff: true, isNotice: true})
     },
     rightDown: function () { if (this.storeObj.isLock || this.isRolling) { this.$emit('rightDown') } },
     rightUp: function (event) {
@@ -66,9 +84,12 @@ export default {
       let pageX = event.pageX
       let pageY = event.pageY
 
-      this.setProperty({property: `display.${contextProperty}.key`, value: this.objKey})
-      this.setProperty({property: `display.${contextProperty}.x`, value: pageX})
-      this.setProperty({property: `display.${contextProperty}.y`, value: pageY})
+      const obj = {
+        key: this.objKey,
+        x: pageX,
+        y: pageY
+      }
+      this.setProperty({property: contextProperty, value: obj})
       this.windowOpen(contextProperty)
       console.log(`  [methods] open context => ${contextProperty}(${this.objKey})`)
     },
@@ -104,21 +125,32 @@ export default {
       const angle = this.getAngle(this.mouseOnTable)
       const planeAngle = this.arrangeAngle(angle - this.angle.total)
       // console.log(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.angle.dragStart`, value: planeAngle})
-      this.setProperty({property: `map.rollObj.propName`, value: this.type})
-      this.setProperty({property: `map.rollObj.key`, value: this.objKey})
+      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.angle.dragStart`, value: planeAngle})
+      const obj = {
+        propName: this.type,
+        key: this.objKey
+      }
+      this.setProperty({property: `map.rollObj`, value: obj})
     },
     rollEnd: function (event) {
-      console.log(`rollEnd`, event.pageX, event.pageY)
-      if (event.button === 2) {
-        this.setProperty({property: `map.isOverEvent`, value: true})
+      // console.log(`rollEnd`, event.pageX, event.pageY)
+      const mapObj = {
+        rollObj: {
+          isRolling: false
+        }
       }
-      this.setProperty({property: `map.rollObj.isRolling`, value: false})
+      if (event.button === 2) {
+        mapObj.isOverEvent = true
+      }
+      this.setProperty({property: `map`, value: mapObj})
       const planeAngle = this.arrangeAngle(this.angle.dragging + this.angle.total)
       const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30)
       // console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.angle.total`, value: total})
-      this.setProperty({property: `map.${this.type}.${this.storeIndex}.angle.dragging`, value: 0})
+      const obj = {
+        total: total,
+        dragging: 0
+      }
+      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.angle`, value: obj, isNotice: true})
     }
   },
   watch: {
@@ -131,21 +163,24 @@ export default {
           }
           const angle = this.getAngle(mouseOnTable)
           const dragging = this.arrangeAngle(this.arrangeAngle(angle - this.angle.dragStart) - this.angle.total)
-          this.setProperty({property: `map.${this.type}.${this.storeIndex}.angle.dragging`, value: dragging, logOff: true})
+          this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.angle.dragging`, value: dragging, logOff: true})
         } else {
           if (this.storeObj.isDraggingLeft) {
-            this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.x`, value: mouseOnTable.x - this.storeObj.move.from.x, logOff: true})
-            this.setProperty({property: `map.${this.type}.${this.storeIndex}.move.dragging.y`, value: mouseOnTable.y - this.storeObj.move.from.y, logOff: true})
+            const obj = {
+              x: mouseOnTable.x - this.storeObj.move.from.x,
+              y: mouseOnTable.y - this.storeObj.move.from.y
+            }
+            this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.move.dragging`, value: obj, logOff: true})
           }
         }
       },
       deep: true
     },
     marginGridNum: function () {
-      return this.$store.state.map.marginGridNum
+      return this.$store.state.public.map.marginGridNum
     },
     gridSize: function () {
-      return this.$store.state.map.grid.size
+      return this.$store.state.public.map.grid.size
     }
   },
   computed: {
@@ -158,7 +193,7 @@ export default {
       return this.getPieceObj(this.type, this.objKey)
     },
     storeIndex: function () {
-      return this.$store.state.map[this.type].indexOf(this.storeObj)
+      return this.$store.state.public.map[this.type].indexOf(this.storeObj)
     },
     rollObj: function () {
       return this.$store.state.map.rollObj

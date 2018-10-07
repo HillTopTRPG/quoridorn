@@ -67,7 +67,7 @@ const app = new Vue({
   methods: {
     handleScroll () {
       this.scrollY = window.scrollY
-      console.log('scroll', this.scrollY)
+      // console.log('scroll', this.scrollY)
     }
   },
   template: `<App/>`

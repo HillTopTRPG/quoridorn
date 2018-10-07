@@ -1,6 +1,6 @@
 
 <template>
-  <ContextFrame displayProperty="gameTableContext">
+  <ContextFrame displayProperty="private.display.gameTableContext">
     <div class="item" @click.left.prevent="addCharacter">キャラクター追加</div>
     <div class="item" @click.left.prevent="addMapMask">マップマスク追加</div>
     <div class="item" @click.left.prevent="addMapMarker">マップマーカー追加</div>
@@ -31,41 +31,41 @@ export default {
     ]),
     addCharacter: function (event) {
       console.log(`  [methods] select context item => GameTable.addCharacter`)
-      this.windowOpen('addCharacterSettingWindow')
-      this.windowClose('gameTableContext')
+      this.windowOpen('private.display.addCharacterSettingWindow')
+      this.windowClose('private.display.gameTableContext')
     },
     addMapMask: function (event) {
       console.log(`  [methods] select context item => GameTable.addMapMask`)
-      this.windowOpen('addMapMaskWindow')
-      this.windowClose('gameTableContext')
+      this.windowOpen('private.display.addMapMaskWindow')
+      this.windowClose('private.display.gameTableContext')
     },
     addMapMarker: function (event) {
       console.log(`  [methods] select context item => GameTable.addMapMarker`)
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'マップマーカー追加'})
-      this.windowOpen('unSupportWindow')
-      this.windowClose('gameTableContext')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップマーカー追加'})
+      this.windowOpen('private.display.unSupportWindow')
+      this.windowClose('private.display.gameTableContext')
     },
     addDiceSymbol: function (event) {
       console.log(`  [methods] select context item => GameTable.addDiceSymbol`)
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'ダイスシンボル追加'})
-      this.windowOpen('unSupportWindow')
-      this.windowClose('gameTableContext')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスシンボル追加'})
+      this.windowOpen('private.display.unSupportWindow')
+      this.windowClose('private.display.gameTableContext')
     },
     createHandCardArea: function (event) {
       console.log(`  [methods] select context item => GameTable.createHandCardArea`)
       alert('未実装の機能です。')
-      this.windowClose('gameTableContext')
+      this.windowClose('private.display.gameTableContext')
     },
     createMessageCard: function (event) {
       console.log(`  [methods] select context item => GameTable.createMessageCard`)
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'メッセージカード追加'})
-      this.windowOpen('unSupportWindow')
-      this.windowClose('gameTableContext')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'メッセージカード追加'})
+      this.windowOpen('private.display.unSupportWindow')
+      this.windowClose('private.display.gameTableContext')
     },
     resetWindowLocate: function (event) {
       console.log(`  [methods] select context item => GameTable.resetWindowLocate`)
       this.doResetWindowLocate()
-      this.windowClose('gameTableContext')
+      this.windowClose('private.display.gameTableContext')
     }
   },
   computed: {

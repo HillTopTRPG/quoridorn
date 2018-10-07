@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame :titleText="title" display-property="unSupportWindow" align="center" fixSize="200, 120">
+  <WindowFrame :titleText="title" display-property="private.display.unSupportWindow" align="center" fixSize="200, 120">
     <div class="contents">
       <div>未実装の機能です。</div>
       <button @click="close">閉じる</button>
@@ -20,12 +20,12 @@ export default {
       'windowClose'
     ]),
     close: function () {
-      this.windowClose('unSupportWindow')
+      this.windowClose('private.display.unSupportWindow')
     }
   },
   computed: {
     title: function () {
-      return this.$store.state.display.unSupportWindow.title
+      return this.$store.state.private.display.unSupportWindow.title
     }
   }
 }

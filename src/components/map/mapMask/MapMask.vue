@@ -3,7 +3,7 @@
     :class="[storeObj.isLock ? 'isLock' : 'isUnLock', isHover ? 'hover' : '']"
     :style="mapMaskStyle"
     @mouseover="mouseover" @mouseout="mouseout"
-    @click.right.prevent="(e) => openContext(e, 'mapMaskContext')"
+    @click.right.prevent="(e) => openContext(e, 'private.display.mapMaskContext')"
     @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
     @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
     @touchstart.stop="leftDown" @touchend.stop="leftUp" @touchcancel.stop="leftUp"

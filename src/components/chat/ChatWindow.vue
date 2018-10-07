@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="チャット" display-property="chatWindow" align="left-bottom" baseSize="-300, 240">
+  <WindowFrame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 240">
     <div class="container">
       <div class="tabs">
         <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive, unRead: tabObj.unRead > 0 }" @click.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/{{tabObj.unRead}}</span><!--
@@ -18,7 +18,7 @@
       </div>
       <div class="sendLine">
         <span class="label">発言</span>
-        <textarea v-model="currentMessage" @keydown.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
+        <textarea v-model="currentMessage" @keypress.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
         <button :tabindex="chatTabList.length + 4">送信</button>
       </div>
     </div>
@@ -89,7 +89,9 @@ export default {
 
       setTimeout(function () {
         var elm = document.getElementById('chatLog')
-        elm.scrollTop = elm.scrollHeight
+        if (elm) {
+          elm.scrollTop = elm.scrollHeight
+        }
       }, 0)
     }.bind(this), 0)
   },
@@ -105,16 +107,16 @@ export default {
       this.$emit('onFocus')
     },
     addTab: function () {
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'タブ編集'})
-      this.windowOpen('unSupportWindow')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'タブ編集'})
+      this.windowOpen('private.display.unSupportWindow')
     },
     settingDiceBot: function () {
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'ダイスボット用表管理'})
-      this.windowOpen('unSupportWindow')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理'})
+      this.windowOpen('private.display.unSupportWindow')
     },
     settingFont: function () {
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'チャット文字設定'})
-      this.windowOpen('unSupportWindow')
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チャット文字設定'})
+      this.windowOpen('private.display.unSupportWindow')
     },
     sendMessage: function (e) {
       if (e.shiftKey || e.ctrlKey) {
@@ -126,7 +128,7 @@ export default {
         name: this.name,
         text: this.currentMessage,
         color: 'black',
-        isChat: true
+        isOperation: true
       })
 
       this.bcDice.setMessage(this.currentMessage)
@@ -139,14 +141,14 @@ export default {
             name: this.currentDiceBotSystem,
             text: `シークレットダイス`,
             color: 'black',
-            isChat: true
+            isOperation: true
           })
         } else {
           this.addChatLog({
             name: this.currentDiceBotSystem,
             text: diceResult,
             color: 'black',
-            isChat: true
+            isOperation: true
           })
         }
       }
@@ -174,25 +176,22 @@ export default {
     chatLogList: function () {
       setTimeout(function () {
         var elm = document.getElementById('chatLog')
-        elm.scrollTop = elm.scrollHeight
+        if (elm) {
+          elm.scrollTop = elm.scrollHeight
+        }
       }, 0)
     },
     name: function (newValue) {
-      this.setProperty({property: 'connect.playerName', value: newValue})
-      const members = this.$store.state.room.members
-      console.log(this.$store.state.connect.peerId, members)
-      const myPeerId = this.$store.state.connect.peerId
+      this.setProperty({property: 'private.connect.playerName', value: newValue})
+      const members = this.$store.state.public.room.members
+      const myPeerId = this.$store.state.private.connect.peerId
       const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
-      console.log(myMemberObjList)
       if (myMemberObjList.length > 0) {
         const memberObj = myMemberObjList[0]
         memberObj.name = newValue
         const index = members.indexOf(memberObj)
         members.splice(index, 1, memberObj)
-        this.sendRoomData({
-          type: 'CHANGE_PLAYER_NAME',
-          value: newValue
-        })
+        this.sendRoomData({ type: 'CHANGE_PLAYER_NAME', value: newValue })
       }
     }
   },
@@ -201,7 +200,7 @@ export default {
       return this.$store.getters.chatLogs
     },
     chatTabList: function () {
-      return this.$store.state.chat.tabs
+      return this.$store.state.public.chat.tabs
     },
     currentCount: function () {
       return this.$store.state.count

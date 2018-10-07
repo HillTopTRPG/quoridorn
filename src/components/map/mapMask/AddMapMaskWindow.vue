@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="マスク作成" display-property="addMapMaskWindow" align="center" fixSize="285, 195">
+  <WindowFrame titleText="マスク作成" display-property="private.display.addMapMaskWindow" align="center" fixSize="285, 195">
     <table>
       <tbody>
         <tr>
@@ -93,7 +93,7 @@ export default {
       return colorObj.getColorCodeReverse()
     },
     gridSize: function () {
-      return this.$store.state.map.grid.size
+      return this.$store.state.public.map.grid.size
     }
   }
 }
@@ -129,8 +129,8 @@ td.mapMaskGrid {
   border: none;
 }
 .mapMask {
-  max-width: 161px;
-  max-height: 161px;
+  max-width: 157px;
+  max-height: 157px;
   margin: auto;
   display: flex;
   justify-content: center;

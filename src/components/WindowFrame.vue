@@ -260,7 +260,7 @@ export default {
         this.windowFactor.b = 0
         this.windowFactor.w = 0
         this.windowFactor.h = 0
-        this.setProperty({property: `display.${this.displayProperty}.doResetPosition`, value: false})
+        this.setProperty({property: `private.display.${this.displayProperty}.doResetPosition`, value: false})
         this.$emit('reset')
       } else {
         console.log(`    [watch] window resetted => ${this.displayProperty}`)
@@ -270,7 +270,8 @@ export default {
   computed: {
     ...mapGetters([
       'isWindowOpen',
-      'doResetPosition'
+      'doResetPosition',
+      'getState'
     ]),
     isDisplay: function () {
       if (!this.displayProperty) return false
@@ -283,7 +284,7 @@ export default {
       return isResetPosition
     },
     zIndex: function () {
-      return this.$store.state.display[this.displayProperty].zIndex
+      return this.getState(this.displayProperty).zIndex
     },
     isFix: function () {
       if (this.fixSize) { return true }

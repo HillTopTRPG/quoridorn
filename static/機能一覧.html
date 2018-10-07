@@ -51,9 +51,10 @@
           <li>キャラクター生成時の「その他」がコマに反映されない（未実装）</li>
           <li><del>キャラクター生成時の画像反転「反」ボタンが効かない（未実装）</del><p>2018/10/06 17:00 改善</p></li>
           <li><del>画像切替設定が効かない（未実装）</del><p>2018/10/06 17:00 改善</p></li>
-          <li>キャラクター生成時の「隠し画像」ない（未実装）</li>
+          <li>キャラクター生成時に「隠し画像」が効かない（未実装）</li>
           <li>キャラクター生成時の「参照URL」がコマに反映されない（未実装）</li>
           <li>メニューの開閉のキッカケがどどんとふと違う</li>
+          <li>画像データ登録時に「隠し画像パスワード」を指定できない（未実装）</li>
         </ul>
       </li>
       <li>
@@ -146,7 +147,7 @@
       $(function() {
         $('.contents li:first-child del').parent().hide()
         $('.contents input[type="checkbox"]').change(function(event) {
-          console.log('changed', $(event.target).prop('checked'))
+          // console.log('changed', $(event.target).prop('checked'))
           if($(event.target).prop('checked')) {
             $('.contents li:first-child del').parent().show()
           } else {

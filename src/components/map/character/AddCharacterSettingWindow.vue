@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="キャラクター追加" display-property="addCharacterSettingWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
+  <WindowFrame titleText="キャラクター追加" display-property="private.display.addCharacterSettingWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
     <div class="container">
       <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
       <div class="choseImage">
@@ -143,22 +143,21 @@ export default {
         useImageList += imgStr + '|'
       })
       useImageList = useImageList.substr(0, useImageList.length - 1)
-      this.setProperty({property: `display.addCharacterWindow.name`, value: this.name})
-      this.setProperty({property: `display.addCharacterWindow.size`, value: this.size})
-      this.setProperty({property: `display.addCharacterWindow.useImageList`, value: useImageList})
-      this.setProperty({property: `display.addCharacterWindow.isHide`, value: this.isHide})
-      this.setProperty({property: `display.addCharacterWindow.url`, value: this.url})
-      this.setProperty({property: `display.addCharacterWindow.text`, value: this.text})
-      this.setProperty({property: `display.addCharacterWindow.useImageIndex`, value: 0}) // TODO
-      this.setProperty({property: `display.addCharacterWindow.currentImageTag`, value: this.currentImageTag})
-      this.windowOpen('addCharacterWindow')
-      /*
-      this.setProperty({property: 'display.unSupportWindow.title', value: 'キャラクター置き場'}); this.windowOpen('unSupportWindow')
-      this.windowClose('addCharacterSettingWindow')
-       */
+      const obj = {
+        name: this.name,
+        size: this.size,
+        useImageList: useImageList,
+        isHide: this.isHide,
+        url: this.url,
+        text: this.text,
+        useImageIndex: 0,
+        currentImageTag: this.currentImageTag
+      }
+      this.setProperty({property: `private.display.addCharacterWindow`, value: obj})
+      this.windowOpen('private.display.addCharacterWindow')
     },
     cancel: function () {
-      this.windowClose('addCharacterSettingWindow')
+      this.windowClose('private.display.addCharacterSettingWindow')
     },
     open: function () {
       this.isOpenSwitch = false
@@ -171,7 +170,7 @@ export default {
       this.isHide = false
       this.url = ''
       this.text = ''
-      this.windowClose('addCharacterWindow')
+      this.windowClose('private.display.addCharacterWindow')
     }
   },
   computed: {
@@ -192,7 +191,7 @@ export default {
       return this.switchImageList.length > 1
     },
     storeImages: function () {
-      return this.$store.state.images.data
+      return this.$store.state.public.images.data
     },
     currentImage: function () {
       return this.getImage(this.currentImageKey)
@@ -202,10 +201,10 @@ export default {
       return switchImageObj.imgKey
     },
     tagList: function () {
-      return this.$store.state.images.tags
+      return this.$store.state.public.images.tags
     },
     imageList: function () {
-      return this.$store.state.images.data.filter((obj) => {
+      return this.$store.state.public.images.data.filter((obj) => {
         if (this.currentImageTag === '(全て)') { return true }
         return obj.tag.indexOf(this.currentImageTag) >= 0
       })
