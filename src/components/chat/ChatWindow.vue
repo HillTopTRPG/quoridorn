@@ -10,7 +10,7 @@
       </ul>
       <div class="oneLine">
         <span class="label">名前</span>
-        <input type="text" v-model="name" :tabindex="chatTabList.length + 2">
+        <input type="text" :value="name" :tabindex="chatTabList.length + 2" @change="changeName">
         <select :tabindex="chatTabList.length + 5"></select>
         <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>
         <img v-img="require('../../assets/dice.png')" alt='ダイスボット' title='ダイスボットの設定' @click="settingDiceBot" :tabindex="chatTabList.length + 7">
@@ -42,7 +42,6 @@ export default {
       currentMessage: '',
       currentDiceBotSystem: 'DiceBot',
       bcDice: new BCDice(),
-      name: '',
       baseHelpMessage:
         '【ダイスボット】チャットにダイス用の文字を入力するとダイスロールが可能\n' +
         '入力例）2d6+1 攻撃！\n' +
@@ -76,6 +75,7 @@ export default {
       // console.log(`bcdice-js ダイスボット一覧`)
       DiceBotLoader.collectDiceBots().forEach(function (diceBot) {
         // console.log(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
+        // console.log(`${diceBot.gameName()}, ${diceBot.gameType()}`)
         this.diceBotSystems.push({
           name: diceBot.gameName(),
           value: diceBot.gameType(),
@@ -87,12 +87,10 @@ export default {
         })
       }.bind(this))
 
-      setTimeout(function () {
-        var elm = document.getElementById('chatLog')
-        if (elm) {
-          elm.scrollTop = elm.scrollHeight
-        }
-      }, 0)
+      var elm = document.getElementById('chatLog')
+      if (elm) {
+        elm.scrollTop = elm.scrollHeight
+      }
     }.bind(this), 0)
   },
   methods: {
@@ -103,6 +101,19 @@ export default {
       'setProperty',
       'sendRoomData'
     ]),
+    changeName: function (event) {
+      const name = event.target.value
+      this.setProperty({property: 'private.connect.playerName', value: name})
+      const myPeerId = this.$store.state.private.connect.peerId
+      const members = this.$store.state.public.room.members
+      const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
+      if (myMemberObjList.length > 0) {
+        const memberObj = myMemberObjList[0]
+        const index = members.indexOf(memberObj)
+        this.setProperty({property: `public.room.members.${index}.name`, value: name})
+        this.sendRoomData({ type: 'CHANGE_PLAYER_NAME', value: name })
+      }
+    },
     onFocus: function () {
       this.$emit('onFocus')
     },
@@ -180,19 +191,6 @@ export default {
           elm.scrollTop = elm.scrollHeight
         }
       }, 0)
-    },
-    name: function (newValue) {
-      this.setProperty({property: 'private.connect.playerName', value: newValue})
-      const members = this.$store.state.public.room.members
-      const myPeerId = this.$store.state.private.connect.peerId
-      const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
-      if (myMemberObjList.length > 0) {
-        const memberObj = myMemberObjList[0]
-        memberObj.name = newValue
-        const index = members.indexOf(memberObj)
-        members.splice(index, 1, memberObj)
-        this.sendRoomData({ type: 'CHANGE_PLAYER_NAME', value: newValue })
-      }
     }
   },
   computed: {
@@ -204,6 +202,9 @@ export default {
     },
     currentCount: function () {
       return this.$store.state.count
+    },
+    name: function () {
+      return this.$store.state.private.connect.playerName
     },
     helpMessage: function () {
       const currentDiceBotSystem = this.currentDiceBotSystem

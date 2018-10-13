@@ -1,6 +1,12 @@
 <template>
   <div id="menu">
-    <div class="menu-button" @click="clickConnect">接続</div>
+    <div class="holder" v-show="!isConnected || isConnectHover">
+      <div class="first"></div>
+      <div class="second"></div>
+      <div class="third"></div>
+      <div class="menu-button" @click="clickConnect" :title="isConnectHover ? '新しいお部屋に移りますか？\n古い部屋への接続は自動で切断されます。' : 'さぁ！お部屋を立てましょう！！'" @mouseleave="hoverConnect(false)">接続</div>
+    </div>
+    <div class="menu-button" v-show="isConnected && !isConnectHover" @click="clickConnect" @mouseenter="hoverConnect(true)">接続</div>
     <div class="span-group">
       <span @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')" :class="{isHover : hover2}">ファイル</span><!--
     --><span @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')" :class="{isHover : hover3}">表示</span><!--
@@ -10,18 +16,16 @@
     --><span @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')" :class="{isHover : hover7}">ヘルプ</span><!--
   --><span @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')" :class="{isHover : hover8}">デモ</span>
     </div>
-    <div class="menu-button" @click="clickRoomInfo">
-      ルームID.<span>{{ roomId }}</span>
+    <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
+      ルームID.<span :class="{isDisconnect : !isConnected}">{{ roomId }}</span>
       :
       <span>{{ memberNum }}</span>名
     </div>
-    <div class="menu-button" @click="clickPublicMemo">共有メモ</div>
-    <div class="menu-button" @click="clickLogOut">ログアウト</div>
+    <div class="menu-button" @click="clickPublicMemo" :title="publicMemoTitle">共有メモ</div>
+    <div class="menu-button" @click="clickLogOut" :class="{isDisconnect : !isConnected}" :title="logoutTitle">ログアウト</div>
     <div class="hoverMenu hoverMenu2" v-show="menu['ファイル']" @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')">
       <div class="item" @click="clickExport">セーブ</div>
       <div class="item" @click="clickImport">ロード</div>
-      <hr>
-      <div class="item" @click="clickLogOut">ログアウト</div>
     </div>
     <div class="hoverMenu hoverMenu3" v-show="menu['表示']" @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')">
       <div class="item" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, 'ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
@@ -102,6 +106,7 @@ export default {
   data () {
     return {
       checkImg: require('../../assets/check.png'),
+      isConnectHover: false,
       menu: {
         'ファイル': false,
         '表示': false,
@@ -119,23 +124,29 @@ export default {
       'windowOpen',
       'setProperty',
       'doResetWindowLocate',
-      'createPeer'
+      'exportStart',
+      'doExport'
     ]),
     menuHover: function (flg, ...targets) {
       for (let target of targets) {
         this.menu[target] = flg
       }
     },
+    hoverConnect: function (flg) {
+      this.isConnectHover = flg
+    },
     clickConnect: function () {
-      // this.setProperty({property: 'private.display.unSupportWindow.title', value: '接続'})
-      // this.windowOpen('private.display.unSupportWindow')
-      this.createPeer()
+      this.windowOpen('private.display.createRoomWindow')
     },
     clickRoomInfo: function () { this.windowOpen('private.display.roomInfoWindow') },
     clickPublicMemo: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '共有メモ'}); this.windowOpen('private.display.unSupportWindow') },
-    clickExport: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'セーブ'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
+    clickExport: function () { this.exportStart(); this.menuHover(false, 'ファイル') },
     clickImport: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
-    clickLogOut: function () { alert('未実装の機能です。'); this.menuHover(false, 'ファイル') },
+    clickLogOut: function () {
+      this.menuHover(false, 'ファイル')
+      const baseUrl = location.href.replace(/\?.+$/, '')
+      location.href = baseUrl
+    },
     clickSettingFontSize: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
     clickResetWindowLocate: function () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
     clickAddCharacter: function () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
@@ -159,6 +170,13 @@ export default {
     clickViewFunction: function () { this.windowOpen('private.display.functionListWindow'); this.menuHover(false, 'デモ') },
     clickBufForm: function () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuHover(false, 'デモ') }
   },
+  watch: {
+    volatilSaveData: function (newValue) {
+      if (newValue.length === this.memberNum) {
+        this.doExport()
+      }
+    }
+  },
   computed: {
     ...mapGetters([]),
     hover1: function () { return this.menuHoverNum === 1 },
@@ -169,11 +187,44 @@ export default {
     hover6: function () { return this.menuHoverNum === 6 },
     hover7: function () { return this.menuHoverNum === 7 },
     hover8: function () { return this.menuHoverNum === 8 },
+    isConnected: function () {
+      const peerId = this.$store.state.private.connect.peerId
+      if (!peerId) return false
+      const filtered = this.$store.state.public.room.members.filter(memberObj => memberObj.peerId === peerId)
+      if (filtered.length === 0) return false
+      return filtered[0].isCame
+    },
     roomId: function () {
-      return this.$store.state.public.room.id
+      const roomId = this.$store.state.public.room.id
+      return roomId !== '' ? roomId : '未接続'
     },
     memberNum: function () {
-      return this.$store.state.public.room.members.length
+      const filtered = this.$store.state.public.room.members.filter(memberObj => memberObj.isCame)
+      return filtered.length
+    },
+    volatilSaveData: function () {
+      return this.$store.state.volatilSaveData
+    },
+    roomInfoTitle: function () {
+      if (this.isConnected) {
+        return 'メンバーの一覧を見たり、部屋の設定を変えることができますよ。'
+      } else {
+        return 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！'
+      }
+    },
+    publicMemoTitle: function () {
+      if (this.isConnected) {
+        return 'メンバーに共有したいテキストはこちらにどうぞ'
+      } else {
+        return '部屋に入る前から準備しておくのですね！？\nなんと準備の良いお方でしょう！'
+      }
+    },
+    logoutTitle: function () {
+      if (this.isConnected) {
+        return 'この部屋から退室するのですか？'
+      } else {
+        return 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！'
+      }
     }
   }
 }
@@ -196,6 +247,16 @@ export default {
   margin: 5px;
   font-size: 80%;
 }
+div.isDisconnect {
+  background-color: rgba(200, 200, 200, 0.5);
+}
+div.isDisconnect:hover {
+  background-color: rgba(200, 200, 200, 0.5);
+}
+span.isDisconnect {
+  color: red;
+  font-weight: bold;
+}
 .span-group {
   display: inline-block;
   background-color: rgba(250, 250, 250, 0.2);
@@ -215,6 +276,7 @@ export default {
 }
 .menu-button {
   display: inline-block;
+  position: relative;
   background: rgba(250, 250, 250, 0.4);
   border: solid gray 1px;
   padding: 2px 10px;
@@ -224,6 +286,10 @@ export default {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+  z-index: 1000;
+}
+.meun-button.isDisconnect {
+  background: rgba(250, 250, 250, 0);
 }
 .menu-button:hover {
   border: solid #0092ED 1px;
@@ -284,5 +350,87 @@ export default {
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
 }
+
+@import url(https://fonts.googleapis.com/css?family=Bitter);
+.first,
+.second,
+.third {
+  display: inline;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -3px;
+  bottom: -3px;
+  border: solid gray 1px;
+  padding: 2px 10px;
+  border-radius: 5px;
+}
+.second,
+.third {
+  opacity: 0;
+}
+.holder {
+  position: relative;
+  padding: 0;
+  display: inline;
+  z-index: 1;
+}
+.first {
+  animation: first 4s infinite;
+  background: linear-gradient(#5ff8ca, #60e08c);
+  z-index: 10;
+}
+  @keyframes first {
+    0% {opacity: 1.0;}
+    10% {opacity: 0.8;}
+    20% {opacity: 0.6;}
+    30% {opacity: 0.4;}
+    40% {opacity: 0.2;}
+    50% {opacity: 0.1;}
+    60% {opacity: 0.2;}
+    70% {opacity: 0.4;}
+    80% {opacity: 0.6;}
+    90% {opacity: 0.8;}
+    100% {opacity: 1.0;}
+  }
+
+.second {
+  animation: second 4s infinite; animation-delay: 0.8s;
+  background: linear-gradient(#19eaa6, #00a1f0);
+  z-index: 20;
+}
+  @keyframes second {
+    0% {opacity: 0;}
+    10% {opacity: 0.2;}
+    20% {opacity: 0.4;}
+    30% {opacity: 0.6;}
+    40% {opacity: 0.8;}
+    50% {opacity: 1.0;}
+    60% {opacity: 0.8;}
+    70% {opacity: 0.6;}
+    80% {opacity: 0.4;}
+    90% {opacity: 0.2;}
+    100% {opacity: 0;}
+  }
+
+.third {
+  animation: third 4s infinite;
+  animation-delay: 3.2s;
+  background: linear-gradient(#aab7f8, #ff75c6);
+  z-index: 30;
+}
+  @keyframes third {
+    0% {opacity: 0;}
+    10% {opacity: 0.2;}
+    20% {opacity: 0.4;}
+    30% {opacity: 0.6;}
+    40% {opacity: 0.8;}
+    50% {opacity: 1.0;}
+    60% {opacity: 0.8;}
+    70% {opacity: 0.6;}
+    80% {opacity: 0.4;}
+    90% {opacity: 0.2;}
+    100% {opacity: 0;}
+  }
 
 </style>

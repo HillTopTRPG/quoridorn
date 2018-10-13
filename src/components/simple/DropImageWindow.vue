@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="画像データ登録" display-property="private.display.dropChooseWindow" align="center" fixSize="385, 660">
+  <WindowFrame titleText="画像データ登録" display-property="private.display.dropImageWindow" align="center" fixSize="385, 660">
     <div class="contents">
       <div v-if="!imageList">画像読込中...</div>
       <fieldset v-if="imageList" v-for="imageObj in imageList" :key="imageObj.key">
@@ -10,8 +10,8 @@
           <label class="passwordLabel">隠し画像パスワード：{{imageObj.password !== '' ? 'あり' : 'なし'}}</label>
           <span class="tagLabel">付与するタグ(半角・全角スペースで区切り)</span>
           <input class="tagInput" type="text" @change="changeTag(imageObj.key)" v-model="imageObj.currentTag" />
-          <select class="tagSelect" list="dropChooseWindowTags" @change="selectTag(imageObj.key)" v-model="imageObj.selectTag">
-          <!-- <datalist id="dropChooseWindowTags"> -->
+          <select class="tagSelect" list="dropImageWindowTags" @change="selectTag(imageObj.key)" v-model="imageObj.selectTag">
+          <!-- <datalist id="dropImageWindowTags"> -->
             <option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option>
           <!-- </datalist> -->
           </select>
@@ -30,7 +30,7 @@ import { mapMutations, mapGetters } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
-  name: 'dropChooseWindow',
+  name: 'dropImageWindow',
   components: {
     WindowFrame: WindowFrame
   },
@@ -54,9 +54,10 @@ export default {
           isNotice: true
         })
       })
-      this.windowClose('private.display.dropChooseWindow')
+      this.windowClose('private.display.dropImageWindow')
     },
     cancel: function () {
+      this.windowClose('private.display.dropImageWindow')
     },
     getKeyObj: function (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
@@ -104,7 +105,7 @@ export default {
     ...mapGetters([
     ]),
     storeImageList: function () {
-      return this.$store.state.private.display.dropChooseWindow.imageDataList
+      return this.$store.state.private.display.dropImageWindow.imageDataList
     },
     tagList: function () {
       const result = this.$store.state.public.images.tags.concat()

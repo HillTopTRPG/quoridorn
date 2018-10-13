@@ -31,7 +31,7 @@
     <div class="side-bottom" v-if="!isFix"
       @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
       @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
-    <img class="close" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow"/>
+    <img class="close" v-if="!isBanClose" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow"/>
   </div>
 </template>
 
@@ -44,7 +44,8 @@ export default {
     'displayProperty': { type: String, required: true },
     'align': { type: String, required: true },
     'baseSize': String,
-    'fixSize': String
+    'fixSize': String,
+    'isBanClose': Boolean
   },
   data () {
     return {
@@ -260,7 +261,7 @@ export default {
         this.windowFactor.b = 0
         this.windowFactor.w = 0
         this.windowFactor.h = 0
-        this.setProperty({property: `private.display.${this.displayProperty}.doResetPosition`, value: false})
+        this.setProperty({property: `${this.displayProperty}.doResetPosition`, value: false})
         this.$emit('reset')
       } else {
         console.log(`    [watch] window resetted => ${this.displayProperty}`)

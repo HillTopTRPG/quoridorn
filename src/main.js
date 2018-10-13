@@ -17,8 +17,13 @@ import PublicMemoWindow from './components/public-memo/PublicMemoWindow'
 import AddCharacterSettingWindow from './components/map/character/AddCharacterSettingWindow'
 import AddCharacterWindow from './components/map/character/AddCharacterWindow'
 import CharacterContext from './components/map/character/CharacterContext'
-import DropChooseWindow from './components/simple/DropChooseWindow'
+import DropImageWindow from './components/simple/DropImageWindow'
 import RoomInfoWindow from './components/simple/RoomInfoWindow'
+import DropZipWindow from './components/simple/DropZipWindow'
+import SelectPeerWindow from './components/simple/SelectPeerWindow'
+import InviteLinkWindow from './components/simple/InviteLinkWindow'
+import CreateRoomWindow from './components/simple/CreateRoomWindow'
+import ConfirmLoadRoomWindow from './components/simple/ConfirmLoadRoomWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -70,6 +75,7 @@ const app = new Vue({
       // console.log('scroll', this.scrollY)
     }
   },
+  // render: h => h(App),
   template: `<App/>`
 })
 app.$mount('#app')
@@ -113,8 +119,23 @@ addCharacterWindow.$mount('#addCharacterWindow')
 const characterContext = new Vue({ store, components: { CharacterContext: CharacterContext }, template: `<CharacterContext/>` })
 characterContext.$mount('#characterContext')
 
-const dropChooseWindow = new Vue({ store, components: { DropChooseWindow: DropChooseWindow }, template: `<DropChooseWindow/>` })
-dropChooseWindow.$mount('#dropChooseWindow')
+const dropImageWindow = new Vue({ store, components: { DropImageWindow: DropImageWindow }, template: `<DropImageWindow/>` })
+dropImageWindow.$mount('#dropImageWindow')
 
 const roomInfoWindow = new Vue({ store, components: { RoomInfoWindow: RoomInfoWindow }, template: `<RoomInfoWindow/>` })
 roomInfoWindow.$mount('#roomInfoWindow')
+
+const dropZipWindow = new Vue({ store, components: { DropZipWindow: DropZipWindow }, template: `<DropZipWindow/>` })
+dropZipWindow.$mount('#dropZipWindow')
+
+const selectPeerWindow = new Vue({ store, components: { SelectPeerWindow: SelectPeerWindow }, template: `<SelectPeerWindow/>` })
+selectPeerWindow.$mount('#selectPeerWindow')
+
+const inviteLinkWindow = new Vue({ store, components: { InviteLinkWindow: InviteLinkWindow }, template: `<InviteLinkWindow/>` })
+inviteLinkWindow.$mount('#inviteLinkWindow')
+
+const createRoomWindow = new Vue({ store, components: { CreateRoomWindow: CreateRoomWindow }, template: `<CreateRoomWindow/>` })
+createRoomWindow.$mount('#createRoomWindow')
+
+const confirmLoadRoomWindow = new Vue({ store, components: { ConfirmLoadRoomWindow: ConfirmLoadRoomWindow }, template: `<ConfirmLoadRoomWindow/>` })
+confirmLoadRoomWindow.$mount('#confirmLoadRoomWindow')

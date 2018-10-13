@@ -18,10 +18,27 @@ export default {
   },
   mounted: function () {
     this.onMount()
+
+    let count = 0
+    document.onkeydown = event => {
+      if ((event.ctrlKey || event.metaKey) && (event.keyCode === 83 || event.which === 83)) {
+        if (count++ === 0) {
+          this.exportStart()
+        }
+        return false
+      }
+    }
+    document.onkeyup = function (event) {
+      if ((event.ctrlKey || event.metaKey) && (event.keyCode === 83 || event.which === 83)) {
+        count = 0
+        return false
+      }
+    }
   },
   methods: {
     ...mapMutations([
-      'onMount'
+      'onMount',
+      'exportStart'
     ]),
     onWheel: function (e) {
       this.$refs['gameTable'].onWheel(e.wheelDelta)

@@ -49,7 +49,7 @@ export default {
       if (nextIndex > maxIndex) {
         nextIndex = 0
       }
-      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.useImageIndex`, value: nextIndex, isNotice: true})
+      this.setProperty({property: `public.${this.type}.${this.storeIndex}.useImageIndex`, value: nextIndex, isNotice: true})
     }
   },
   computed: {

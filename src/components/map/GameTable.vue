@@ -46,7 +46,8 @@ export default {
       'addPieceInfo',
       'windowOpen',
       'setProperty',
-      'windowClose'
+      'windowClose',
+      'importStart'
     ]),
     dragging: function () {
       console.log(`★★★★ dragging ★★★★`)
@@ -97,8 +98,8 @@ export default {
       console.log(`  [methods] mouseup left on GameTable`)
       if (this.rollObj.isRolling) {
         // マップ上のオブジェクトを回転中の場合
-        const pieceObj = this.$store.state.public.map[this.rollObj.propName].filter(obj => obj.key === this.rollObj.key)[0]
-        const storeIndex = this.$store.state.public.map[this.rollObj.propName].indexOf(pieceObj)
+        const pieceObj = this.$store.state.public[this.rollObj.propName].filter(obj => obj.key === this.rollObj.key)[0]
+        const storeIndex = this.$store.state.public[this.rollObj.propName].indexOf(pieceObj)
         this.setProperty({property: `map.rollObj.isRolling`, value: false, logOff: true})
         const planeAngle = this.arrangeAngle(pieceObj.angle.dragging + pieceObj.angle.total)
         const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30)
@@ -107,7 +108,7 @@ export default {
           total: total,
           dragging: 0
         }
-        this.setProperty({property: `public.map.${this.rollObj.propName}.${storeIndex}.angle`, value: obj, logOff: true, isNotice: true})
+        this.setProperty({property: `public.${this.rollObj.propName}.${storeIndex}.angle`, value: obj, logOff: true, isNotice: true})
       } else {
         // マップを動かしている場合
         const obj = {
@@ -299,10 +300,15 @@ export default {
 
       // ファイルの種類に応じて振り分け
       const imageFiles = []
+      const zipFiles = []
       for (const file of files) {
+        console.log(file.type)
         if (file.type.indexOf('image/') === 0) {
           // 画像
           imageFiles.push(file)
+        } else if (file.type.indexOf('zip') >= 0) {
+          // zip
+          zipFiles.push(file)
         }
       }
 
@@ -318,9 +324,14 @@ export default {
           values.forEach(function (valueObj, index) {
             valueObj.key = index
           })
-          this.setProperty({property: 'private.display.dropChooseWindow.imageDataList', value: values})
+          this.setProperty({property: 'private.display.dropImageWindow.imageDataList', value: values})
         }.bind(this))
-        this.windowOpen('private.display.dropChooseWindow')
+        this.windowOpen('private.display.dropImageWindow')
+      }
+
+      // zipファイルの処理
+      if (zipFiles.length > 0) {
+        this.importStart(zipFiles)
       }
     },
     createBase64DataSet: function (imageFile, thumbnailSize) {

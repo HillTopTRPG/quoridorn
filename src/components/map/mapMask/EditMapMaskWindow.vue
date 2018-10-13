@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 195" @open="initWindow" @reset="initWindow">
+  <WindowFrame titleText="マスク変更" display-property="private.display.editMapMaskWindow" align="center" fixSize="285, 198" @open="initWindow" @reset="initWindow">
     <table>
       <tbody>
         <tr>
@@ -155,8 +155,8 @@ td.mapMaskGrid {
   border: none;
 }
 .mapMask {
-  max-width: 161px;
-  max-height: 161px;
+  max-width: 157px;
+  max-height: 157px;
   margin: auto;
   display: flex;
   justify-content: center;

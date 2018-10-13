@@ -42,7 +42,7 @@ export default {
         },
         isDraggingLeft: true
       }
-      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}`, value: pieceObj, logOff: true})
+      this.setProperty({property: `public.${this.type}.${this.storeIndex}`, value: pieceObj, logOff: true})
     },
     leftUp: function () {
       if (this.storeObj.isLock || this.isRolling) {
@@ -73,7 +73,7 @@ export default {
         },
         isDraggingLeft: false
       }
-      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}`, value: pieceObj, logOff: true, isNotice: true})
+      this.setProperty({property: `public.${this.type}.${this.storeIndex}`, value: pieceObj, logOff: true, isNotice: true})
     },
     rightDown: function () { if (this.storeObj.isLock || this.isRolling) { this.$emit('rightDown') } },
     rightUp: function (event) {
@@ -125,7 +125,7 @@ export default {
       const angle = this.getAngle(this.mouseOnTable)
       const planeAngle = this.arrangeAngle(angle - this.angle.total)
       // console.log(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
-      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.angle.dragStart`, value: planeAngle})
+      this.setProperty({property: `public.${this.type}.${this.storeIndex}.angle.dragStart`, value: planeAngle})
       const obj = {
         propName: this.type,
         key: this.objKey
@@ -150,7 +150,7 @@ export default {
         total: total,
         dragging: 0
       }
-      this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.angle`, value: obj, isNotice: true})
+      this.setProperty({property: `public.${this.type}.${this.storeIndex}.angle`, value: obj, isNotice: true})
     }
   },
   watch: {
@@ -163,14 +163,14 @@ export default {
           }
           const angle = this.getAngle(mouseOnTable)
           const dragging = this.arrangeAngle(this.arrangeAngle(angle - this.angle.dragStart) - this.angle.total)
-          this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.angle.dragging`, value: dragging, logOff: true})
+          this.setProperty({property: `public.${this.type}.${this.storeIndex}.angle.dragging`, value: dragging, logOff: true})
         } else {
           if (this.storeObj.isDraggingLeft) {
             const obj = {
               x: mouseOnTable.x - this.storeObj.move.from.x,
               y: mouseOnTable.y - this.storeObj.move.from.y
             }
-            this.setProperty({property: `public.map.${this.type}.${this.storeIndex}.move.dragging`, value: obj, logOff: true})
+            this.setProperty({property: `public.${this.type}.${this.storeIndex}.move.dragging`, value: obj, logOff: true})
           }
         }
       },
@@ -193,7 +193,7 @@ export default {
       return this.getPieceObj(this.type, this.objKey)
     },
     storeIndex: function () {
-      return this.$store.state.public.map[this.type].indexOf(this.storeObj)
+      return this.$store.state.public[this.type].indexOf(this.storeObj)
     },
     rollObj: function () {
       return this.$store.state.map.rollObj
