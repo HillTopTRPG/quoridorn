@@ -1,10 +1,10 @@
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   methods: {
-    ...mapMutations([]),
-    arrangeAngle: function (angle) {
+    ...mapActions([]),
+    arrangeAngle (angle) {
       if (angle > 180) { angle -= 360 }
       if (angle < -180) { angle += 360 }
       return angle
@@ -15,7 +15,7 @@ export default {
      * @param  {Number} screenY スクリーン上のY座標
      * @return {Object}         ソース参照
      */
-    calcCoordinate: function (screenX, screenY, oldAngle) {
+    calcCoordinate (screenX, screenY, oldAngle) {
       // スクロール倍率を考慮
       const zoom = (1000 - this.wheel) / 1000.0
       // canvas上のマス座標を計算する
@@ -79,10 +79,10 @@ export default {
       // console.log(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
       return result
     },
-    f: function (v) {
+    f (v) {
       return Math.floor(v * 100) / 100
     },
-    getLeftTop: function () {
+    getLeftTop () {
       let canvasElm = document.getElementById('map-canvas')
       const canvasRect = canvasElm.getBoundingClientRect()
       const center = {
@@ -95,7 +95,7 @@ export default {
       }
       return leftTop
     },
-    calcAddress: function (screenX, screenY, oldAngle, offsetX = 0, offsetY = 0) {
+    calcAddress (screenX, screenY, oldAngle, offsetX = 0, offsetY = 0) {
       // 回転やズームの前のスクリーン座標がどこになるかを計算し、そこをベースにマップ上の座標を算出する
       let planeLocateCanvas = this.calcCoordinate(screenX, screenY, oldAngle).planeLocateCanvas
 
@@ -124,7 +124,7 @@ export default {
         gridR: gridR
       }
     },
-    calcCanvasAddress: function (screenX, screenY, oldAngle, offsetX = 0, offsetY = 0) {
+    calcCanvasAddress (screenX, screenY, oldAngle, offsetX = 0, offsetY = 0) {
       //
       let coordinateObj = this.calcCoordinate(screenX, screenY, oldAngle)
 
@@ -151,62 +151,42 @@ export default {
       }
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([]),
-    mouseLocate: function () {
-      return this.$store.state.mouse
-    },
-    columns: function () {
-      return this.$store.state.public.map.grid.totalColumn
-    },
-    rows: function () {
-      return this.$store.state.public.map.grid.totalRow
-    },
-    gridSize: function () {
-      return this.$store.state.public.map.grid.size
-    },
-    canvasSize: function () {
+    mouseLocate: 'mouse',
+    columns: state => state.public.map.grid.totalColumn,
+    rows: state => state.public.map.grid.totalRow,
+    gridSize: state => state.public.map.grid.size,
+    canvasSize () {
       return {
         w: this.columns * this.gridSize,
         h: this.rows * this.gridSize
       }
     },
-    mouseOnScreen: function () {
-      return this.$store.state.map.mouse.onScreen
-    },
-    mouseOnTable: function () {
-      return this.$store.state.map.mouse.onTable
-    },
-    mouseOnCanvas: function () {
-      return this.$store.state.map.mouse.onCanvas
-    },
-    mouseOnGrid: function () {
+    mouseOnScreen: state => state.map.mouse.onScreen,
+    mouseOnTable: state => state.map.mouse.onTable,
+    mouseOnCanvas: state => state.map.mouse.onCanvas,
+    mouseOnGrid () {
       return {
         c: this.$store.state.map.grid.c,
         r: this.$store.state.map.grid.r
       }
     },
-    mouseOnGridLocaleOnCanvas: function () {
+    mouseOnGridLocaleOnCanvas () {
       return {
         x: (this.mouseOnGrid.c - 1) * this.gridSize,
         y: (this.mouseOnGrid.r - 1) * this.gridSize
       }
     },
-    mouseOnGridLocaleOnTable: function () {
+    mouseOnGridLocaleOnTable () {
       return {
         x: this.mouseOnGridLocaleOnCanvas.x + this.canvasSize.w / 2,
         y: this.mouseOnGridLocaleOnCanvas.y + this.canvasSize.h / 2
       }
     },
-    wheel: function () {
-      return this.$store.state.private.map.wheel
-    },
-    borderWidth: function () {
-      return this.$store.state.public.map.borderWidth
-    },
-    marginGridNum: function () {
-      return this.$store.state.public.map.marginGridNum
-    }
-  }
+    wheel: state => state.private.map.wheel,
+    borderWidth: state => state.public.map.borderWidth,
+    marginGridNum: state => state.public.map.marginGridNum
+  })
 }
 </script>

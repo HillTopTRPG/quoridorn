@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
@@ -27,14 +27,14 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowClose',
       'setProperty',
       'createPeer',
       'windowOpen',
       'updateCame'
     ]),
-    commit: function () {
+    commit () {
       console.log(this.currentPeerId)
       const currentMemberObj = this.currentMemberObj
       if (!currentMemberObj) {
@@ -60,13 +60,12 @@ export default {
     }
   },
   watch: {
-    yourPeerId: function (newValue, oldValue) {
+    yourPeerId (newValue, oldValue) {
       this.currentPeerId = newValue
     }
   },
-  computed: {
-    ...mapGetters([]),
-    yourPeerId: function () {
+  computed: mapState({
+    yourPeerId () {
       const privatePeerId = this.$store.state.private.connect.peerId
       if (privatePeerId) {
         const filtered = this.members.filter(memberObj => memberObj.peerId === privatePeerId)
@@ -77,17 +76,10 @@ export default {
       }
       return null
     },
-    members: function () {
-      return this.$store.state.public.room.members
-    },
-    roomId: function () {
-      return this.$store.state.public.room.id
-    },
-    currentMemberObj: function () {
-      const filtered = this.members.filter(memberObj => memberObj.peerId === this.currentPeerId)
-      return filtered[0]
-    }
-  }
+    members: state => state.public.room.members,
+    roomId: state => state.public.room.id,
+    currentMemberObj () { return this.members.filter(memberObj => memberObj.peerId === this.currentPeerId)[0] }
+  })
 }
 </script>
 

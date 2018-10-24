@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import ContextFrame from '../../ContextFrame'
 
 export default {
@@ -17,53 +17,43 @@ export default {
     ContextFrame: ContextFrame
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowOpen',
       'setProperty',
       'changeMapMaskInfo',
       'deletePieceInfo',
       'windowClose'
     ]),
-    viewEditMapMask: function () {
+    viewEditMapMask () {
       console.log(`  [methods] select context item => MapMask(${this.objKey}).viewEditMapMask`)
       this.setProperty({property: 'private.display.editMapMaskWindow.key', value: this.objKey})
       this.windowOpen('private.display.editMapMaskWindow')
       this.windowClose('private.display.mapMaskContext')
     },
-    changeMapMaskLock: function () {
+    changeMapMaskLock () {
       console.log(`  [methods] select context item => MapMask(${this.objKey}).changeMapMaskLock`)
-      this.changeMapMaskInfo({
-        key: this.objKey,
-        isLock: !this.isLock,
-        isNotice: true
-      })
+      this.changeMapMaskInfo({ key: this.objKey, isLock: !this.isLock, isNotice: true })
       this.windowClose('private.display.mapMaskContext')
     },
-    deleteMapMask: function () {
+    deleteMapMask () {
       console.log(`  [methods] select context item => MapMask(${this.objKey}).deleteMapMask`)
-      this.deletePieceInfo({
-        propName: 'mapMasks',
-        key: this.objKey,
-        isNotice: true
-      })
+      this.deletePieceInfo({ propName: 'mapMask', key: this.objKey, isNotice: true })
       this.windowClose('private.display.mapMaskContext')
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'isWindowOpen',
       'getPieceObj'
     ]),
-    objKey: function () {
-      return this.$store.state.private.display['mapMaskContext'].key
-    },
-    storeObj: function () {
-      const type = 'mapMasks'
+    objKey: state => state.private.display['mapMaskContext'].key,
+    storeObj () {
+      const type = 'mapMask'
       const key = this.objKey
       // console.log(`key:${key}`)
       return this.getPieceObj(type, key)
     },
-    isLock: function () {
+    isLock () {
       if (!this.isWindowOpen('private.display.mapMaskContext')) {
         return false
       }
@@ -71,7 +61,7 @@ export default {
       console.log(` [computed] isLock => ${isLock}`)
       return isLock
     }
-  }
+  })
 }
 </script>
 

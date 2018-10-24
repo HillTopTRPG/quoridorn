@@ -27,7 +27,7 @@
 
 <script>
 // import 'bcdice-js/lib/preload-dicebots'
-import { mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 import BCDice, { DiceBotLoader } from 'bcdice-js' // ES Modules
 
@@ -61,7 +61,8 @@ export default {
     }
   },
   created () {
-    this.$store.commit('changeChatTab', '雑談')
+    this.$store.dispatch('changeChatTab', '雑談')
+    // this.changeChatTab('雑談')
 
     this.diceBotSystems.push({
       name: 'ダイスボット(指定なし)',
@@ -94,14 +95,14 @@ export default {
     }.bind(this), 0)
   },
   methods: {
-    ...mapMutations([
-      'chatTabSelect',
+    ...mapActions([
       'addChatLog',
+      'chatTabSelect',
       'windowOpen',
       'setProperty',
       'sendRoomData'
     ]),
-    changeName: function (event) {
+    changeName (event) {
       const name = event.target.value
       this.setProperty({property: 'private.connect.playerName', value: name})
       const myPeerId = this.$store.state.private.connect.peerId
@@ -114,22 +115,22 @@ export default {
         this.sendRoomData({ type: 'CHANGE_PLAYER_NAME', value: name })
       }
     },
-    onFocus: function () {
+    onFocus () {
       this.$emit('onFocus')
     },
-    addTab: function () {
+    addTab () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'タブ編集'})
       this.windowOpen('private.display.unSupportWindow')
     },
-    settingDiceBot: function () {
+    settingDiceBot () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理'})
       this.windowOpen('private.display.unSupportWindow')
     },
-    settingFont: function () {
+    settingFont () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チャット文字設定'})
       this.windowOpen('private.display.unSupportWindow')
     },
-    sendMessage: function (e) {
+    sendMessage (e) {
       if (e.shiftKey || e.ctrlKey) {
         this.currentMessage += '\r\n'
         return
@@ -138,8 +139,7 @@ export default {
       this.addChatLog({
         name: this.name,
         text: this.currentMessage,
-        color: 'black',
-        isOperation: true
+        color: 'black'
       })
 
       this.bcDice.setMessage(this.currentMessage)
@@ -151,15 +151,13 @@ export default {
           this.addChatLog({
             name: this.currentDiceBotSystem,
             text: `シークレットダイス`,
-            color: 'black',
-            isOperation: true
+            color: 'black'
           })
         } else {
           this.addChatLog({
             name: this.currentDiceBotSystem,
             text: diceResult,
-            color: 'black',
-            isOperation: true
+            color: 'black'
           })
         }
       }
@@ -170,7 +168,7 @@ export default {
       //   elm.scrollTop = elm.scrollHeight
       // }, 0)
     },
-    tabSelect: function (tabObj) {
+    tabSelect (tabObj) {
       this.currentTab = tabObj.text
       for (let chatTabObj of this.chatTabList) {
         chatTabObj.isActive = chatTabObj.text === tabObj.text
@@ -178,13 +176,13 @@ export default {
     }
   },
   watch: {
-    currentDiceBotSystem: function () {
+    currentDiceBotSystem () {
       console.log(`ダイスボットシステムを${this.currentDiceBotSystem}に変更`)
       const currentDiceBotSystem = this.currentDiceBotSystem
       const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
       this.bcDice.setDiceBot(diceObj.diceBot)
     },
-    chatLogList: function () {
+    chatLogList () {
       setTimeout(function () {
         var elm = document.getElementById('chatLog')
         if (elm) {
@@ -193,25 +191,19 @@ export default {
       }, 0)
     }
   },
-  computed: {
-    chatLogList: function () {
+  computed: mapState({
+    chatLogList () {
       return this.$store.getters.chatLogs
     },
-    chatTabList: function () {
-      return this.$store.state.public.chat.tabs
-    },
-    currentCount: function () {
-      return this.$store.state.count
-    },
-    name: function () {
-      return this.$store.state.private.connect.playerName
-    },
-    helpMessage: function () {
+    chatTabList: state => state.public.chat.tabs,
+    currentCount: 'count',
+    name: state => state.private.connect.playerName,
+    helpMessage () {
       const currentDiceBotSystem = this.currentDiceBotSystem
       const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
       return diceObj.helpMessage
     }
-  }
+  })
 }
 </script>
 

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import { DiceBotLoader } from 'bcdice-js' // ES Modules
 import WindowFrame from '../WindowFrame'
 
@@ -56,40 +56,40 @@ export default {
     }.bind(this), 0)
   },
   watch: {
-    roomName: function (newValue) {
+    roomName (newValue) {
       this.existCheckMessage = ''
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowClose',
       'createPeer',
       'setProperty',
       'checkRoomName',
-      'deleteMember'
+      'emptyMember'
     ]),
-    open: function () {
+    open () {
       this.roomName = ''
       this.password = ''
       this.currentSystem = 'DiceBot'
     },
-    commit: function () {
+    commit () {
       if (this.roomName === '') {
         alert(`部屋名は必須項目です。\n入力をお願いします。`)
         return
       }
       this.setProperty({property: 'public.room.system', value: this.currentSystem})
-      this.setProperty({property: 'private.connect.password', value: this.password, logOff: true})
-      this.deleteMember()
+      this.setProperty({property: 'private.connect.password', value: this.password, logOff: false})
+      this.emptyMember()
       this.createPeer({
         roomId: this.roomName
       })
       this.windowClose('private.display.createRoomWindow')
     },
-    cancel: function () {
+    cancel () {
       this.windowClose('private.display.createRoomWindow')
     },
-    checkRoomExist: function () {
+    checkRoomExist () {
       if (this.roomName === '') {
         this.existCheckMessage = '部屋名を入力してください。'
         return
@@ -101,9 +101,6 @@ export default {
         roomNonFindFunc: function () { this.existCheckMessage = 'この部屋は存在しません。新しく部屋を作ることになります。' }.bind(this)
       })
     }
-  },
-  computed: {
-    ...mapGetters([])
   }
 }
 </script>

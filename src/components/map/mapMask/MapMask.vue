@@ -13,17 +13,17 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import PieceMixin from '../../PieceMixin'
 
 export default {
   name: 'mapMask',
   mixins: [PieceMixin],
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'parseColor'
     ]),
-    mapMaskStyle: function () {
+    mapMaskStyle () {
       let obj = {}
       const baseStyle = this.style
       for (let key in baseStyle) {
@@ -45,7 +45,7 @@ export default {
       // console.log(` [computed] mapMask(${this.objKey}) style => isDraggingLeft:${storeObj.isDraggingLeft},transZ:${obj['transform']} lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj
     }
-  }
+  })
 }
 </script>
 

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import WindowFrame from './WindowFrame'
 
 export default {
@@ -16,18 +16,12 @@ export default {
     WindowFrame: WindowFrame
   },
   methods: {
-    ...mapMutations([
-      'windowClose'
-    ]),
-    close: function () {
-      this.windowClose('private.display.unSupportWindow')
-    }
+    ...mapActions([ 'windowClose' ]),
+    close () { this.windowClose('private.display.unSupportWindow') }
   },
-  computed: {
-    title: function () {
-      return this.$store.state.private.display.unSupportWindow.title
-    }
-  }
+  computed: mapState({
+    title: state => state.private.display.unSupportWindow.title
+  })
 }
 </script>
 

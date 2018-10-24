@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
@@ -20,27 +20,17 @@ export default {
   },
   data () { return {} },
   methods: {
-    ...mapMutations([
-      'windowClose'
-    ]),
-    createURL: function (peerId) {
+    createURL (peerId) {
       const baseUrl = location.href.replace(/\?.+$/, '')
       const url = `${baseUrl}?roomId=${this.roomId}&password=${this.password}&peerId=${peerId}`
       return url
     }
   },
-  computed: {
-    ...mapGetters([]),
-    members: function () {
-      return this.$store.state.public.room.members.filter(memberObj => memberObj.peerId !== this.$store.state.private.connect.peerId)
-    },
-    roomId: function () {
-      return this.$store.state.public.room.id
-    },
-    password: function () {
-      return this.$store.state.public.room.password
-    }
-  }
+  computed: mapState({
+    members () { return this.$store.state.public.room.members.filter(memberObj => memberObj.peerId !== this.$store.state.private.connect.peerId) },
+    roomId: state => state.public.room.id,
+    password: state => state.public.room.password
+  })
 }
 </script>
 

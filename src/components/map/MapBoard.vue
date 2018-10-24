@@ -9,16 +9,15 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'mapBoard',
-  mounted: function () {
+  mounted () {
     this.paint()
   },
   methods: {
-    ...mapMutations([]),
-    paint: function () {
+    paint () {
       const ctx = document.getElementById('map-canvas').getContext('2d')
       // console.log('paint')
 
@@ -92,7 +91,7 @@ export default {
         }
       }.bind(this)
     },
-    drawLine: function (ctx, x, y, width, height) {
+    drawLine (ctx, x, y, width, height) {
       ctx.beginPath()
       ctx.moveTo(x, y)
       ctx.lineTo(x + width, y + height)
@@ -100,59 +99,47 @@ export default {
     }
   },
   watch: {
-    isDrawGridLine: function () { this.paint() },
-    isDrawGridId: function () { this.paint() },
-    gridColor: function () { this.paint() },
+    isDrawGridLine () { this.paint() },
+    isDrawGridId () { this.paint() },
+    gridColor () { this.paint() },
     grid: {
-      handler: function () { this.paint() },
+      handler () { this.paint() },
       deep: true
     },
     mouseOnCanvas: {
-      handler: function () { this.paint() },
+      handler () { this.paint() },
       deep: true
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'getBackgroundImage'
     ]),
-    isDrawGridLine: function () {
-      return this.$store.state.public.setting.gridLine
-    },
-    isDrawGridId: function () {
-      return this.$store.state.public.setting.gridId
-    },
-    gridColor: function () {
-      return this.$store.state.public.map.grid.color
-    },
-    columns: function () {
-      return this.$store.state.public.map.grid.totalColumn
-    },
-    rows: function () {
-      return this.$store.state.public.map.grid.totalRow
-    },
-    grid: function () {
+    isDrawGridLine: state => state.public.setting.gridLine,
+    isDrawGridId: state => state.public.setting.gridId,
+    gridColor: state => state.public.map.grid.color,
+    columns: state => state.public.map.grid.totalColumn,
+    rows: state => state.public.map.grid.totalRow,
+    grid () {
       return {
         c: this.$store.state.map.grid.c,
         r: this.$store.state.map.grid.r
       }
     },
-    gridSize: function () {
-      return this.$store.state.public.map.grid.size
-    },
-    canvasSize: function () {
+    gridSize: state => state.public.map.grid.size,
+    canvasSize () {
       return {
         w: this.columns * this.gridSize,
         h: this.rows * this.gridSize
       }
     },
-    mouseOnCanvas: function () {
+    mouseOnCanvas () {
       return {
         x: this.$store.state.map.mouse.onCanvas.x,
         y: this.$store.state.map.mouse.onCanvas.y
       }
     }
-  }
+  })
 }
 </script>
 

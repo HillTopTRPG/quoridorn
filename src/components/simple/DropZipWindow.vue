@@ -22,11 +22,11 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
-  name: 'dropImageWindow',
+  name: 'dropZipWindow',
   components: {
     WindowFrame: WindowFrame
   },
@@ -36,12 +36,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowClose',
       'windowOpen',
       'doImport'
     ]),
-    commit: function () {
+    commit () {
       const importData = {
         private: this.$store.state.private,
         public: {}
@@ -93,17 +93,17 @@ export default {
       console.log(importData, this.members)
       this.windowClose('private.display.dropZipWindow')
     },
-    cancel: function () {
+    cancel () {
       this.windowClose('private.display.dropZipWindow')
     },
-    allSelect: function (index) {
+    allSelect (index) {
       const useList = this.saveDataList[index].useList
       useList.forEach((useObj, ind) => {
         useObj.isUse = true
         useList.splice(ind, 1, useObj)
       })
     },
-    allDisSelect: function (index) {
+    allDisSelect (index) {
       const useList = this.saveDataList[index].useList
       useList.forEach((useObj, ind) => {
         useObj.isUse = false
@@ -112,7 +112,7 @@ export default {
     }
   },
   watch: {
-    storeZipList: function (newValue, oldValue) {
+    storeZipList (newValue, oldValue) {
       this.saveDataList = []
       if (!newValue) {
         return
@@ -129,17 +129,17 @@ export default {
         if (publicData.chat) {
           useList.push({ label: 'チャット履歴(部屋情報とセットで)', isUse: true, target: 'chat' })
         }
-        if (publicData.images) {
-          useList.push({ label: '画像情報', isUse: true, target: 'images' })
+        if (publicData.image) {
+          useList.push({ label: '画像情報', isUse: true, target: 'image' })
         }
         if (publicData.map) {
           useList.push({ label: 'マップ情報(画像情報とセットで)', isUse: true, target: 'map' })
         }
-        if (publicData.mapMasks) {
-          useList.push({ label: 'マップマスク情報(画像情報とセットで)', isUse: true, target: 'mapMasks' })
+        if (publicData.mapMask) {
+          useList.push({ label: 'マップマスク情報(画像情報とセットで)', isUse: true, target: 'mapMask' })
         }
-        if (publicData.characters) {
-          useList.push({ label: 'キャラクター情報(画像情報とセットで)', isUse: true, target: 'characters' })
+        if (publicData.character) {
+          useList.push({ label: 'キャラクター情報(画像情報とセットで)', isUse: true, target: 'character' })
         }
         if (publicData.publicMemo) {
           useList.push({ label: '共有メモ', isUse: true, target: 'publicMemo' })
@@ -152,15 +152,10 @@ export default {
       })
     }
   },
-  computed: {
-    ...mapGetters([]),
-    storeZipList: function () {
-      return this.$store.state.private.display.dropZipWindow.zipList
-    },
-    members: function () {
-      return this.$store.state.public.room.members
-    }
-  }
+  computed: mapState({
+    storeZipList: state => state.private.display.dropZipWindow.zipList,
+    members: state => state.public.room.members
+  })
 }
 </script>
 

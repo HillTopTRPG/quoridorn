@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
@@ -27,13 +27,10 @@ export default {
     WindowFrame: WindowFrame
   },
   methods: {
-    ...mapMutations([]),
-    createURL: function (peerId) {
-      const baseUrl = location.href.replace(/\?.+$/, '')
-      const url = `${baseUrl}?roomId=${this.roomName}&password=${this.password}&peerId=${peerId}`
-      return url
+    createURL (peerId) {
+      return `${this.inviteUrl}&peerId=${peerId}`
     }
-    // open: function () {
+    // open () {
     //   setTimeout(function () {
     //     const elms = document.querySelectorAll('.returnUrl')
     //     elms.forEach((elm) => {
@@ -45,7 +42,7 @@ export default {
     // }
   },
   watch: {
-    // memberList: function () {
+    // memberList () {
     //   setTimeout(function () {
     //     const elms = document.querySelectorAll('.returnUrl')
     //     elms.forEach((elm) => {
@@ -56,21 +53,20 @@ export default {
     //   }, 0)
     // }
   },
-  computed: {
-    ...mapGetters([]),
-    roomName: function () { return this.$store.state.public.room.id },
-    password: function () { return this.$store.state.public.room.password },
-    memberList: function () { return this.$store.state.public.room.members.filter(memberObj => memberObj.isCame) },
-    yourPeerId: function () { return this.$store.state.private.connect.peerId },
-    inviteUrl: function () {
+  computed: mapState({
+    roomName: state => state.public.room.id,
+    password: state => state.public.room.password,
+    memberList: state => state.public.room.members.filter(memberObj => memberObj.isCame),
+    yourPeerId: state => state.private.connect.peerId,
+    inviteUrl (state) {
       const baseUrl = location.href.replace(/\?.+$/, '')
-      const url = `${baseUrl}?roomId=${this.roomName}&password=${this.password}`
-      return url
+      const roomName = state.public.room.id
+      const password = state.public.room.password
+      const passwordParam = password ? `&password=${password}` : ''
+      return `${baseUrl}?roomId=${roomName}${passwordParam}`
     },
-    text: function () {
-      return location.pathname
-    }
-  }
+    text () { return location.pathname }
+  })
 }
 </script>
 

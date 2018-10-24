@@ -37,11 +37,11 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
 
 export default {
-  name: 'addMapMaskSetting',
+  name: 'addCharacterSettingWindow',
   components: {
     WindowFrame: WindowFrame
   },
@@ -51,7 +51,7 @@ export default {
       isOpenSwitch: false,
       currentImageTag: 'キャラクター',
       switchImageList: [
-        { key: 0, imgKey: 1, isReverse: false }
+        { key: 0, imgKey: 'image-1', isReverse: false }
       ],
       switchCurrentKey: 0,
       name: '',
@@ -62,12 +62,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'setProperty',
       'windowOpen',
       'windowClose'
     ]),
-    addSwitch: function () {
+    addSwitch () {
       let nextKey = -1
       let isFind
       do {
@@ -83,22 +83,22 @@ export default {
 
       this.switchImageList.push({
         key: nextKey,
-        imgKey: 1,
+        imgKey: 'image-1',
         isReverse: false
       })
       this.switchCurrentKey = nextKey
     },
-    doReverse: function () {
+    doReverse () {
       const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
       console.log(`image(${this.switchCurrentKey}) isReverse: ${switchImageObj.isReverse} -> ${!switchImageObj.isReverse}`)
       switchImageObj.isReverse = !switchImageObj.isReverse
       const index = this.switchImageList.indexOf(switchImageObj)
       this.switchImageList.splice(index, 1, switchImageObj)
     },
-    getImage: function (key) {
+    getImage (key) {
       return this.getKeyObj(this.storeImages, key).data
     },
-    getKeyObj: function (list, key) {
+    getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
         console.log(`key:"${key}" is not find.`)
@@ -110,17 +110,17 @@ export default {
       }
       return filteredList[0]
     },
-    selectSwitchImage: function (key) {
+    selectSwitchImage (key) {
       this.switchCurrentKey = key
     },
-    selectTagImage: function (key) {
+    selectTagImage (key) {
       const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
       switchImageObj.imgKey = key
       switchImageObj.isReverse = false
       const index = this.switchImageList.indexOf(switchImageObj)
       this.switchImageList.splice(index, 1, switchImageObj)
     },
-    deleteSwitch: function () {
+    deleteSwitch () {
       const switchObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
       const index = this.switchImageList.indexOf(switchObj)
       // 削除
@@ -131,7 +131,7 @@ export default {
         this.switchCurrentKey = this.switchImageList[this.switchImageList.length - 1].key
       }
     },
-    commit: function () {
+    commit () {
       if (this.name === '') {
         alert(`名前を入力してください。`)
         return
@@ -156,14 +156,14 @@ export default {
       this.setProperty({property: `private.display.addCharacterWindow`, value: obj})
       this.windowOpen('private.display.addCharacterWindow')
     },
-    cancel: function () {
+    cancel () {
       this.windowClose('private.display.addCharacterSettingWindow')
     },
-    open: function () {
+    open () {
       this.isOpenSwitch = false
       this.currentImageTag = 'キャラクター'
       this.switchImageList.splice(0, this.switchImageList.length)
-      this.switchImageList.push({ key: 0, imgKey: 1, isReverse: false })
+      this.switchImageList.push({ key: 0, imgKey: 'image-1', isReverse: false })
       this.switchCurrentKey = 0
       this.name = ''
       this.size = 1
@@ -173,43 +173,29 @@ export default {
       this.windowClose('private.display.addCharacterWindow')
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'parseColor'
     ]),
-    selectedTagIndexText: function () {
+    selectedTagIndexText () {
       const imageList = this.imageList
       const keyObj = this.getKeyObj(imageList, this.currentImageKey)
       const index = keyObj ? imageList.indexOf(keyObj) + 1 : 0
       return `${index}/${imageList.length}`
     },
-    isReverse: function () {
-      const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
-      return switchImageObj.isReverse
-    },
-    isCanSwitchDelete: function () {
-      return this.switchImageList.length > 1
-    },
-    storeImages: function () {
-      return this.$store.state.public.images.data
-    },
-    currentImage: function () {
-      return this.getImage(this.currentImageKey)
-    },
-    currentImageKey: function () {
-      const switchImageObj = this.getKeyObj(this.switchImageList, this.switchCurrentKey)
-      return switchImageObj.imgKey
-    },
-    tagList: function () {
-      return this.$store.state.public.images.tags
-    },
-    imageList: function () {
-      return this.$store.state.public.images.data.filter((obj) => {
+    isReverse () { return this.getKeyObj(this.switchImageList, this.switchCurrentKey).isReverse },
+    isCanSwitchDelete () { return this.switchImageList.length > 1 },
+    storeImages: state => state.public.image.list,
+    currentImage () { return this.getImage(this.currentImageKey) },
+    currentImageKey () { return this.getKeyObj(this.switchImageList, this.switchCurrentKey).imgKey },
+    tagList: state => state.public.image.tags.list,
+    imageList () {
+      return this.$store.state.public.image.list.filter((obj) => {
         if (this.currentImageTag === '(全て)') { return true }
         return obj.tag.indexOf(this.currentImageTag) >= 0
       })
     }
-  }
+  })
 }
 </script>
 

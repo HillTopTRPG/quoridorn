@@ -3,7 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from 'vue'
 import App from './App'
-import store from './store.js'
+import store from './store/store.js'
 
 import Menu from './components/menu/Menu'
 import AddMapMaskWindow from './components/map/mapMask/AddMapMaskWindow'
@@ -68,7 +68,7 @@ const app = new Vue({
   store,
   components: { App: App },
   data: { scrollY: 0 },
-  mounted: function () { window.addEventListener('scroll', this.handleScroll) },
+  mounted () { window.addEventListener('scroll', this.handleScroll) },
   methods: {
     handleScroll () {
       this.scrollY = window.scrollY

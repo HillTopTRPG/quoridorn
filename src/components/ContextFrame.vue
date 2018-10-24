@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -16,19 +16,19 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowClose'
     ])
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'isWindowOpen',
       'getState'
     ]),
-    isDisplay: function () {
+    isDisplay () {
       return this.isWindowOpen(this.displayProperty)
     },
-    contextStyle: function () {
+    contextStyle () {
       const displayObj = this.getState(this.displayProperty)
       const obj = {
         top: displayObj.y - 5 + 'px',
@@ -36,7 +36,7 @@ export default {
       }
       return obj
     }
-  }
+  })
 }
 </script>
 

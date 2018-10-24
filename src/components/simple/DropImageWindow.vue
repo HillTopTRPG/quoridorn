@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
@@ -40,26 +40,24 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'windowActive',
+    ...mapActions([
       'imageTagChange',
       'addImage',
-      'windowClose'
+      'windowClose',
+      'emptyProperty'
     ]),
-    commit: function () {
+    commit () {
       this.imageList.forEach(imageObj => {
-        this.addImage({
-          tag: imageObj.currentTag,
-          image: imageObj.image,
-          isNotice: true
-        })
+        this.addImage({ tag: imageObj.currentTag, data: imageObj.image, isNotice: true })
       })
       this.windowClose('private.display.dropImageWindow')
+      this.emptyProperty({property: 'private.display.dropImageWindow.imageDataList'})
     },
-    cancel: function () {
+    cancel () {
       this.windowClose('private.display.dropImageWindow')
+      this.emptyProperty({property: 'private.display.dropImageWindow.imageDataList'})
     },
-    getKeyObj: function (list, key) {
+    getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
         console.log(`key:"${key}" is not find.`)
@@ -71,23 +69,19 @@ export default {
       }
       return filteredList[0]
     },
-    changeTag: function (key) {
-      this.imageList.forEach(imageObj => {
-        // console.log(`@@@@  ` + imageObj.currentTag)
-      })
+    changeTag (key) {
+      // 入力によってタグの追加・削除が発生する可能性があるので、タグリストを整理してもらう
       this.imageTagChange({key: key, imageList: this.imageList})
     },
-    selectTag: function (key) {
+    selectTag (key) {
       const imgObj = this.getKeyObj(this.imageList, key)
       imgObj.currentTag = imgObj.selectTag
-      this.imageList.forEach(imageObj => {
-        // console.log(`++++++  ` + imageObj.currentTag)
-      })
+      // 選択によってタグの削除が発生する可能性があるので、タグリストを整理してもらう
       this.imageTagChange({key: key, imageList: this.imageList})
     }
   },
   watch: {
-    storeImageList: function (newValue, oldValue) {
+    storeImageList (newValue, oldValue) {
       this.imageList = []
       newValue.forEach(imgObj => {
         this.imageList.push({
@@ -101,18 +95,14 @@ export default {
       })
     }
   },
-  computed: {
-    ...mapGetters([
-    ]),
-    storeImageList: function () {
-      return this.$store.state.private.display.dropImageWindow.imageDataList
-    },
-    tagList: function () {
-      const result = this.$store.state.public.images.tags.concat()
+  computed: mapState({
+    storeImageList: state => state.private.display.dropImageWindow.imageDataList,
+    tagList () {
+      const result = this.$store.state.public.image.tags.list.concat()
       result.shift()
       return result
     }
-  }
+  })
 }
 </script>
 

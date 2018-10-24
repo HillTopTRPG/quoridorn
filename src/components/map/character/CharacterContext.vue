@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import ContextFrame from '../../ContextFrame'
 
 export default {
@@ -20,59 +20,48 @@ export default {
     ContextFrame: ContextFrame
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowOpen',
       'setProperty',
       'changeMapMaskInfo',
       'deletePieceInfo',
       'windowClose'
     ]),
-    viewEditCharacter: function () {
+    viewEditCharacter () {
       console.log(`  [methods] select context item => Character(${this.objKey}).viewEditCharacter`)
       this.setProperty({property: 'private.display.editCharacterWindow.key', value: this.objKey})
       this.windowOpen('private.display.editCharacterWindow')
       this.windowClose('private.display.characterContext')
     },
-    deleteCharacter: function () {
+    deleteCharacter () {
       console.log(`  [methods] select context item => Character(${this.objKey}).deleteCharacter`)
-      this.deletePieceInfo({
-        propName: 'characters',
-        key: this.objKey,
-        isNotice: true
-      })
+      this.deletePieceInfo({ propName: 'character', key: this.objKey, isNotice: true })
       this.windowClose('private.display.characterContext')
     },
-    copyCharacter: function () {
+    copyCharacter () {
       console.log(`  [methods] select context item => Character(${this.objKey}).copyCharacter`)
       this.windowClose('private.display.characterContext')
       alert('未実装の機能です。')
     },
-    openRefURL: function () {
+    openRefURL () {
       // console.log(this.storeObj.url)
       window.open(this.storeObj.url, '_blank')
       this.windowClose('private.display.characterContext')
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'getPieceObj'
     ]),
-    objKey: function () {
-      return this.$store.state.private.display['characterContext'].key
-    },
-    url: function () {
-      if (this.objKey === -1) {
-        return null
-      }
-      return this.storeObj.url
-    },
-    storeObj: function () {
-      const type = 'characters'
+    objKey: state => state.private.display['characterContext'].key,
+    url () { return this.objKey === -1 ? null : this.storeObj.url },
+    storeObj () {
+      const type = 'character'
       const key = this.objKey
       // console.log(`key:${key}`)
       return this.getPieceObj(type, key, true)
     }
-  }
+  })
 }
 </script>
 

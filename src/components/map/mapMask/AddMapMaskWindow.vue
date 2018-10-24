@@ -32,11 +32,11 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
 
 export default {
-  name: 'addMapMask',
+  name: 'addMapMaskWindow',
   components: {
     WindowFrame: WindowFrame
   },
@@ -51,8 +51,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['windowActive']),
-    dragStart: function (event) {
+    ...mapActions(['windowActive']),
+    dragStart (event) {
       event.dataTransfer.setData('kind', 'mapMask')
       event.dataTransfer.setData('name', this.name)
       event.dataTransfer.setData('color', this.rgba)
@@ -62,11 +62,11 @@ export default {
       console.log(`  [methods] drag start mapMask => {name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}`)
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'parseColor'
     ]),
-    mapMaskStyle: function () {
+    mapMaskStyle () {
       let width = this.width * this.gridSize
       let height = this.height * this.gridSize
       let zoom = 1
@@ -83,19 +83,14 @@ export default {
       }
       return result
     },
-    rgba: function () {
+    rgba () {
       const colorObj = this.parseColor(this.color)
       colorObj.a = (100 - this.transparency) / 100
       return colorObj.getRGBA()
     },
-    fontColor: function () {
-      const colorObj = this.parseColor(this.color)
-      return colorObj.getColorCodeReverse()
-    },
-    gridSize: function () {
-      return this.$store.state.public.map.grid.size
-    }
-  }
+    fontColor () { return this.parseColor(this.color).getColorCodeReverse() },
+    gridSize: state => state.public.map.grid.size
+  })
 }
 </script>
 

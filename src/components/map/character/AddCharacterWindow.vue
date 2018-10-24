@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
 
 export default {
-  name: 'addMapMask',
+  name: 'addCharacterWindow',
   components: {
     WindowFrame: WindowFrame
   },
@@ -27,11 +27,11 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'setProperty',
       'windowClose'
     ]),
-    dragStart: function (event) {
+    dragStart (event) {
       event.dataTransfer.setData('kind', 'character')
       event.dataTransfer.setData('name', this.name)
       event.dataTransfer.setData('size', this.size)
@@ -51,7 +51,7 @@ export default {
         `useImageIndex:${this.useImageIndex}, ` +
         `currentImageTag:${this.currentImageTag}}`)
     },
-    getKeyObj: function (list, key) {
+    getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
         console.log(`key:"${key}" is not find.`)
@@ -63,48 +63,50 @@ export default {
       }
       return filteredList[0]
     },
-    open: function () {
+    open () {
       this.continuous_Num = 1
       this.is_Continuous = false
       this.windowClose('private.display.addCharacterSettingWindow')
     }
   },
   watch: {
-    is_Continuous: function (newVal, oldVal) {
+    is_Continuous (newVal, oldVal) {
       this.setProperty({property: `private.display.addCharacterWindow.isContinuous`, value: newVal})
     },
-    continuousNum: function (newVal, oldVal) {
+    continuousNum (newVal, oldVal) {
       this.continuous_Num = newVal
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'parseColor'
     ]),
-    windowObj: function () { return this.$store.state.private.display.addCharacterWindow },
-    name: function () { return this.windowObj.name + (this.is_Continuous ? `_${this.continuous_Num}` : '') },
-    size: function () { return this.windowObj.size },
-    useImageList: function () { return this.windowObj.useImageList },
-    isHide: function () { return this.windowObj.isHide },
-    url: function () { return this.windowObj.url },
-    text: function () { return this.windowObj.text },
-    useImageIndex: function () { return this.windowObj.useImageIndex },
-    currentImageTag: function () { return this.windowObj.currentImageTag },
-    isContinuous: function () { return this.windowObj.isContinuous },
-    continuousNum: function () { return this.windowObj.continuousNum },
-    imageObj: function () {
+    windowObj: state => state.private.display.addCharacterWindow,
+    imageList: state => state.public.image.list,
+    name () { return this.windowObj.name + (this.is_Continuous ? `_${this.continuous_Num}` : '') },
+    size () { return this.windowObj.size },
+    useImageList () { return this.windowObj.useImageList },
+    isHide () { return this.windowObj.isHide },
+    url () { return this.windowObj.url },
+    text () { return this.windowObj.text },
+    useImageIndex () { return this.windowObj.useImageIndex },
+    currentImageTag () { return this.windowObj.currentImageTag },
+    isContinuous () { return this.windowObj.isContinuous },
+    continuousNum () { return this.windowObj.continuousNum },
+    imageObj () {
       if (this.useImageList === '') { return '' }
       const imageStr = this.useImageList.split('|')[this.useImageIndex]
       // console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
       const isReverse = imageStr.indexOf(':R') >= 0
       // console.log(imageStr, isReverse)
-      const imageKey = parseInt(imageStr.replace(':r', ''))
+      const imageKey = imageStr.replace(':R', '')
+      console.log(imageKey, this.imageList)
       return {
         isReverse: isReverse,
-        data: this.getKeyObj(this.$store.state.public.images.data, imageKey).data
+        data: this.getKeyObj(this.imageList, imageKey).data
       }
     }
-  }
+  })
 }
 </script>
 

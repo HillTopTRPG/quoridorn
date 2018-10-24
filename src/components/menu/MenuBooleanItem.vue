@@ -1,9 +1,9 @@
 <template>
-  <div class="item" @click="changeDisplay(property)"><img v-img="propValue ? checkImg : ''" class="check" alt=""><span><slot></slot></span></div>
+  <div class="item" @click="changeDisplay({property:property})"><img v-img="propValue ? checkImg : ''" class="check" alt=""><span><slot></slot></span></div>
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'menuBooleanItem',
@@ -19,18 +19,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'changeDisplay'
-    ])
+    ...mapActions([ 'changeDisplay' ])
   },
-  computed: {
-    ...mapGetters([
-      'isWindowOpen'
-    ]),
-    propValue: function () {
-      return this.isWindowOpen(this.property)
-    }
-  }
+  computed: mapState({
+    ...mapGetters([ 'isWindowOpen' ]),
+    propValue () { return this.isWindowOpen(this.property) }
+  })
 }
 </script>
 

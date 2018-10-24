@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import MenuBooleanItem from './MenuBooleanItem'
 
 export default {
@@ -120,113 +120,86 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowOpen',
       'setProperty',
       'doResetWindowLocate',
       'exportStart',
       'doExport'
     ]),
-    menuHover: function (flg, ...targets) {
+    menuHover (flg, ...targets) {
       for (let target of targets) {
         this.menu[target] = flg
       }
     },
-    hoverConnect: function (flg) {
+    hoverConnect (flg) {
       this.isConnectHover = flg
     },
-    clickConnect: function () {
+    clickConnect () {
       this.windowOpen('private.display.createRoomWindow')
     },
-    clickRoomInfo: function () { this.windowOpen('private.display.roomInfoWindow') },
-    clickPublicMemo: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '共有メモ'}); this.windowOpen('private.display.unSupportWindow') },
-    clickExport: function () { this.exportStart(); this.menuHover(false, 'ファイル') },
-    clickImport: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
-    clickLogOut: function () {
+    clickRoomInfo () { this.windowOpen('private.display.roomInfoWindow') },
+    clickPublicMemo () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '共有メモ'}); this.windowOpen('private.display.unSupportWindow') },
+    clickExport () { this.exportStart(); this.menuHover(false, 'ファイル') },
+    clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
+    clickLogOut () {
       this.menuHover(false, 'ファイル')
       const baseUrl = location.href.replace(/\?.+$/, '')
       location.href = baseUrl
     },
-    clickSettingFontSize: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
-    clickResetWindowLocate: function () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
-    clickAddCharacter: function () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
-    clickAddRange: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
-    clickAddChit: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チット追加'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
-    clickGraveyard: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
-    clickWaitingRoom: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
-    clickChangeMap: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickFloorTileMode: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickAddMapMask: function (target) { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
-    clickCreateEasyMap: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickSaveMap: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickSwitchMap: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickFileUploader: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ファイルアップローダー'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
-    clickTagEdit: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像タグ編集'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
-    clickDeleteImage: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像削除'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
-    clickVersion: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
-    clickManual: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
-    clickOfficialSite: function () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '公式サイト'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
-    clickDevHistory: function () { this.windowOpen('private.display.devLogWindow'); this.menuHover(false, 'デモ') },
-    clickViewFunction: function () { this.windowOpen('private.display.functionListWindow'); this.menuHover(false, 'デモ') },
-    clickBufForm: function () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuHover(false, 'デモ') }
+    clickSettingFontSize () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
+    clickResetWindowLocate () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
+    clickAddCharacter () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
+    clickAddRange () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickAddChit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チット追加'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickChangeMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickAddMapMask (target) { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
+    clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSaveMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSwitchMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickFileUploader () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ファイルアップローダー'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickTagEdit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像タグ編集'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickDeleteImage () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像削除'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickVersion () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickManual () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickOfficialSite () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '公式サイト'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickDevHistory () { this.windowOpen('private.display.devLogWindow'); this.menuHover(false, 'デモ') },
+    clickViewFunction () { this.windowOpen('private.display.functionListWindow'); this.menuHover(false, 'デモ') },
+    clickBufForm () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuHover(false, 'デモ') }
   },
   watch: {
-    volatilSaveData: function (newValue) {
+    volatilSaveData (newValue) {
       if (newValue.length === this.memberNum) {
         this.doExport()
       }
     }
   },
-  computed: {
-    ...mapGetters([]),
-    hover1: function () { return this.menuHoverNum === 1 },
-    hover2: function () { return this.menuHoverNum === 2 },
-    hover3: function () { return this.menuHoverNum === 3 },
-    hover4: function () { return this.menuHoverNum === 4 },
-    hover5: function () { return this.menuHoverNum === 5 },
-    hover6: function () { return this.menuHoverNum === 6 },
-    hover7: function () { return this.menuHoverNum === 7 },
-    hover8: function () { return this.menuHoverNum === 8 },
-    isConnected: function () {
+  computed: mapState({
+    hover1 () { return this.menuHoverNum === 1 },
+    hover2 () { return this.menuHoverNum === 2 },
+    hover3 () { return this.menuHoverNum === 3 },
+    hover4 () { return this.menuHoverNum === 4 },
+    hover5 () { return this.menuHoverNum === 5 },
+    hover6 () { return this.menuHoverNum === 6 },
+    hover7 () { return this.menuHoverNum === 7 },
+    hover8 () { return this.menuHoverNum === 8 },
+    isConnected () {
       const peerId = this.$store.state.private.connect.peerId
       if (!peerId) return false
       const filtered = this.$store.state.public.room.members.filter(memberObj => memberObj.peerId === peerId)
       if (filtered.length === 0) return false
       return filtered[0].isCame
     },
-    roomId: function () {
-      const roomId = this.$store.state.public.room.id
-      return roomId !== '' ? roomId : '未接続'
-    },
-    memberNum: function () {
-      const filtered = this.$store.state.public.room.members.filter(memberObj => memberObj.isCame)
-      return filtered.length
-    },
-    volatilSaveData: function () {
-      return this.$store.state.volatilSaveData
-    },
-    roomInfoTitle: function () {
-      if (this.isConnected) {
-        return 'メンバーの一覧を見たり、部屋の設定を変えることができますよ。'
-      } else {
-        return 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！'
-      }
-    },
-    publicMemoTitle: function () {
-      if (this.isConnected) {
-        return 'メンバーに共有したいテキストはこちらにどうぞ'
-      } else {
-        return '部屋に入る前から準備しておくのですね！？\nなんと準備の良いお方でしょう！'
-      }
-    },
-    logoutTitle: function () {
-      if (this.isConnected) {
-        return 'この部屋から退室するのですか？'
-      } else {
-        return 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！'
-      }
-    }
-  }
+    roomId: state => state.public.room.id !== '' ? state.public.room.id : '未接続',
+    memberNum: state => state.public.room.members.filter(memberObj => memberObj.isCame).length,
+    volatilSaveData: 'volatilSaveData',
+    roomInfoTitle () { return this.isConnected === true ? 'メンバーの一覧を見たり、部屋の設定を変えることができますよ。' : 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！' },
+    publicMemoTitle () { return this.isConnected === true ? 'メンバーに共有したいテキストはこちらにどうぞ' : '部屋に入る前から準備しておくのですね！？\nなんと準備の良いお方でしょう！' },
+    logoutTitle () { return this.isConnected === true ? 'この部屋から退室するのですか？' : 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！' }
+  })
 }
 </script>
 

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapActions } from 'vuex'
 import GameTable from './components/map/GameTable'
 
 export default {
@@ -16,7 +16,7 @@ export default {
   components: {
     GameTable: GameTable
   },
-  mounted: function () {
+  mounted () {
     this.onMount()
 
     let count = 0
@@ -36,11 +36,11 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'onMount',
       'exportStart'
     ]),
-    onWheel: function (e) {
+    onWheel (e) {
       this.$refs['gameTable'].onWheel(e.wheelDelta)
     }
   }

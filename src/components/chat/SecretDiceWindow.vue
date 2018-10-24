@@ -8,17 +8,11 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
 import WindowFrame from './WindowFrame'
 
 export default {
   components: {
     WindowFrame: WindowFrame
-  },
-  methods: {
-    ...mapMutations([])
-  },
-  computed: {
   }
 }
 </script>

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -69,7 +69,7 @@ export default {
       }
     }
   },
-  mounted: function () {
+  mounted () {
     document.addEventListener('mousemove', function (event) {
       this.mouse.x = event.pageX
       this.mouse.y = event.pageY
@@ -83,23 +83,23 @@ export default {
     this.addEventForIFrame()
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowClose',
       'setProperty',
       'windowActive'
     ]),
-    closeWindow: function () {
+    closeWindow () {
       console.log(`  [methods] closeWindow(click [x]button)`)
       this.windowClose(this.displayProperty)
     },
-    mouseup: function (event) {
+    mouseup (event) {
       const evtObj = { clientX: event.pageX, clientY: event.pageY, button: event.button }
       if (event.button === 2) {
         this.setProperty({property: `map.isOverEvent`, value: true})
       }
       document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
     },
-    resize: function (event, direct, flg, isTouch) {
+    resize (event, direct, flg, isTouch) {
       if (flg) {
         this.mouse.saveX = isTouch ? event.changedTouches[0].pageX : event.pageX
         this.mouse.saveY = isTouch ? event.changedTouches[0].pageY : event.pageY
@@ -130,7 +130,7 @@ export default {
       // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
       this.moveMode = (flg ? direct : '')
     },
-    reflesh: function () {
+    reflesh () {
       const x = this.mouse.x
       const y = this.mouse.y
       const moveX = x - this.mouse.saveX
@@ -157,7 +157,7 @@ export default {
       }
       // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     },
-    move: function (event, flg, isTouch) {
+    move (event, flg, isTouch) {
       if (flg) {
         this.mouse.saveX = isTouch ? event.changedTouches[0].pageX : event.pageX
         this.mouse.saveY = isTouch ? event.changedTouches[0].pageY : event.pageY
@@ -172,7 +172,7 @@ export default {
       }
       this.moveMode = flg ? 'move' : ''
     },
-    addEventForIFrame: function () {
+    addEventForIFrame () {
       const elms = document.getElementsByTagName('iframe')
       for (const iframeElm of elms) {
         // マウス移動
@@ -235,7 +235,7 @@ export default {
     }
   },
   watch: {
-    isDisplay: function (newValue, oldValue) {
+    isDisplay (newValue, oldValue) {
       if (newValue) {
         console.log(`    [watch] window open => ${this.displayProperty}`)
         this.windowFactor.l = 0
@@ -252,7 +252,7 @@ export default {
         this.$emit('close')
       }
     },
-    isResetPosition: function (newValue, oldValue) {
+    isResetPosition (newValue, oldValue) {
       if (newValue) {
         console.log(`    [watch] window reset => ${this.displayProperty}`)
         this.windowFactor.l = 0
@@ -268,54 +268,32 @@ export default {
       }
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'isWindowOpen',
-      'doResetPosition',
       'getState'
     ]),
-    isDisplay: function () {
-      if (!this.displayProperty) return false
-      return this.isWindowOpen(this.displayProperty)
-    },
-    isResetPosition: function () {
-      if (!this.displayProperty) return false
-      let isResetPosition = this.doResetPosition(this.displayProperty)
-      // console.log(`isResetPosition ${isResetPosition} ${this.displayProperty}`)
-      return isResetPosition
-    },
-    zIndex: function () {
-      return this.getState(this.displayProperty).zIndex
-    },
-    isFix: function () {
-      if (this.fixSize) { return true }
-      return false
-    },
-    fixW: function () {
-      if (!this.isFix) { return -1 }
-      let width = this.fixSize.split(',')[0].trim()
-      return parseInt(width)
-    },
-    fixH: function () {
-      if (!this.isFix) { return -1 }
-      let height = this.fixSize.split(',')[1].trim()
-      return parseInt(height)
-    },
-    base: function () {
-      if (!this.baseSize) { return 0 }
+    isDisplay () { return !this.displayProperty ? false : this.isWindowOpen(this.displayProperty) },
+    isResetPosition () { return !this.displayProperty ? false : this.getState(this.displayProperty).doResetPosition },
+    zIndex () { return this.getState(this.displayProperty).zIndex },
+    isFix () { return this.fixSize !== undefined },
+    fixW () { return !this.isFix ? -1 : parseInt(this.fixSize.split(',')[0].trim()) },
+    fixH () { return !this.isFix ? -1 : parseInt(this.fixSize.split(',')[1].trim()) },
+    base () {
+      if (!this.baseSize) { return { w: 0, h: 0 } }
       return {
         w: parseInt(this.baseSize.split(',')[0].trim()),
         h: parseInt(this.baseSize.split(',')[1].trim())
       }
     },
-    min: function () {
-      if (!this.minSize) { return 0 }
+    min () {
+      if (!this.minSize) { return { w: 0, h: 0 } }
       return {
         w: parseInt(this.minSize.split(',')[0].trim()),
         h: parseInt(this.minSize.split(',')[1].trim())
       }
     },
-    windowStyle: function () {
+    windowStyle () {
       const moveMode = this.moveMode
       const winFac = this.windowFactor
 
@@ -383,7 +361,7 @@ export default {
       }
       return obj
     }
-  }
+  })
 }
 </script>
 

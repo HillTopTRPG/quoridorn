@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import ContextFrame from '../ContextFrame'
 
 export default {
@@ -23,53 +23,50 @@ export default {
     ContextFrame: ContextFrame
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowOpen',
       'setProperty',
       'windowClose',
       'doResetWindowLocate'
     ]),
-    addCharacter: function (event) {
+    addCharacter (event) {
       console.log(`  [methods] select context item => GameTable.addCharacter`)
       this.windowOpen('private.display.addCharacterSettingWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    addMapMask: function (event) {
+    addMapMask (event) {
       console.log(`  [methods] select context item => GameTable.addMapMask`)
       this.windowOpen('private.display.addMapMaskWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    addMapMarker: function (event) {
+    addMapMarker (event) {
       console.log(`  [methods] select context item => GameTable.addMapMarker`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップマーカー追加'})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    addDiceSymbol: function (event) {
+    addDiceSymbol (event) {
       console.log(`  [methods] select context item => GameTable.addDiceSymbol`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスシンボル追加'})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    createHandCardArea: function (event) {
+    createHandCardArea (event) {
       console.log(`  [methods] select context item => GameTable.createHandCardArea`)
       alert('未実装の機能です。')
       this.windowClose('private.display.gameTableContext')
     },
-    createMessageCard: function (event) {
+    createMessageCard (event) {
       console.log(`  [methods] select context item => GameTable.createMessageCard`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'メッセージカード追加'})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    resetWindowLocate: function (event) {
+    resetWindowLocate (event) {
       console.log(`  [methods] select context item => GameTable.resetWindowLocate`)
       this.doResetWindowLocate()
       this.windowClose('private.display.gameTableContext')
     }
-  },
-  computed: {
-    ...mapGetters([])
   }
 }
 </script>

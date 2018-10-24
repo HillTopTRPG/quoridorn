@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
@@ -27,17 +27,17 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowClose',
       'logout',
       'createPeer',
       'windowOpen',
       'updateCame'
     ]),
-    cancel: function () {
+    cancel () {
       this.windowClose('private.display.confirmLoadRoomWindow')
     },
-    clickJoinRoom: function () {
+    clickJoinRoom () {
       if (!this.importData) {
         return
       }
@@ -50,26 +50,18 @@ export default {
       })
       this.windowClose('private.display.confirmLoadRoomWindow')
     },
-    clickExitRoomAndLoad: function () {
+    clickExitRoomAndLoad () {
       this.logout()
       alert('ログアウト後のセーブデータ読込は未実装')
     },
-    clickLoad: function () {
+    clickLoad () {
       alert('未実装')
     }
   },
-  computed: {
-    ...mapGetters([]),
-    importData: function () {
-      return this.$store.state.private.display.confirmLoadRoomWindow.importData
-    },
-    roomId: function () {
-      if (!this.importData) {
-        return ''
-      }
-      return this.importData.public.room.id
-    }
-  }
+  computed: mapState({
+    importData: state => state.private.display.confirmLoadRoomWindow.importData,
+    roomId () { return !this.importData ? '' : this.importData.public.room.id }
+  })
 }
 </script>
 

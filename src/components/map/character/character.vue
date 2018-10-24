@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import PieceMixin from '../../PieceMixin'
 
 export default {
@@ -31,7 +31,7 @@ export default {
     }
   },
   methods: {
-    getKeyObj: function (list, key) {
+    getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
         console.log(`key:"${key}" is not find.`)
@@ -43,18 +43,18 @@ export default {
       }
       return filteredList[0]
     },
-    dblClick: function () {
+    dblClick () {
       const maxIndex = this.useImageList.split('|').length - 1
       let nextIndex = this.useImageIndex + 1
       if (nextIndex > maxIndex) {
         nextIndex = 0
       }
-      this.setProperty({property: `public.${this.type}.${this.storeIndex}.useImageIndex`, value: nextIndex, isNotice: true})
+      this.setProperty({property: `public.${this.type}.list.${this.storeIndex}.useImageIndex`, value: nextIndex, isNotice: true})
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([]),
-    characterStyle: function () {
+    characterStyle () {
       let obj = this.style
       if (this.storeObj.isDraggingLeft) {
         const plus = 1.5
@@ -66,21 +66,22 @@ export default {
       // console.log(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj
     },
-    name: function () { return this.storeObj.name },
-    useImageList: function () { return this.storeObj.useImageList },
-    useImageIndex: function () { return this.storeObj.useImageIndex },
-    imageObj: function () {
+    name () { return this.storeObj.name },
+    useImageList () { return this.storeObj.useImageList },
+    useImageIndex () { return this.storeObj.useImageIndex },
+    imageList: state => state.public.image.list,
+    imageObj () {
       if (this.useImageList === '') { return '' }
       const imageStr = this.useImageList.split('|')[this.useImageIndex]
       // console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
       const isReverse = imageStr.indexOf(':R') >= 0
-      const imageKey = parseInt(imageStr.replace(':R', ''))
+      const imageKey = imageStr.replace(':R', '')
       return {
         isReverse: isReverse,
-        data: this.getKeyObj(this.$store.state.public.images.data, imageKey).data
+        data: this.getKeyObj(this.imageList, imageKey).data
       }
     }
-  }
+  })
 }
 </script>
 

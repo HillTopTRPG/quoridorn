@@ -32,11 +32,11 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
 
 export default {
-  name: 'editMapMask',
+  name: 'editMapMaskWindow',
   components: {
     WindowFrame: WindowFrame
   },
@@ -50,30 +50,20 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'windowClose',
-      'setProperty',
       'changeMapMaskInfo'
     ]),
-    commitEdit: function () {
-      const mapMaskObj = {
-        key: this.key,
-        name: this.name,
-        columns: this.width,
-        rows: this.height,
-        color: this.rgba,
-        fontColor: this.fontColor,
-        isNotice: true
-      }
-      this.changeMapMaskInfo(mapMaskObj)
+    commitEdit () {
+      this.changeMapMaskInfo({ key: this.key, name: this.name, columns: this.width, rows: this.height, color: this.rgba, fontColor: this.fontColor, isNotice: true })
       this.windowClose('private.display.editMapMaskWindow')
     },
-    cancelEdit: function () {
+    cancelEdit () {
       this.windowClose('private.display.editMapMaskWindow')
     },
-    initWindow: function () {
+    initWindow () {
       // console.log(`initWindow`)
-      let mapMaskObj = this.getPieceObj('mapMasks', this.key)
+      let mapMaskObj = this.getPieceObj('mapMask', this.key)
       this.name = mapMaskObj.name
       this.width = mapMaskObj.columns
       this.height = mapMaskObj.rows
@@ -83,16 +73,13 @@ export default {
       console.log(`  [methods] init window => EditMapMask:{name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}}`)
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
-      'doResetPosition',
       'parseColor',
       'getPieceObj'
     ]),
-    key: function () {
-      return this.$store.state.private.display['editMapMaskWindow'].key
-    },
-    mapMaskStyle: function () {
+    key: state => state.private.display['editMapMaskWindow'].key,
+    mapMaskStyle () {
       let width = this.width * this.gridSize
       let height = this.height * this.gridSize
       let zoom = 1
@@ -109,19 +96,14 @@ export default {
       }
       return result
     },
-    rgba: function () {
+    rgba () {
       const colorObj = this.parseColor(this.color)
       colorObj.a = (100 - this.transparency) / 100
       return colorObj.getRGBA()
     },
-    fontColor: function () {
-      const colorObj = this.parseColor(this.color)
-      return colorObj.getColorCodeReverse()
-    },
-    gridSize: function () {
-      return this.$store.state.public.map.grid.size
-    }
-  }
+    fontColor () { return this.parseColor(this.color).getColorCodeReverse() },
+    gridSize: state => state.public.map.grid.size
+  })
 }
 </script>
 

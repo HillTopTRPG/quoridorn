@@ -14,16 +14,16 @@
       <MapBoard/>
     </div>
 
-    <MapMask v-for="mapMask in pieceList('mapMasks')" type="mapMasks" :objKey="mapMask.key" :key="mapMask.key"
+    <MapMask v-for="mapMaskObj in pieceList('mapMask')" type="mapMask" :objKey="mapMaskObj.key" :key="mapMaskObj.key"
       @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
-    <Character v-for="character in pieceList('characters')" type="characters" :objKey="character.key" :key="character.key"
+    <Character v-for="characterObj in pieceList('character')" type="character" :objKey="characterObj.key" :key="characterObj.key"
       @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
 
   </div>
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import AddressCalcMixin from '../AddressCalcMixin'
 import MapBoard from './MapBoard'
 import MapMask from './mapMask/MapMask'
@@ -37,22 +37,22 @@ export default {
     MapMask: MapMask,
     Character: Character
   },
-  mounted: function () {
+  mounted () {
     document.addEventListener('mousemove', this.mouseMove)
     document.addEventListener('touchmove', this.touchMove)
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'addPieceInfo',
       'windowOpen',
       'setProperty',
       'windowClose',
       'importStart'
     ]),
-    dragging: function () {
+    dragging () {
       console.log(`★★★★ dragging ★★★★`)
     },
-    onWheel: function (delta) {
+    onWheel (delta) {
       const changeValue = 100
       const add = delta > 0 ? changeValue : -changeValue
       const wheel = this.wheel + add
@@ -61,7 +61,7 @@ export default {
       }
       this.setProperty({property: 'private.map.wheel', value: wheel})
     },
-    getAngle: function (mouseOnTable, storeObj) {
+    getAngle (mouseOnTable, storeObj) {
       const rectObj = {
         top: storeObj.top + storeObj.move.dragging.y,
         left: storeObj.left + storeObj.move.dragging.x,
@@ -81,7 +81,7 @@ export default {
       const angle = Math.atan2(loc.y, loc.x) * 180 / Math.PI
       return angle
     },
-    leftDown: function () {
+    leftDown () {
       console.log(`  [methods] mousedown left on GameTable`)
       const obj = {
         move: {
@@ -94,12 +94,12 @@ export default {
       }
       this.setProperty({property: 'map', value: obj, logOff: true})
     },
-    leftUp: function () {
+    leftUp () {
       console.log(`  [methods] mouseup left on GameTable`)
       if (this.rollObj.isRolling) {
         // マップ上のオブジェクトを回転中の場合
-        const pieceObj = this.$store.state.public[this.rollObj.propName].filter(obj => obj.key === this.rollObj.key)[0]
-        const storeIndex = this.$store.state.public[this.rollObj.propName].indexOf(pieceObj)
+        const pieceObj = this.$store.state.public[this.rollObj.propName].list.filter(obj => obj.key === this.rollObj.key)[0]
+        const storeIndex = this.$store.state.public[this.rollObj.propName].list.indexOf(pieceObj)
         this.setProperty({property: `map.rollObj.isRolling`, value: false, logOff: true})
         const planeAngle = this.arrangeAngle(pieceObj.angle.dragging + pieceObj.angle.total)
         const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30)
@@ -108,7 +108,7 @@ export default {
           total: total,
           dragging: 0
         }
-        this.setProperty({property: `public.${this.rollObj.propName}.${storeIndex}.angle`, value: obj, logOff: true, isNotice: true})
+        this.setProperty({property: `public.${this.rollObj.propName}.list.${storeIndex}.angle`, value: obj, logOff: true, isNotice: true})
       } else {
         // マップを動かしている場合
         const obj = {
@@ -127,7 +127,7 @@ export default {
         this.setProperty({property: 'map', value: obj, logOff: true})
       }
     },
-    rightDown: function () {
+    rightDown () {
       console.log(`  [methods] mousedown right on GameTable`)
       const obj = {
         angle: {
@@ -137,7 +137,7 @@ export default {
       }
       this.setProperty({property: 'map', value: obj, logOff: true})
     },
-    rightUp: function (event) {
+    rightUp (event) {
       console.log(`  [methods] mouseup right on GameTable`)
       const isDraggingRight = this.isDraggingRight
       this.setProperty({property: 'map.isMouseDownRight', value: false, logOff: false})
@@ -175,13 +175,13 @@ export default {
         this.setProperty({property: `map.isOverEvent`, value: false, logOff: true})
       }
     },
-    mouseMove: function (event) {
+    mouseMove (event) {
       this.setMouseLocateOnPage(event.pageX, event.pageY)
     },
-    touchMove: function (event) {
+    touchMove (event) {
       this.setMouseLocateOnPage(event.changedTouches[0].pageX, event.changedTouches[0].pageY)
     },
-    setMouseLocateOnPage: function (pageX, pageY) {
+    setMouseLocateOnPage (pageX, pageY) {
       const obj = {
         x: pageX,
         y: pageY
@@ -214,7 +214,7 @@ export default {
       }
       this.setProperty({property: 'map', value: mapObj, logOff: true})
     },
-    drop: function (event) {
+    drop (event) {
       // ドロップされた物の種類
       const kind = event.dataTransfer.getData('kind')
 
@@ -230,12 +230,7 @@ export default {
 
       console.log(`  [methods] drop on GameTable(${canvasAddress.grid.column}, ${canvasAddress.grid.row}) => ${kind}`)
 
-      const pieceObj = {
-        kind: kind,
-        left: locateOnTable.x,
-        top: locateOnTable.y,
-        isNotice: true
-      }
+      const pieceObj = { kind: kind, left: locateOnTable.x, top: locateOnTable.y, isNotice: true }
 
       // マップマスクの作成
       if (kind === 'mapMask') {
@@ -246,7 +241,7 @@ export default {
         const rows = parseInt(event.dataTransfer.getData('rows'))
 
         // 必須項目
-        pieceObj.propName = 'mapMasks'
+        pieceObj.propName = 'mapMask'
         pieceObj.columns = columns
         pieceObj.rows = rows
         // 個別部
@@ -270,7 +265,7 @@ export default {
         const currentImageTag = event.dataTransfer.getData('currentImageTag')
 
         // 必須項目
-        pieceObj.propName = 'characters'
+        pieceObj.propName = 'character'
         pieceObj.columns = size
         pieceObj.rows = size
         // 個別部
@@ -334,7 +329,7 @@ export default {
         this.importStart(zipFiles)
       }
     },
-    createBase64DataSet: function (imageFile, thumbnailSize) {
+    createBase64DataSet (imageFile, thumbnailSize) {
       return new Promise(function (resolve, reject) {
         const createPromise = function (isThumbnail) {
           // eslint-disable-next-line
@@ -400,7 +395,7 @@ export default {
   },
   watch: {
     mouseLocate: {
-      handler: function (mouseLocate) {
+      handler (mouseLocate) {
         if (this.isDraggingLeft) {
           const obj = {
             x: mouseLocate.x - this.move.from.x,
@@ -417,23 +412,23 @@ export default {
       deep: true
     }
   },
-  computed: {
+  computed: mapState({
     ...mapGetters([
       'pieceList',
       'isFitGrid'
     ]),
-    rollObj: function () { return this.$store.state.map.rollObj },
-    isDraggingLeft: function () { return this.$store.state.map.isDraggingLeft },
-    isMouseDownRight: function () { return this.$store.state.map.isMouseDownRight },
-    isOverEvent: function () { return this.$store.state.map.isOverEvent },
-    isDraggingRight: function () { return this.$store.state.map.isDraggingRight },
-    move: function () { return this.$store.state.map.move },
-    angle: function () { return this.$store.state.private.map.angle },
-    angleVolatil: function () { return this.$store.state.map.angle },
-    currentAngle: function () { return this.arrangeAngle(this.angle.total + this.angleVolatil.dragging) },
-    sizeW: function () { return (this.columns + this.marginGridNum) * this.gridSize + 0 },
-    sizeH: function () { return (this.rows + this.marginGridNum) * this.gridSize + 0 },
-    gameTableStyle: function () {
+    rollObj: state => state.map.rollObj,
+    isDraggingLeft: state => state.map.isDraggingLeft,
+    isMouseDownRight: state => state.map.isMouseDownRight,
+    isOverEvent: state => state.map.isOverEvent,
+    isDraggingRight: state => state.map.isDraggingRight,
+    move: state => state.map.move,
+    angle: state => state.private.map.angle,
+    angleVolatil: state => state.map.angle,
+    currentAngle () { return this.arrangeAngle(this.angle.total + this.angleVolatil.dragging) },
+    sizeW () { return (this.columns + this.marginGridNum) * this.gridSize + 0 },
+    sizeH () { return (this.rows + this.marginGridNum) * this.gridSize + 0 },
+    gameTableStyle () {
       const translateZ = this.wheel
       const zoom = (1000 - this.wheel) / 1000
       const totalLeftX = (this.move.total.x + this.move.dragging.x) * zoom
@@ -452,7 +447,7 @@ export default {
           'rotateZ(' + rotateZ + 'deg)'
       }
     }
-  }
+  })
 }
 </script>
 

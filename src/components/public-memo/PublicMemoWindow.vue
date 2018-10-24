@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 
 export default {
@@ -30,15 +30,15 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       'chatTabSelect',
       'windowOpen',
       'setProperty'
     ]),
-    open: function () {
+    open () {
       // TODO get data
     },
-    addTab: function () {
+    addTab () {
       let tabs = ''
       this.texts.forEach(function (textObj, index) {
         textObj.replace(/"/g, '\\"')
@@ -50,35 +50,24 @@ export default {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'タブ編集'})
       this.windowOpen('private.display.unSupportWindow')
     },
-    tabSelect: function (tabObj) {
+    tabSelect (tabObj) {
       this.currentTab = tabObj.text
       for (let chatTabObj of this.chatTabList) {
         chatTabObj.isActive = chatTabObj.text === tabObj.text
       }
     },
-    clickAdd: function () {
+    clickAdd () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理'})
       this.windowOpen('private.display.unSupportWindow')
     },
-    clickCancel: function () {
+    clickCancel () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チャット文字設定'})
       this.windowOpen('private.display.unSupportWindow')
     }
   },
-  computed: {
-    ...mapGetters([
-      'doResetPosition'
-    ]),
-    chatLogList: function () {
-      return this.$store.state.publicMemo
-    },
-    chatTabList: function () {
-      return this.$store.state.public.chat.tabs
-    },
-    currentCount: function () {
-      return this.$store.state.count
-    }
-  }
+  computed: mapState({
+    publicMemoList: state => state.publicMemo.list
+  })
 }
 </script>
 
