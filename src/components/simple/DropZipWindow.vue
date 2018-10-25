@@ -46,7 +46,6 @@ export default {
         private: this.$store.state.private,
         public: {}
       }
-      console.log('#### ', this.saveDataList)
       this.saveDataList.forEach(saveData => {
         const propProc = (target, props) => {
           for (const prop in props) {
@@ -90,7 +89,6 @@ export default {
         propProc(importData.private, saveData.saveData.private)
       })
       this.doImport(importData)
-      console.log(importData, this.members)
       this.windowClose('private.display.dropZipWindow')
     },
     cancel () {
@@ -136,10 +134,13 @@ export default {
           useList.push({ label: 'マップ情報(画像情報とセットで)', isUse: true, target: 'map' })
         }
         if (publicData.mapMask) {
-          useList.push({ label: 'マップマスク情報(画像情報とセットで)', isUse: true, target: 'mapMask' })
+          useList.push({ label: 'マップマスク情報', isUse: true, target: 'mapMask' })
         }
         if (publicData.character) {
           useList.push({ label: 'キャラクター情報(画像情報とセットで)', isUse: true, target: 'character' })
+        }
+        if (publicData.chit) {
+          useList.push({ label: 'チット情報(画像情報とセットで)', isUse: true, target: 'chit' })
         }
         if (publicData.publicMemo) {
           useList.push({ label: '共有メモ', isUse: true, target: 'publicMemo' })

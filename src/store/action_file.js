@@ -56,31 +56,43 @@ const actionFile = {
       const hasImgKeys = historyAddKeys.filter(key => {
         const prefex = key.split('-')[0]
         // 今のところ、画像を持つのはキャラクターだけだが、ここに or で接頭語判定を増やしていく
-        return prefex === 'character'
+        return prefex === 'character' || prefex === 'chit'
       })
       // 画像を持つオブジェクトを全部まとめた配列にし、そこから参照される画像ファイルをすべて相対参照に変換する
-      const hasImgObjList = rootState.public.character.list.concat()
+      const hasImgObjList = rootState.public.character.list.concat(rootState.public.chit.list)
       const filteredHasImgKeys = hasImgKeys.map(hiKey => {
         let hiObj = hasImgObjList.filter(hiObj => hiObj.key === hiKey)[0]
         if (!hiObj) { return null }
         hiObj = JSON.parse(JSON.stringify(hiObj))
         let useImageList = hiObj.useImageList
-        const useImageKeys = useImageList.split('|').map(str => str.replace(':R', ''))
-        useImageKeys.forEach(uiKey => {
-          const matchKey = imageKeys.filter(iKey => iKey === uiKey)[0]
-          if (!matchKey) return
-          const afterKey = matchKey.replace(/[0-9]+/, s => `$${imageKeys.indexOf(matchKey)}`)
-          useImageList = useImageList.replace(matchKey, afterKey)
-        })
-        hiObj.useImageList = useImageList
+        if (useImageList) {
+          const useImageKeys = useImageList.split('|').map(str => str.replace(':R', ''))
+          useImageKeys.forEach(uiKey => {
+            const matchKey = imageKeys.filter(iKey => iKey === uiKey)[0]
+            if (!matchKey) return
+            const afterKey = matchKey.replace(/[0-9]+/, s => `$${imageKeys.indexOf(matchKey)}`)
+            useImageList = useImageList.replace(matchKey, afterKey)
+          })
+          hiObj.useImageList = useImageList
+        }
+        let imageKey = hiObj.imageKey
+        if (imageKey) {
+          const matchKey = imageKeys.filter(iKey => iKey === imageKey)[0]
+          if (matchKey) {
+            const afterKey = matchKey.replace(/[0-9]+/, s => `$${imageKeys.indexOf(matchKey)}`)
+            imageKey = imageKey.replace(matchKey, afterKey)
+            hiObj.imageKey = imageKey
+          }
+        }
         return hiObj
       })
 
       const func = hisObj => {
-        if (hisObj.key.split('-')[0] === 'image') {
+        const prefex = hisObj.key.split('-')[0]
+        if (prefex === 'image') {
           hisObj.key = hisObj.key.replace(/[0-9]+/, s => `$${imageKeys.indexOf(hisObj.key)}`)
         }
-        if (hisObj.key.split('-')[0] === 'character') {
+        if (prefex === 'character' || prefex === 'chit') {
           hisObj.key = hisObj.key.replace(/[0-9]+/, s => `$${hasImgKeys.indexOf(hisObj.key)}`)
         }
       }
@@ -95,6 +107,13 @@ const actionFile = {
         return hiObj.key.split('-')[0] === 'character'
       })
       delete saveData.public.character.maxKey
+
+      // チット一覧
+      saveData.public.chit.list = filteredHasImgKeys.filter(hiObj => {
+        if (!hiObj) return false
+        return hiObj.key.split('-')[0] === 'chit'
+      })
+      delete saveData.public.chit.maxKey
 
       // 画像一覧
       saveData.public.image.list = imageKeys.map(iKey => {
@@ -204,7 +223,6 @@ const actionFile = {
         // TODO 追加されたキャラクターを元に、各プレイヤーの履歴情報を更新すること。
         // let addCharacterKeyList = null
         if (publicData.character) {
-          console.log(addImageKeyList)
           // addCharacterKeyList =
           publicData.character.list.map(charObj => {
             let useImageList = charObj.useImageList
@@ -216,6 +234,20 @@ const actionFile = {
             return `character-${rootState.public.character.maxKey}`
           })
         }
+        // TODO 追加されたチットを元に、各プレイヤーの履歴情報を更新すること。
+        // let addChitKeyList = null
+        if (publicData.chit) {
+          // addChitKeyList =
+          publicData.chit.list.map(chitObj => {
+            let imageKey = chitObj.imageKey
+            addImageKeyList.forEach((key, index) => {
+              imageKey = imageKey.replace(new RegExp(`image-\\$${index}$`, 'g'), key)
+            })
+            chitObj.imageKey = imageKey
+            dispatch('doAddPieceInfo', chitObj)
+            return `chit-${rootState.public.chit.maxKey}`
+          })
+        }
         if (publicData.publicMemo) {
           rootState.public.publicMemo = publicData.publicMemo
         }
@@ -223,7 +255,6 @@ const actionFile = {
           dispatch('windowOpen', 'private.display.selectPeerWindow')
         }
       }
-      console.log(publicData.room)
       if (publicData.room && publicData.room.id !== '') {
         const roomId = publicData.room.id
         const peerId = privateData.connect.peerId
