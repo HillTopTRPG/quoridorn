@@ -51,23 +51,6 @@ const actionFile = {
           if (hisObj.type === 'del') historyDelKeys.push(hisObj.key)
         })
       })
-      // 履歴上の追加・削除リストを整理する
-      const ddKeys = []
-      historyDelKeys.forEach(dKey => {
-        let key = null
-        historyAddKeys.forEach(aKey => {
-          if (dKey === aKey) { key = aKey }
-        })
-        if (key) {
-          const aIndex = historyAddKeys.indexOf(key)
-          historyAddKeys.splice(aIndex, 1)
-          ddKeys.push(key)
-        }
-      })
-      ddKeys.forEach(ddKey => {
-        const dIndex = historyDelKeys.indexOf(ddKey)
-        historyDelKeys.splice(dIndex, 1)
-      })
       const imageKeys = historyAddKeys.filter(key => key.split('-')[0] === 'image')
       const imgTagKeys = historyAddKeys.filter(key => key.split('-')[0] === 'imgTag')
       const hasImgKeys = historyAddKeys.filter(key => {
