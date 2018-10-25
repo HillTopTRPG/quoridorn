@@ -151,7 +151,7 @@ export default {
     clickResetWindowLocate () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
     clickAddCharacter () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
     clickAddRange () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
-    clickAddChit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チット追加'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickAddChit () { this.windowOpen('private.display.addChitWindow'); this.menuHover(false, 'コマ') },
     clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
     clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
     clickChangeMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
@@ -214,7 +214,7 @@ export default {
   border-bottom: solid gray 1px;
   padding: 0px 10px;
   font-size: 16px;
-  z-index: 10100;
+  z-index: 900000000;
 }
 #menu > * {
   margin: 5px;
@@ -259,7 +259,7 @@ span.isDisconnect {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  z-index: 1000;
+  z-index: 100;
 }
 .meun-button.isDisconnect {
   background: rgba(250, 250, 250, 0);
@@ -273,6 +273,7 @@ span.isDisconnect {
   top: 25px;
   background: white;
   border: solid gray 1px;
+  z-index: 200;
 }
 .hoverMenu > * {
   padding: 0 10px;

@@ -91,22 +91,23 @@ const actionOperation = {
       }
     },
     /** ========================================================================
-     * マップマスク情報を変更する
+     * マップオブジェクト情報を変更する
      */
-    changeMapMaskInfo: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doChangeMapMaskInfo' }) },
-    doChangeMapMaskInfo: ({ rootState, rootGetters }, payload) => {
-      let key = payload.key
+    changePieceInfo: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doChangePieceInfo' }) },
+    doChangePieceInfo: ({ rootState, rootGetters }, payload) => {
+      const key = payload.key
+      const propName = payload.propName
 
-      const mapMaskObj = rootGetters.getPieceObj('mapMask', key)
+      const pieceObj = rootGetters.getPieceObj(propName, key)
       for (let prop in payload) {
-        if (prop === 'key') { continue }
-        if (mapMaskObj[prop] !== payload[prop]) {
-          console.log(`[mutations] update mapMask(${key}) => ${prop}: ${mapMaskObj[prop]} -> ${payload[prop]}`)
-          mapMaskObj[prop] = payload[prop]
+        if (prop === 'key' || prop === 'propName') { continue }
+        if (pieceObj[prop] !== payload[prop]) {
+          console.log(`[mutations] update ${propName}(${key}) => ${prop}: ${pieceObj[prop]} -> ${payload[prop]}`)
+          pieceObj[prop] = payload[prop]
         }
       }
-      const index = rootState.public['mapMask'].list.indexOf(mapMaskObj)
-      rootState.public['mapMask'].list.splice(index, 1, mapMaskObj)
+      const index = rootState.public[propName].list.indexOf(pieceObj)
+      rootState.public[propName].list.splice(index, 1, pieceObj)
     },
     /** ========================================================================
      * マップオブジェクトの削除

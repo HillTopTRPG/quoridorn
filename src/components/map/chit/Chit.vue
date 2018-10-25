@@ -1,21 +1,16 @@
 <template>
-  <div class="character"
+  <div class="chit"
     :class="[isThisRolling ? 'rolling' : '', isHover ? 'hover' : '']"
-    :style="characterStyle"
-    :title="storeObj.text"
-    @click.right.prevent="(e) => openContext(e, 'private.display.characterContext')"
+    :style="chitStyle"
+    :title="description"
+    @click.right.prevent="(e) => openContext(e, 'private.display.chitContext')"
     @mouseover="mouseover" @mouseout="mouseout"
-    @dblclick="dblClick"
     @mousedown.left.stop="leftDown" @mouseup.left.stop="leftUp"
     @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
     @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
     @contextmenu.prevent>
     <div class="border"/>
-    <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
-    <div class="name">{{name}}</div>
-    <img class="rotate" v-img="require('../../../assets/rotateArrow.png')" v-show="isHover || isThisRolling" draggable="false"
-      @mousedown.stop="rollStart" @mouseup.stop="rollEnd"
-      @touchstart.stop="rollStart" @touchend.stop="rollEnd" @touchcancel.stop="rollEnd" />
+    <img class="image" v-img="getKeyObj(imageList, imageKey).data" :class="{reverse : isReverse}" draggable="false"/>
   </div>
 </template>
 
@@ -24,7 +19,7 @@ import { mapState, mapGetters } from 'vuex'
 import PieceMixin from '../../PieceMixin'
 
 export default {
-  name: 'character',
+  name: 'chit',
   mixins: [PieceMixin],
   data () {
     return {
@@ -42,19 +37,11 @@ export default {
         return null
       }
       return filteredList[0]
-    },
-    dblClick () {
-      const maxIndex = this.useImageList.split('|').length - 1
-      let nextIndex = this.useImageIndex + 1
-      if (nextIndex > maxIndex) {
-        nextIndex = 0
-      }
-      this.setProperty({property: `public.${this.type}.list.${this.storeIndex}.useImageIndex`, value: nextIndex, isNotice: true})
     }
   },
   computed: mapState({
     ...mapGetters([]),
-    characterStyle () {
+    chitStyle () {
       let obj = this.style
       if (this.storeObj.isDraggingLeft) {
         const plus = 1.5
@@ -62,32 +49,22 @@ export default {
         obj.top = this.rect.top - plus + 'px'
         obj.width = this.rect.width + plus * 2 + 'px'
         obj.height = this.rect.height + plus * 2 + 'px'
+        obj.opacity = 0.6
       }
-      // console.log(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+      // console.log(` [computed] chit(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj
     },
-    name () { return this.storeObj.name },
-    useImageList () { return this.storeObj.useImageList },
-    useImageIndex () { return this.storeObj.useImageIndex },
-    imageList: state => state.public.image.list,
-    imageObj () {
-      if (this.useImageList === '') { return '' }
-      const imageStr = this.useImageList.split('|')[this.useImageIndex]
-      // console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
-      const isReverse = imageStr.indexOf(':R') >= 0
-      const imageKey = imageStr.replace(':R', '')
-      return {
-        isReverse: isReverse,
-        data: this.getKeyObj(this.imageList, imageKey).data
-      }
-    }
+    imageKey () { return this.storeObj.imageKey },
+    isReverse () { return this.storeObj.isReverse },
+    description () { return this.storeObj.description },
+    imageList: state => state.public.image.list
   })
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.character {
+.chit {
   /*
   box-sizing: border-box;
   */
@@ -103,20 +80,19 @@ export default {
   font-size: 12px;
   cursor: crosshair;
   border-radius: 3px;
-  z-index: 600000000;
+  z-index: 100000000;
 }
-.character.hover,
-.character.rolling {
+.chit.hover,
+.chit.rolling {
   z-index: 999999999;
 }
-.character:before {
+.chit:before {
   content: "";
   position: absolute;
   left: -2px;
   right: -2px;
   bottom: -2px;
   top: -2px;
-  border: solid black 2px;
 }
 img.image {
   position: absolute;

@@ -50,9 +50,12 @@ const storeModulePrivate = {
       createRoomWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       selectPeerWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       confirmLoadRoomWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, importData: null },
+      addChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      editChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
       mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       characterContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       gameTableContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0 },
+      chitContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0, key: -1 },
       addCharacterWindow: {
         isDisplay: false,
         doResetPosition: false,

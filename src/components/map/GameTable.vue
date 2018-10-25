@@ -18,6 +18,8 @@
       @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
     <Character v-for="characterObj in pieceList('character')" type="character" :objKey="characterObj.key" :key="characterObj.key"
       @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
+    <Chit v-for="chitObj in pieceList('chit')" type="chit" :objKey="chitObj.key" :key="chitObj.key"
+      @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
 
   </div>
 </template>
@@ -28,6 +30,7 @@ import AddressCalcMixin from '../AddressCalcMixin'
 import MapBoard from './MapBoard'
 import MapMask from './mapMask/MapMask'
 import Character from './character/Character'
+import Chit from './chit/Chit'
 
 export default {
   name: 'gameTable',
@@ -35,7 +38,8 @@ export default {
   components: {
     MapBoard: MapBoard,
     MapMask: MapMask,
-    Character: Character
+    Character: Character,
+    Chit: Chit
   },
   mounted () {
     document.addEventListener('mousemove', this.mouseMove)
@@ -285,6 +289,29 @@ export default {
           this.windowClose('private.display.addCharacterWindow')
           this.setProperty({property: 'private.display.addCharacterWindow.continuousNum', value: 1})
         }
+
+        this.addPieceInfo(pieceObj)
+        return
+      }
+
+      // チットの作成
+      if (kind === 'chit') {
+        const currentImageTag = event.dataTransfer.getData('currentImageTag')
+        const imageKey = event.dataTransfer.getData('imageKey')
+        const isReverse = event.dataTransfer.getData('isReverse')
+        const columns = event.dataTransfer.getData('columns')
+        const rows = event.dataTransfer.getData('rows')
+        const description = event.dataTransfer.getData('description')
+
+        // 必須項目
+        pieceObj.propName = 'chit'
+        pieceObj.columns = columns
+        pieceObj.rows = rows
+        // 個別部
+        pieceObj.currentImageTag = currentImageTag
+        pieceObj.imageKey = imageKey
+        pieceObj.isReverse = isReverse
+        pieceObj.description = description
 
         this.addPieceInfo(pieceObj)
         return

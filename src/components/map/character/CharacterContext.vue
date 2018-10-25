@@ -23,7 +23,6 @@ export default {
     ...mapActions([
       'windowOpen',
       'setProperty',
-      'changeMapMaskInfo',
       'deletePieceInfo',
       'windowClose'
     ]),

@@ -24,6 +24,9 @@ import SelectPeerWindow from './components/simple/SelectPeerWindow'
 import InviteLinkWindow from './components/simple/InviteLinkWindow'
 import CreateRoomWindow from './components/simple/CreateRoomWindow'
 import ConfirmLoadRoomWindow from './components/simple/ConfirmLoadRoomWindow'
+import AddChitWindow from './components/map/chit/AddChitWindow'
+import EditChitWindow from './components/map/chit/EditChitWindow'
+import ChitContext from './components/map/chit/ChitContext'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -139,3 +142,12 @@ createRoomWindow.$mount('#createRoomWindow')
 
 const confirmLoadRoomWindow = new Vue({ store, components: { ConfirmLoadRoomWindow: ConfirmLoadRoomWindow }, template: `<ConfirmLoadRoomWindow/>` })
 confirmLoadRoomWindow.$mount('#confirmLoadRoomWindow')
+
+const addChitWindow = new Vue({ store, components: { AddChitWindow: AddChitWindow }, template: `<AddChitWindow/>` })
+addChitWindow.$mount('#addChitWindow')
+
+const editChitWindow = new Vue({ store, components: { EditChitWindow: EditChitWindow }, template: `<EditChitWindow/>` })
+editChitWindow.$mount('#editChitWindow')
+
+const chitContext = new Vue({ store, components: { ChitContext: ChitContext }, template: `<ChitContext/>` })
+chitContext.$mount('#chitContext')

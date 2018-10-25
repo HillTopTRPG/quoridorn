@@ -38,7 +38,7 @@ export default {
         obj.top = this.rect.top - plus + 'px'
         obj.width = this.rect.width + plus * 2 + 'px'
         obj.height = this.rect.height + plus * 2 + 'px'
-        colorObj.a = colorObj.a / 2
+        colorObj.a = colorObj.a * 0.6
       }
       obj['background-color'] = colorObj.getRGBA()
       obj['color'] = this.storeObj.fontColor
@@ -69,10 +69,11 @@ export default {
   -ms-user-select: none;
   font-size: 12px;
   cursor: crosshair;
+  z-index: 200000000;
 }
 .mapMask.hover {
   border-width: 2px;
-  z-index: 1000;
+  z-index: 999999999;
 }
 .mapMask.isLock.hover { border-color: blue; }
 .mapMask.isUnLock.hover { border-color: yellow; }

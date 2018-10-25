@@ -61,4 +61,9 @@ export default {
 .context > :hover {
   background-color: lightblue;
 }
+.item {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
 </style>

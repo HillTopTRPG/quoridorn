@@ -59,7 +59,7 @@ const storeModulePublic = {
       ],
       maxKey: 24
     },
-    room: { id: '', members: [], system: 'DiceBot' },
+    room: { id: '', members: [], system: 'DiceBot', password: '' },
     map: {
       imageKey: 'image-0',
       marginGridNum: 60,
@@ -68,6 +68,7 @@ const storeModulePublic = {
     },
     mapMask: { list: [], maxKey: -1 },
     character: { list: [], maxKey: -1 },
+    chit: { list: [], maxKey: -1 },
     chat: {
       tabs: [ { name: 'メイン', isActive: true, isHover: false, unRead: 0 } ],
       logs: {

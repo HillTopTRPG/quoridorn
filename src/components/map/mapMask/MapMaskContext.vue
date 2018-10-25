@@ -20,7 +20,7 @@ export default {
     ...mapActions([
       'windowOpen',
       'setProperty',
-      'changeMapMaskInfo',
+      'changePieceInfo',
       'deletePieceInfo',
       'windowClose'
     ]),
@@ -32,7 +32,7 @@ export default {
     },
     changeMapMaskLock () {
       console.log(`  [methods] select context item => MapMask(${this.objKey}).changeMapMaskLock`)
-      this.changeMapMaskInfo({ key: this.objKey, isLock: !this.isLock, isNotice: true })
+      this.changePieceInfo({ propName: 'mapMask', key: this.objKey, isLock: !this.isLock, isNotice: true })
       this.windowClose('private.display.mapMaskContext')
     },
     deleteMapMask () {

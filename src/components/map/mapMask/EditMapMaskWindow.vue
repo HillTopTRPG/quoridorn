@@ -52,10 +52,10 @@ export default {
   methods: {
     ...mapActions([
       'windowClose',
-      'changeMapMaskInfo'
+      'changePieceInfo'
     ]),
     commitEdit () {
-      this.changeMapMaskInfo({ key: this.key, name: this.name, columns: this.width, rows: this.height, color: this.rgba, fontColor: this.fontColor, isNotice: true })
+      this.changePieceInfo({ propName: 'mapMask', key: this.key, name: this.name, columns: this.width, rows: this.height, color: this.rgba, fontColor: this.fontColor, isNotice: true })
       this.windowClose('private.display.editMapMaskWindow')
     },
     cancelEdit () {
