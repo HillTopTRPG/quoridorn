@@ -85,7 +85,6 @@ const actionPeer = {
      */
     connectFunc: ({ rootState, dispatch }, room) => {
       // Handle a chat connection.
-      console.log(room)
       const roomName = room.name.replace('sfu_text_', '')
 
       const logName = 'SYSTEM'
@@ -236,6 +235,9 @@ const actionPeer = {
                 dispatch(method, value)
               }
               break
+            case 'NOTICE_INPUT':
+              dispatch('noticeInput', peerId)
+              break
             default:
           }
         }
@@ -314,7 +316,9 @@ const actionPeer = {
      * データ送信
      */
     sendRoomData ({ rootState }, payload) {
-      rootState.room.webRtcRoom.send(payload)
+      if (rootState.room.webRtcRoom) {
+        rootState.room.webRtcRoom.send(payload)
+      }
     }
   }
 }

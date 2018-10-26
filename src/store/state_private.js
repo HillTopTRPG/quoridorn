@@ -13,7 +13,7 @@ Vue.use(Vuex)
 const storeModulePrivate = {
   // privateデータは、データ保存時に public.room.members に含める
   state: {
-    connect: { peerId: null, playerName: '' },
+    connect: { peerId: null, playerName: '', password: '' },
     setting: {
       standImage: true, // 立ち絵を表示するか
       dice: true, // ダイスを表示するか

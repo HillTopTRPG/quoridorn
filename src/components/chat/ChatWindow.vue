@@ -18,8 +18,11 @@
       </div>
       <div class="sendLine">
         <span class="label">発言</span>
-        <textarea v-model="currentMessage" @keypress.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
+        <textarea id="chatTextArea" v-model="currentMessage" @input="onInput" @keypress.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
         <button :tabindex="chatTabList.length + 4">送信</button>
+      </div>
+      <div class="inputtingArea">
+        <div v-for="peerId in inputtingPeerIdList" :key="peerId"><img v-show="inputtingPeerIdList.length>0" :src="require('../../assets/inputting.gif')" >{{createInputtingMsg(peerId)}}</div>
       </div>
     </div>
   </WindowFrame>
@@ -42,6 +45,7 @@ export default {
       currentMessage: '',
       currentDiceBotSystem: 'DiceBot',
       bcDice: new BCDice(),
+      inputtingPeerIdList: [],
       baseHelpMessage:
         '【ダイスボット】チャットにダイス用の文字を入力するとダイスロールが可能\n' +
         '入力例）2d6+1 攻撃！\n' +
@@ -102,6 +106,9 @@ export default {
       'setProperty',
       'sendRoomData'
     ]),
+    onInput (event) {
+      this.sendRoomData({ type: 'NOTICE_INPUT', value: name })
+    },
     changeName (event) {
       const name = event.target.value
       this.setProperty({property: 'private.connect.playerName', value: name})
@@ -189,6 +196,17 @@ export default {
           elm.scrollTop = elm.scrollHeight
         }
       }, 0)
+    },
+    inputting: {
+      handler (inputting) {
+        this.inputtingPeerIdList.splice(0, this.inputtingPeerIdList.length)
+        for (const peerId in inputting) {
+          if (inputting[peerId] > 0) {
+            this.inputtingPeerIdList.push(peerId)
+          }
+        }
+      },
+      deep: true
     }
   },
   computed: mapState({
@@ -202,6 +220,12 @@ export default {
       const currentDiceBotSystem = this.currentDiceBotSystem
       const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
       return diceObj.helpMessage
+    },
+    inputting: state => state.public.chat.inputting,
+    createInputtingMsg: state => peerId => {
+      const memberObj = state.public.room.members.filter(memberObj => memberObj.peerId === peerId)[0]
+      if (!memberObj) return ''
+      return `${memberObj.name ? memberObj.name : '名無し'}が入力中...`
     }
   })
 }
@@ -303,12 +327,26 @@ export default {
   min-height: 42px;
   vertical-align: middle;
 }
-textarea {
-  width: calc(100% - 85px);
-  resize: none;
-}
 .diceBotSystem {
   margin-right: 10px;
+}
+textarea {
+  resize: none;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  width: calc(100% - 85px);
+}
+.inputtingArea {
+  width: 100%;
+  height: 20px;
+  background-color: transparent;
+  font-size: 10px;
+}
+.inputtingArea div {
+  display: inline-flex;
+  justify-content: left;
+  align-items: center;
 }
 img {
   width:auto;

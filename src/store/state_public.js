@@ -79,7 +79,8 @@ const storeModulePublic = {
           { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：Twitterで私が困ってたらいろいろ教えていただけると嬉しいです。</span>' },
           { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：9月末までは休みを利用して開発できますが、10月からは新しい仕事が始まるので、開発スピードが落ちます。</span>' }
         ]
-      }
+      },
+      inputting: {}
     },
     publicMemo: {
       editTab: '',
@@ -102,6 +103,12 @@ const storeModulePublic = {
         tabsText: tabsText,
         lastActiveTab: getters.activeChatTab
       })
+    },
+    noticeInput: ({ commit, state }, peerId) => {
+      commit('inputPeerId', { peerId: peerId, add: 1 })
+      setTimeout(() => {
+        commit('inputPeerId', { peerId: peerId, add: -1 })
+      }, 400)
     }
   },
   mutations: {
@@ -115,6 +122,12 @@ const storeModulePublic = {
           tabObj.unRead = 0
         }
       }
+    },
+    inputPeerId (state, payload) {
+      if (!state.chat.inputting[payload.peerId]) {
+        this._vm.$set(state.chat.inputting, payload.peerId, 0)
+      }
+      state.chat.inputting[payload.peerId] += payload.add
     },
     /** チャットのタブの構成を変更する */
     imageTagChange (state, payload) {

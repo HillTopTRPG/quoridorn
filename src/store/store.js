@@ -77,7 +77,7 @@ const store = new Vuex.Store({
       const roomId = getParam('roomId')
       const peerId = getParam('peerId')
       const password = getParam('password')
-      state.private.connect.password = password
+      state.private.connect.password = !password ? '' : password
       if (roomId) {
         dispatch('createPeer', {
           roomId: roomId,
