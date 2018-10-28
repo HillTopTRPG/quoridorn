@@ -5,7 +5,7 @@
         <tr>
           <th>文字：</th>
           <td><input type="text" v-model="name"></td>
-          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" draggable="true" :style="mapMaskStyle" @dragstart="dragStart" @mousedown.stop="windowActive('addMapMaskWindow')">{{name}}</div></td>
+          <td rowspan="6" class="mapMaskGrid"><div class="mapMask" draggable="true" :style="mapMaskStyle" @dragstart="dragStart" @mousedown.stop="windowActive('private.display.addMapMaskWindow')">{{name}}</div></td>
         </tr>
         <tr>
           <th>色：</th>

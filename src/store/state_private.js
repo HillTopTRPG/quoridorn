@@ -125,10 +125,13 @@ const storeModulePrivate = {
     windowActive ({ state }, property) {
       let current = 0
       let maxIndex = 0
+      const splits = property.split('.')
+      const dispName = splits[splits.length - 1]
+      console.log(`windowActive => ${dispName}`)
       for (const key in state.display) {
         const value = state.display[key]
         if (!value.isDisplay) { continue }
-        if (key === property) {
+        if (key === dispName) {
           current = value.zIndex
         }
         if (maxIndex < value.zIndex) {
@@ -138,7 +141,7 @@ const storeModulePrivate = {
       for (const key in state.display) {
         const value = state.display[key]
         if (!value.isDisplay) { continue }
-        if (key === property) {
+        if (key === dispName) {
           value.zIndex = maxIndex
         } else {
           if (current <= value.zIndex) {

@@ -486,7 +486,7 @@ export default {
       if (this.isUseImage) {
         result['background-image'] = `url(${this.getBackgroundImage})`
       }
-      return result;
+      return result
     },
     gridPaperStyle () {
       const maskColorObj = this.parseColor(this.marginMaskColor)
@@ -517,7 +517,7 @@ export default {
               `${marginGridColor1} 61%, ${marginGridColor1} 62%, transparent 63%, transparent 80%,` +
               `${marginGridColor1} 81%, ${marginGridColor1} 82%, transparent 83%, transparent)`
       }
-      return result;
+      return result
     }
   })
 }
