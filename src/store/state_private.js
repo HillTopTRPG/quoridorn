@@ -53,6 +53,7 @@ const storeModulePrivate = {
       addChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       editChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
       editMapWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      editCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
       mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       characterContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       gameTableContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0 },

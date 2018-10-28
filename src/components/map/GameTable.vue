@@ -265,9 +265,9 @@ export default {
         const name = event.dataTransfer.getData('name')
         const size = event.dataTransfer.getData('size')
         const useImageList = event.dataTransfer.getData('useImageList')
-        const isHide = event.dataTransfer.getData('isHide')
-        const url = event.dataTransfer.getData('url')
-        const text = event.dataTransfer.getData('text')
+        const isHide = event.dataTransfer.getData('isHide') === 'true'
+        const url = event.dataTransfer.getData('urlStr')
+        const text = event.dataTransfer.getData('description')
         const useImageIndex = parseInt(event.dataTransfer.getData('useImageIndex'))
         const currentImageTag = event.dataTransfer.getData('currentImageTag')
 

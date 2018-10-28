@@ -76,7 +76,6 @@ export default {
       return filteredList[0]
     },
     initWindow () {
-      console.log(this.key)
       let chitObj = this.getPieceObj('chit', this.key)
       this.currentImageTag = chitObj.currentImageTag
       this.imageKey = chitObj.imageKey

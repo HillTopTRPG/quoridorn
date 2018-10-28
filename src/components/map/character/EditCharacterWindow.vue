@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="キャラクター追加" display-property="private.display.addCharacterSettingWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
+  <WindowFrame titleText="キャラクター変更" display-property="private.display.editCharacterWindow" align="center" fixSize="653, 377" @open="open"><!--  baseSize="601, 377" -->
     <div class="container">
       <div class="viewImage"><img v-img="currentImage" draggable="false" :class="{isReverse : isReverse}"/></div>
       <div class="choseImage">
@@ -28,7 +28,7 @@
       <textarea class="otherText" v-model="text"></textarea>
       <div class="buttonArea">
         <div>
-          <button @click="commit">追加</button>
+          <button @click="commit">確定</button>
           <button @click="cancel">キャンセル</button>
         </div>
       </div>
@@ -41,7 +41,7 @@ import { mapState, mapActions, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
 
 export default {
-  name: 'addCharacterSettingWindow',
+  name: 'editCharacterWindow',
   components: {
     WindowFrame: WindowFrame
   },
@@ -64,7 +64,8 @@ export default {
     ...mapActions([
       'setProperty',
       'windowOpen',
-      'windowClose'
+      'windowClose',
+      'changePieceInfo'
     ]),
     addSwitch () {
       let nextKey = -1
@@ -143,6 +144,9 @@ export default {
       })
       useImageList = useImageList.substr(0, useImageList.length - 1)
       const obj = {
+        propName: 'character',
+        key: this.key,
+        isNotice: true,
         name: this.name,
         size: this.size,
         useImageList: useImageList,
@@ -152,30 +156,36 @@ export default {
         useImageIndex: 0,
         currentImageTag: this.currentImageTag
       }
-      this.setProperty({property: `private.display.addCharacterWindow`, value: obj})
-      this.windowOpen('private.display.addCharacterWindow')
+      this.changePieceInfo(obj)
+      this.windowClose('private.display.editCharacterWindow')
     },
     cancel () {
-      this.windowClose('private.display.addCharacterSettingWindow')
+      this.windowClose('private.display.editCharacterWindow')
     },
     open () {
       this.isOpenSwitch = false
-      this.currentImageTag = 'キャラクター'
+      let characterObj = this.getPieceObj('character', this.key)
+      this.currentImageTag = characterObj.currentImageTag
       this.switchImageList.splice(0, this.switchImageList.length)
-      this.switchImageList.push({ key: 0, imgKey: 'image-1', isReverse: false })
-      this.switchCurrentKey = 0
-      this.name = ''
-      this.size = 1
-      this.isHide = false
-      this.url = ''
-      this.text = ''
-      this.windowClose('private.display.addCharacterWindow')
+      characterObj.useImageList.split('|').forEach((imageStr, index) => {
+        const isReverse = imageStr.indexOf(':R') >= 0
+        const imageKey = imageStr.replace(':R', '')
+        this.switchImageList.push({ key: index, imgKey: imageKey, isReverse: isReverse })
+      })
+      this.switchCurrentKey = characterObj.useImageIndex
+      this.name = characterObj.name
+      this.size = characterObj.columns
+      this.isHide = characterObj.isHide
+      this.url = characterObj.url
+      this.text = characterObj.text
     }
   },
   computed: mapState({
     ...mapGetters([
+      'getPieceObj',
       'parseColor'
     ]),
+    key: state => state.private.display['editCharacterWindow'].key,
     selectedTagIndexText () {
       const imageList = this.imageList
       const keyObj = this.getKeyObj(imageList, this.currentImageKey)

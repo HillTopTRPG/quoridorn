@@ -37,8 +37,8 @@ export default {
       event.dataTransfer.setData('size', this.size)
       event.dataTransfer.setData('useImageList', this.useImageList)
       event.dataTransfer.setData('isHide', this.isHide)
-      event.dataTransfer.setData('url', this.url)
-      event.dataTransfer.setData('text', this.text)
+      event.dataTransfer.setData('urlStr', this.url) // urlはなぜか使えない
+      event.dataTransfer.setData('description', this.text)
       event.dataTransfer.setData('useImageIndex', this.useImageIndex)
       event.dataTransfer.setData('currentImageTag', this.currentImageTag)
       console.log(`  [methods] drag start character => {` +
@@ -96,9 +96,7 @@ export default {
     imageObj () {
       if (this.useImageList === '') { return '' }
       const imageStr = this.useImageList.split('|')[this.useImageIndex]
-      // console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
       const isReverse = imageStr.indexOf(':R') >= 0
-      // console.log(imageStr, isReverse)
       const imageKey = imageStr.replace(':R', '')
       console.log(imageKey, this.imageList)
       return {

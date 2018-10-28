@@ -97,8 +97,7 @@ export default {
     ...mapActions([
       'setProperty',
       'windowOpen',
-      'windowClose',
-      'changePieceInfo'
+      'windowClose'
     ]),
     initWindow () {
       console.log(this.storeMapObj.isEditting, this.peerId)

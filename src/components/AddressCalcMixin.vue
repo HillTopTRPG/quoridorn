@@ -49,8 +49,8 @@ export default {
         y: planeLocateCenter.y + this.rows / 2 * this.gridSize
       }
       const planeLocateTable = {
-        x: planeLocateCanvas.x + this.marginGridSize / 2 * this.gridSize,
-        y: planeLocateCanvas.y + this.marginGridSize / 2 * this.gridSize
+        x: planeLocateCanvas.x + this.marginGridSize * this.gridSize,
+        y: planeLocateCanvas.y + this.marginGridSize * this.gridSize
       }
       /*
       const f = Math.floor
