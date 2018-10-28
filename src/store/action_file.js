@@ -98,7 +98,7 @@ const actionFile = {
       }
       saveData.private.history.forEach(func)
       saveData.public.room.members.forEach(memberData => {
-        memberData.history.forEach(func)
+        memberData.private.history.forEach(func)
       })
 
       // キャラクター一覧
@@ -197,18 +197,18 @@ const actionFile = {
             const imageKey = `image-${currentImageKeyNum}`
             return imageKey
           })
-          publicData.room.members.forEach(memberObj => {
-            console.log(memberObj)
-            const func = hisObj => {
-              let key = hisObj.key
-              if (key.split('-')[0] === 'image') {
-                const matchObj = key.match(/\$([0-9]+)/)
-                console.log(matchObj[1])
-                const index = parseInt(matchObj[1])
-                hisObj.key = addImageKeyList[index]
-              }
+          const func = hisObj => {
+            let key = hisObj.key
+            console.log(key)
+            if (key.split('-')[0] === 'image') {
+              const matchObj = key.match(/\$([0-9]+)/)
+              console.log(matchObj[1])
+              const index = parseInt(matchObj[1])
+              hisObj.key = addImageKeyList[index]
             }
-            privateData.history.forEach(func)
+          }
+          privateData.history.forEach(func)
+          publicData.room.members.forEach(memberObj => {
             memberObj.private.history.forEach(func)
           })
         }

@@ -27,6 +27,7 @@ import ConfirmLoadRoomWindow from './components/simple/ConfirmLoadRoomWindow'
 import AddChitWindow from './components/map/chit/AddChitWindow'
 import EditChitWindow from './components/map/chit/EditChitWindow'
 import ChitContext from './components/map/chit/ChitContext'
+import EditMapWindow from './components/map/EditMapWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -151,3 +152,6 @@ editChitWindow.$mount('#editChitWindow')
 
 const chitContext = new Vue({ store, components: { ChitContext: ChitContext }, template: `<ChitContext/>` })
 chitContext.$mount('#chitContext')
+
+const editMapWindow = new Vue({ store, components: { EditMapWindow: EditMapWindow }, template: `<EditMapWindow/>` })
+editMapWindow.$mount('#editMapWindow')

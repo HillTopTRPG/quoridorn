@@ -7,6 +7,9 @@
     @contextmenu.prevent
     :style="gameTableStyle">
 
+    <div :style="gridPaperStyle">
+    </div>
+
     <div id="mapBoardFrame"
       @mousedown.left.prevent="leftDown" @mouseup.left.prevent="leftUp"
       @mousedown.right.prevent="rightDown" @mouseup.right.prevent="rightUp"
@@ -442,7 +445,9 @@ export default {
   computed: mapState({
     ...mapGetters([
       'pieceList',
-      'isFitGrid'
+      'isFitGrid',
+      'parseColor',
+      'getBackgroundImage'
     ]),
     rollObj: state => state.map.rollObj,
     isDraggingLeft: state => state.map.isDraggingLeft,
@@ -453,15 +458,20 @@ export default {
     angle: state => state.private.map.angle,
     angleVolatil: state => state.map.angle,
     currentAngle () { return this.arrangeAngle(this.angle.total + this.angleVolatil.dragging) },
-    sizeW () { return (this.columns + this.marginGridNum) * this.gridSize + 0 },
-    sizeH () { return (this.rows + this.marginGridNum) * this.gridSize + 0 },
+    sizeW () { return (this.columns + this.marginGridSize * 2) * this.gridSize + 0 },
+    sizeH () { return (this.rows + this.marginGridSize * 2) * this.gridSize + 0 },
+    marginGridColor: state => state.public.map.margin.gridColor,
+    marginMaskColor: state => state.public.map.margin.maskColor,
+    marginMaskAlpha: state => state.public.map.margin.maskAlpha,
+    isUseGridColor: state => state.public.map.margin.isUseGridColor,
+    isUseImage: state => state.public.map.margin.isUseImage,
     gameTableStyle () {
       const translateZ = this.wheel
       const zoom = (1000 - this.wheel) / 1000
       const totalLeftX = (this.move.total.x + this.move.dragging.x) * zoom
       const totalLeftY = (this.move.total.y + this.move.dragging.y) * zoom
       let rotateZ = this.currentAngle
-      return {
+      const result = {
         width: this.sizeW + 'px',
         height: this.sizeH + 'px',
         'border-width': this.borderWidth + 'px',
@@ -473,6 +483,41 @@ export default {
           'rotateX(0deg) ' +
           'rotateZ(' + rotateZ + 'deg)'
       }
+      if (this.isUseImage) {
+        result['background-image'] = `url(${this.getBackgroundImage})`
+      }
+      return result;
+    },
+    gridPaperStyle () {
+      const maskColorObj = this.parseColor(this.marginMaskColor)
+      maskColorObj.a = this.marginMaskAlpha
+      const marginMaskColorStr = maskColorObj.getRGBA()
+      const result = {
+        width: this.sizeW + 'px',
+        height: this.sizeH + 'px',
+        'background-color': marginMaskColorStr
+      }
+      if (this.isUseGridColor) {
+        const colorObj = this.parseColor(this.marginGridColor)
+        colorObj.a = 0.3
+        const marginGridColor3 = colorObj.getRGBA()
+        colorObj.a = 0.1
+        const marginGridColor1 = colorObj.getRGBA()
+        result['background-image'] =
+          `linear-gradient(0deg, transparent -2px,` +
+              `${marginGridColor3} 2px, ${marginGridColor3} 3%, transparent 4%, transparent 20%,` +
+              `${marginGridColor1} 21%, ${marginGridColor1} 22%, transparent 23%, transparent 40%,` +
+              `${marginGridColor1} 41%, ${marginGridColor1} 42%, transparent 43%, transparent 60%,` +
+              `${marginGridColor1} 61%, ${marginGridColor1} 62%, transparent 63%, transparent 80%,` +
+              `${marginGridColor1} 81%, ${marginGridColor1} 82%, transparent 83%, transparent),` +
+          `linear-gradient(270deg, transparent -2px,` +
+              `${marginGridColor3} 2px, ${marginGridColor3} 3%, transparent 4%, transparent 20%,` +
+              `${marginGridColor1} 21%, ${marginGridColor1} 22%, transparent 23%, transparent 40%,` +
+              `${marginGridColor1} 41%, ${marginGridColor1} 42%, transparent 43%, transparent 60%,` +
+              `${marginGridColor1} 61%, ${marginGridColor1} 62%, transparent 63%, transparent 80%,` +
+              `${marginGridColor1} 81%, ${marginGridColor1} 82%, transparent 83%, transparent)`
+      }
+      return result;
     }
   })
 }
@@ -487,7 +532,8 @@ export default {
   text-align: center;
   vertical-align: middle;
   -khtml-user-drag: element;
-  background-color: rgba(20, 80, 20, .1);
+  background-position: 0px 0px;
+  background-size: 100% 100%;
   cursor: crosshair;
   border: none;
   /*
@@ -496,21 +542,27 @@ export default {
   perspective: 1000px;
   border-style: ridge;
   border-color: gray;
+  overflow: hidden;
+}
+#gameTable:before{
+  content: '';
+  background: inherit;/*.bgImageで設定した背景画像を継承する*/
+  -webkit-filter: blur(10px);
+  -moz-filter: blur(10px);
+  -o-filter: blur(10px);
+  -ms-filter: blur(10px);
+  filter: blur(10px);
+  position: absolute;
+  /*ブラー効果で画像の端がボヤけた分だけ位置を調整*/
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  z-index: -1;/*重なり順序を一番下にしておく*/
+}
+#gameTable > div {
   background-position: 1px 1px;
-    background-image:
-    linear-gradient(0deg, transparent -2px,
-            rgba(255, 255, 255, .3) 2px, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,
-            rgba(255, 255, 255, .1) 21%, rgba(255, 255, 255, .1) 22%, transparent 23%, transparent 40%,
-            rgba(255, 255, 255, .1) 41%, rgba(255, 255, 255, .1) 42%, transparent 43%, transparent 60%,
-            rgba(255, 255, 255, .1) 61%, rgba(255, 255, 255, .1) 62%, transparent 63%, transparent 80%,
-            rgba(255, 255, 255, .1) 81%, rgba(255, 255, 255, .1) 82%, transparent 83%, transparent),
-    linear-gradient(270deg, transparent -2px,
-            rgba(255, 255, 255, .3) 2px, rgba(255, 255, 255, .2) 3%, transparent 4%, transparent 20%,
-            rgba(255, 255, 255, .1) 21%, rgba(255, 255, 255, .1) 22%, transparent 23%, transparent 40%,
-            rgba(255, 255, 255, .1) 41%, rgba(255, 255, 255, .1) 42%, transparent 43%, transparent 60%,
-            rgba(255, 255, 255, .1) 61%, rgba(255, 255, 255, .1) 62%, transparent 63%, transparent 80%,
-            rgba(255, 255, 255, .1) 81%, rgba(255, 255, 255, .1) 82%, transparent 83%, transparent);
-  background-size:48px 48px;
+  background-size: 48px 48px;
 }
 #mapBoardFrame {
   position: fixed;

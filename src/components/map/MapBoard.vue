@@ -2,6 +2,7 @@
   <canvas
     id="map-canvas"
     class="anime"
+    :class="{isReverse : isReverse}"
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
@@ -109,6 +110,10 @@ export default {
     mouseOnCanvas: {
       handler () { this.paint() },
       deep: true
+    },
+    canvasSize: {
+      handler () { this.paint() },
+      deep: true
     }
   },
   computed: mapState({
@@ -120,6 +125,7 @@ export default {
     gridColor: state => state.public.map.grid.color,
     columns: state => state.public.map.grid.totalColumn,
     rows: state => state.public.map.grid.totalRow,
+    isReverse: state => state.public.map.isReverse,
     grid () {
       return {
         c: this.$store.state.map.grid.c,
@@ -159,5 +165,8 @@ canvas {
   */
   box-sizing: border-box;
   background-size: 100% 100%;
+}
+.isReverse {
+  transform: scale(-1, 1);
 }
 </style>

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import GameTable from './components/map/GameTable'
 
 export default {
@@ -35,6 +35,22 @@ export default {
       }
     }
   },
+  watch: {
+    // background (background) {
+    //   document.style['background-color'] = background
+    // },
+    backgroundColor: {
+      handler: function (backgroundColor) {
+        document.body.style.backgroundColor = backgroundColor
+      },
+      immediate: true
+    }
+  },
+  computed: mapState({
+    backgroundColor: state => {
+      return state.public.map.background
+    }
+  }),
   methods: {
     ...mapActions([
       'onMount',
@@ -51,7 +67,6 @@ export default {
 html, body {
   padding: 0;
   margin: 0;
-  background-color: #92A8B3;
   width: 100%;
   height: 100%;
   overflow: hidden;

@@ -52,6 +52,7 @@ const storeModulePrivate = {
       confirmLoadRoomWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, importData: null },
       addChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       editChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
+      editMapWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       characterContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       gameTableContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0 },
@@ -78,6 +79,7 @@ const storeModulePrivate = {
       alert('未実装の機能です。')
     },
     windowOpen ({ state, getters }, property) {
+      console.log(`window open => ${property}`)
       const windowObj = getters.getState(property)
       if (!windowObj.isDisplay) {
         // まだ表示していないウィンドウを開いた場合

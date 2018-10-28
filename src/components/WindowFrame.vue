@@ -91,6 +91,7 @@ export default {
     closeWindow () {
       console.log(`  [methods] closeWindow(click [x]button)`)
       this.windowClose(this.displayProperty)
+      this.$emit('cancel')
     },
     mouseup (event) {
       const evtObj = { clientX: event.pageX, clientY: event.pageY, button: event.button }

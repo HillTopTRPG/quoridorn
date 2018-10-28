@@ -33,9 +33,7 @@ const actionPeer = {
         // セーブデータからの復元の場合は既にpeerIdが格納されており、接続
         if (rootState.private.connect.peerId !== id) {
           rootState.private.connect.peerId = id
-          console.log(`RoomPassword:'${rootState.private.connect.password}'`)
           rootState.public.room.password = rootState.private.connect.password
-          console.log(`RoomPassword:'${rootState.public.room.password}'`)
           rootState.public.room.members.push({
             peerId: id,
             name: rootState.private.connect.playerName,
@@ -75,6 +73,9 @@ const actionPeer = {
 
       // 画面が閉じられたらPeer接続を破棄
       window.onunload = window.onbeforeunload = e => {
+        if (rootState.public.map.isEditting === rootState.private.connect.peerId) {
+          dispatch('setProperty', {property: 'public.map.isEditting', isNotice: true, value: null})
+        }
         if (peer && !peer.destroyed) {
           peer.destroy()
         }

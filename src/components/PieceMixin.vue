@@ -176,8 +176,8 @@ export default {
       },
       deep: true
     },
-    marginGridNum () {
-      return this.$store.state.public.map.marginGridNum
+    marginGridSize () {
+      return this.$store.state.public.map.margin.gridSize
     },
     gridSize () {
       return this.$store.state.public.map.grid.size

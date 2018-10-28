@@ -49,8 +49,8 @@ export default {
         y: planeLocateCenter.y + this.rows / 2 * this.gridSize
       }
       const planeLocateTable = {
-        x: planeLocateCanvas.x + this.marginGridNum / 2 * this.gridSize,
-        y: planeLocateCanvas.y + this.marginGridNum / 2 * this.gridSize
+        x: planeLocateCanvas.x + this.marginGridSize / 2 * this.gridSize,
+        y: planeLocateCanvas.y + this.marginGridSize / 2 * this.gridSize
       }
       /*
       const f = Math.floor
@@ -185,8 +185,8 @@ export default {
       }
     },
     wheel: state => state.private.map.wheel,
-    borderWidth: state => state.public.map.borderWidth,
-    marginGridNum: state => state.public.map.marginGridNum
+    borderWidth: state => state.public.map.margin.borderWidth,
+    marginGridSize: state => state.public.map.margin.gridSize
   })
 }
 </script>

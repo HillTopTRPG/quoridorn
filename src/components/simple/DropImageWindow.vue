@@ -71,11 +71,15 @@ export default {
     },
     changeTag (key) {
       // 入力によってタグの追加・削除が発生する可能性があるので、タグリストを整理してもらう
+      console.log('changeTag')
       this.imageTagChange({key: key, imageList: this.imageList})
     },
     selectTag (key) {
       const imgObj = this.getKeyObj(this.imageList, key)
+      console.log(imgObj.currentTag, imgObj.selectTag)
       imgObj.currentTag = imgObj.selectTag
+      // const index = this.imageList.indexOf(imgObj)
+      // this.imageList.splice(index, 1, imgObj)
       // 選択によってタグの削除が発生する可能性があるので、タグリストを整理してもらう
       this.imageTagChange({key: key, imageList: this.imageList})
     }

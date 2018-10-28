@@ -61,10 +61,21 @@ const storeModulePublic = {
     },
     room: { id: '', members: [], system: 'DiceBot', password: '' },
     map: {
+      imageTag: 'マップ',
       imageKey: 'image-0',
-      marginGridNum: 60,
-      borderWidth: 60,
-      grid: { totalColumn: 20, totalRow: 15, size: 48, color: 'rgba(0, 0, 0, 1)' }
+      isReverse: false,
+      margin: {
+        gridSize: 5,
+        gridColor: '#FFFFFF',
+        maskColor: '#145014',
+        maskAlpha: 0.1,
+        isUseGridColor: true,
+        isUseImage: false,
+        borderWidth: 10
+      },
+      grid: { totalColumn: 20, totalRow: 15, size: 48, color: '#000000' },
+      background: '#92A8B3',
+      isEditting: null
     },
     mapMask: { list: [], maxKey: -1 },
     character: { list: [], maxKey: -1 },
@@ -129,7 +140,7 @@ const storeModulePublic = {
       }
       state.chat.inputting[payload.peerId] += payload.add
     },
-    /** チャットのタブの構成を変更する */
+    /** 画像のタブの構成を変更する */
     imageTagChange (state, payload) {
       const key = payload.key
       const imageList = payload.imageList
@@ -145,7 +156,7 @@ const storeModulePublic = {
       let addList = useTexts.concat() // 配列をシャロ―コピー
       const deleteList = state.image.tags.list.filter(tag => {
         // 「(全て)」は消させない
-        if (tag.key === 'tagImg-0') { return }
+        if (tag.key === 'imgTag-0') { return }
 
         let findFlg = false
         const filteredList = useTexts.filter(txt => txt === tag.name)

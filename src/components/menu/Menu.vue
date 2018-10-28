@@ -154,7 +154,7 @@ export default {
     clickAddChit () { this.windowOpen('private.display.addChitWindow'); this.menuHover(false, 'コマ') },
     clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
     clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
-    clickChangeMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickChangeMap () { this.windowOpen('private.display.editMapWindow'); this.menuHover(false, 'マップ') },
     clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
     clickAddMapMask (target) { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
     clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
