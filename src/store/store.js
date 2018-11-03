@@ -58,7 +58,7 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    onMount ({ dispatch, state }) {
+    onMount ({ dispatch, state }, jukeboxWindow) {
       dispatch('windowOpen', 'private.display.chatWindow')
       // dispatch('windowOpen', 'private.display.initiativeWindow')
       // dispatch('windowOpen', 'private.display.resourceWindow')

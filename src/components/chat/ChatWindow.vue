@@ -12,9 +12,10 @@
         <span class="label">名前</span>
         <input type="text" :value="name" :tabindex="chatTabList.length + 2" @change="changeName">
         <select :tabindex="chatTabList.length + 5"></select>
-        <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>
-        <img v-img="require('../../assets/dice.png')" alt='ダイスボット' title='ダイスボットの設定' @click="settingDiceBot" :tabindex="chatTabList.length + 7">
-        <img v-img="require('../../assets/font.png')" alt='フォント' title='フォントの設定' @click="settingFont" :tabindex="chatTabList.length + 8">
+        <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select><!--
+     --><span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabList.length + 7"></i></span><!--
+     --><span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabList.length + 8"></i></span><!--
+     --><span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabList.length + 9"></i></span>
       </div>
       <div class="sendLine">
         <span class="label">発言</span>
@@ -136,6 +137,9 @@ export default {
     settingFont () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チャット文字設定'})
       this.windowOpen('private.display.unSupportWindow')
+    },
+    settingBGM () {
+      this.windowOpen('private.display.settingBGMWindow')
     },
     sendMessage (e) {
       if (e.shiftKey || e.ctrlKey) {
@@ -360,5 +364,25 @@ img {
 img:hover {
   border-color: #0092ED;
 }
+span.icon {
+  padding: 0;
+  margin-right: 4px;
+}
+i[class^="icon-"] {
+  border: 1px solid #777;
+  border-radius: 50%;
+  font-size: 12px;
+  padding: 5px;
+  background-color: white;
+}
+i[class^="icon-"]:hover {
+  border-color: black;
+}
+i.icon-dice { color: rgb(0, 0, 150); }
+i.icon-font { color: rgb(150, 0, 150); }
+i.icon-music { color: rgb(0, 150, 150); }
+i.icon-dice:hover, i.icon-dice.hover { background-color: rgb(0, 0, 150); color: white; }
+i.icon-font:hover, i.icon-font.hover { background-color: rgb(150, 0, 150); color: white; }
+i.icon-music:hover, i.icon-music.hover { background-color: rgb(0, 150, 150); color: white; }
 
 </style>

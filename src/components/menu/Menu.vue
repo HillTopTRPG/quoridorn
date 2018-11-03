@@ -105,7 +105,6 @@ export default {
   },
   data () {
     return {
-      checkImg: require('../../assets/check.png'),
       isConnectHover: false,
       menu: {
         'ファイル': false,

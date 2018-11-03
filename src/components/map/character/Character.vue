@@ -13,9 +13,9 @@
     <div class="border"/>
     <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
     <div class="name">{{name}}</div>
-    <img class="rotate" v-img="require('../../../assets/rotateArrow.png')" v-show="isHover || isThisRolling" draggable="false"
+    <span class="rotate" v-show="isHover || isThisRolling" draggable="false"><i class="icon-redo2"
       @mousedown.stop="rollStart" @mouseup.stop="rollEnd"
-      @touchstart.stop="rollStart" @touchend.stop="rollEnd" @touchcancel.stop="rollEnd" />
+      @touchstart.stop="rollStart" @touchend.stop="rollEnd" @touchcancel.stop="rollEnd"></i></span>
   </div>
 </template>
 
@@ -129,7 +129,7 @@ img.image {
 img.image.reverse {
   transform: scale(-1, 1);
 }
-img.rotate {
+.rotate {
   position: absolute;
   left: -5px;
   top: -5px;
@@ -138,8 +138,11 @@ img.rotate {
   width: 15px;
   height: 15px;
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-img.rotate:hover {
+.rotate:hover {
   width: 19px;
   height: 19px;
   transform: translate(-2px, -2px);

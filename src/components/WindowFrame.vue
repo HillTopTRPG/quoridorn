@@ -31,7 +31,7 @@
     <div class="side-bottom" v-if="!isFix"
       @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
       @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
-    <img class="close" v-if="!isBanClose" v-img="require('../assets/window_close.png')" @click.left.prevent="closeWindow"/>
+    <span v-if="!isBanClose"><i class="icon-cross close" @click.left.prevent="closeWindow"></i></span>
   </div>
 </template>
 
@@ -89,7 +89,7 @@ export default {
       'windowActive'
     ]),
     closeWindow () {
-      console.log(`  [methods] closeWindow(click [x]button)`)
+      // console.log(`  [methods] closeWindow(click [x]button)`)
       this.windowClose(this.displayProperty)
       this.$emit('cancel')
     },
@@ -238,34 +238,33 @@ export default {
   watch: {
     isDisplay (newValue, oldValue) {
       if (newValue) {
-        console.log(`    [watch] window open => ${this.displayProperty}`)
+        // console.log(`    [watch] window open => ${this.displayProperty}`)
         this.windowFactor.l = 0
         this.windowFactor.r = 0
         this.windowFactor.t = 0
         this.windowFactor.b = 0
         this.windowFactor.w = 0
         this.windowFactor.h = 0
-        this.$emit('open')
-
         setTimeout(this.addEventForIFrame, 0)
+        setTimeout(function () { this.$emit('open') }.bind(this), 0)
       } else {
-        console.log(`    [watch] window close => ${this.displayProperty}`)
+        // console.log(`    [watch] window close => ${this.displayProperty}`)
         this.$emit('close')
       }
     },
     isResetPosition (newValue, oldValue) {
       if (newValue) {
-        console.log(`    [watch] window reset => ${this.displayProperty}`)
+        // console.log(`    [watch] window reset => ${this.displayProperty}`)
         this.windowFactor.l = 0
         this.windowFactor.r = 0
         this.windowFactor.t = 0
         this.windowFactor.b = 0
         this.windowFactor.w = 0
         this.windowFactor.h = 0
-        this.setProperty({property: `${this.displayProperty}.doResetPosition`, value: false})
+        this.setProperty({property: `${this.displayProperty}.doResetPosition`, value: false, logOff: true})
         this.$emit('reset')
       } else {
-        console.log(`    [watch] window resetted => ${this.displayProperty}`)
+        // console.log(`    [watch] window resetted => ${this.displayProperty}`)
       }
     }
   },
@@ -367,7 +366,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 .window {
   position: fixed;
   display: block;
@@ -423,15 +422,23 @@ export default {
 
 .close {
   position: absolute;
-  width: 13px;
-  height: 13px;
-  top: 7px;
+  top: 3px;
   right: 8px;
+  padding: 3px;
+  font-size: 8px;
+  border: 2px solid rgba(0,0,0,0.5);
+  color: rgba(0,0,0,0.5);
+  transform-origin: right;
+  transform: scale(0.8);
   cursor: pointer;
   white-space: nowrap;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+}
+.close:hover {
+  border-color: black;
+  color: black;
 }
 
 .side-left,

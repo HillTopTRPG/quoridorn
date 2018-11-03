@@ -66,7 +66,7 @@ export default {
       if (wheel < -2400 || wheel > 800) {
         return
       }
-      this.setProperty({property: 'private.map.wheel', value: wheel})
+      this.setProperty({property: 'private.map.wheel', value: wheel, logOff: true})
     },
     getAngle (mouseOnTable, storeObj) {
       const rectObj = {
@@ -89,7 +89,7 @@ export default {
       return angle
     },
     leftDown () {
-      console.log(`  [methods] mousedown left on GameTable`)
+      // console.log(`  [methods] mousedown left on GameTable`)
       const obj = {
         move: {
           from: {
@@ -102,7 +102,7 @@ export default {
       this.setProperty({property: 'map', value: obj, logOff: true})
     },
     leftUp () {
-      console.log(`  [methods] mouseup left on GameTable`)
+      // console.log(`  [methods] mouseup left on GameTable`)
       if (this.rollObj.isRolling) {
         // マップ上のオブジェクトを回転中の場合
         const pieceObj = this.$store.state.public[this.rollObj.propName].list.filter(obj => obj.key === this.rollObj.key)[0]
@@ -147,7 +147,7 @@ export default {
     rightUp (event) {
       console.log(`  [methods] mouseup right on GameTable`)
       const isDraggingRight = this.isDraggingRight
-      this.setProperty({property: 'map.isMouseDownRight', value: false, logOff: false})
+      this.setProperty({property: 'map.isMouseDownRight', value: false, logOff: true})
 
       let isRoll = false
       if (isDraggingRight) {
@@ -161,8 +161,8 @@ export default {
           },
           isDraggingRight: false
         }
-        this.setProperty({property: 'map', value: obj, logOff: false})
-        this.setProperty({property: 'private.map.angle.total', value: nextAngle, logOff: false})
+        this.setProperty({property: 'map', value: obj, logOff: true})
+        this.setProperty({property: 'private.map.angle.total', value: nextAngle, logOff: true})
       }
       let pageX = event.pageX
       let pageY = event.pageY

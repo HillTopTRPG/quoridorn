@@ -59,6 +59,23 @@ const storeModulePublic = {
       ],
       maxKey: 24
     },
+    bgm: {
+      list: [
+        { key: 'bgm-0', charHandle: false, tag: 'BGM', title: 'BGM停止', path: '', second: 0, volume: 0.5, isLoop: false },
+        { key: 'bgm-1', charHandle: false, tag: 'BGM', title: '馬車道', path: require('../assets/BGM/o12.mp3'), second: 0, volume: 0.8, isLoop: true },
+        { key: 'bgm-2', charHandle: false, tag: 'BGM', title: '羊飼いの夕餉', path: require('../assets/BGM/n122.mp3'), second: 0, volume: 0.8, isLoop: true },
+        { key: 'bgm-3', charHandle: false, tag: 'BGM', title: '小さな行進曲', path: require('../assets/BGM/n26.mp3'), second: 0, volume: 0.8, isLoop: true },
+        { key: 'bgm-4', charHandle: false, tag: 'SE', title: 'チーン1', path: require('../assets/BGM/tin1.mp3'), second: 0, volume: 0.8, isLoop: false },
+        { key: 'bgm-5', charHandle: false, tag: 'SE', title: '出題1', path: require('../assets/BGM/question1.mp3'), second: 0, volume: 0.8, isLoop: false },
+        { key: 'bgm-6', charHandle: false, tag: 'SE', title: '正解1', path: require('../assets/BGM/correct1.mp3'), second: 0, volume: 0.8, isLoop: false },
+        { key: 'bgm-7', charHandle: false, tag: 'SE', title: '不正解1', path: require('../assets/BGM/incorrect1.mp3'), second: 0, volume: 0.8, isLoop: false }
+      ],
+      maxKey: 7,
+      playList: {
+        list: [],
+        maxKey: -1
+      }
+    },
     room: { id: '', members: [], system: 'DiceBot', password: '' },
     map: {
       imageTag: 'マップ',

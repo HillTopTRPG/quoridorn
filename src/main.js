@@ -3,6 +3,7 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import Vue from 'vue'
 import App from './App'
+import { mapActions } from 'vuex'
 import store from './store/store.js'
 
 import Menu from './components/menu/Menu'
@@ -29,6 +30,8 @@ import EditChitWindow from './components/map/chit/EditChitWindow'
 import ChitContext from './components/map/chit/ChitContext'
 import EditMapWindow from './components/map/EditMapWindow'
 import EditCharacterWindow from './components/map/character/EditCharacterWindow'
+import SettingBGMWindow from './components/music/SettingBGMWindow'
+import JukeboxWindow from './components/music/JukeboxWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -71,17 +74,20 @@ Vue.directive('bg-img', function (el, binding, compornent) {
 
 const app = new Vue({
   store,
-  components: { App: App },
-  data: { scrollY: 0 },
-  mounted () { window.addEventListener('scroll', this.handleScroll) },
+  components: {
+    App: App,
+    JukeboxWindow: JukeboxWindow
+  },
+  mounted () {
+    this.onMountApp(this.$refs.jukeboxWindow)
+  },
   methods: {
-    handleScroll () {
-      this.scrollY = window.scrollY
-      // console.log('scroll', this.scrollY)
-    }
+    ...mapActions([
+      'onMountApp'
+    ])
   },
   // render: h => h(App),
-  template: `<App/>`
+  template: `<div style="width: 100%; height: 100%;"><App/><JukeboxWindow ref="jukeboxWindow"/></div>`
 })
 app.$mount('#app')
 
@@ -159,3 +165,6 @@ editMapWindow.$mount('#editMapWindow')
 
 const editCharacterWindow = new Vue({ store, components: { EditCharacterWindow: EditCharacterWindow }, template: `<EditCharacterWindow/>` })
 editCharacterWindow.$mount('#editCharacterWindow')
+
+const settingBGMWindow = new Vue({ store, components: { SettingBGMWindow: SettingBGMWindow }, template: `<SettingBGMWindow/>` })
+settingBGMWindow.$mount('#settingBGMWindow')

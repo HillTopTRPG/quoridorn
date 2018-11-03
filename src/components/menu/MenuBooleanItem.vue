@@ -1,5 +1,8 @@
 <template>
-  <div class="item" @click="changeDisplay({property:property})"><img v-img="propValue ? checkImg : ''" class="check" alt=""><span><slot></slot></span></div>
+  <div class="item" @click="changeDisplay({property:property})">
+    <span class="check"><i v-show="propValue" class="icon-checkmark"></i></span>
+    <!-- <img v-img="propValue ? checkImg : ''" class="check" alt=""> -->
+  <span><slot></slot></span></div>
 </template>
 
 <script>
@@ -11,11 +14,6 @@ export default {
     'property': {
       type: String,
       required: true
-    }
-  },
-  data () {
-    return {
-      checkImg: require('../../assets/check.png')
     }
   },
   methods: {
@@ -41,13 +39,16 @@ export default {
   display: inline;
   vertical-align: middle;
 }
-.item img.check {
-  display: inline;
+.item .check {
+  display: inline-block;
   width: 10px;
   height: 10px;
   min-width: 10px;
   min-height: 10px;
   margin-right: 5px;
   border: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

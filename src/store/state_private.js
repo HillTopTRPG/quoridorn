@@ -42,7 +42,6 @@ const storeModulePrivate = {
       publicMemoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
       secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       addCharacterSettingWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      editCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       roomInfoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       dropImageWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, imageDataList: null },
       dropZipWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, zipList: null },
@@ -54,6 +53,8 @@ const storeModulePrivate = {
       editChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
       editMapWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
       editCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
+      settingBGMWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      jukeboxWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, ref: null },
       mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       characterContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
       gameTableContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0 },
@@ -79,8 +80,12 @@ const storeModulePrivate = {
     doResetWindowLocate () {
       alert('未実装の機能です。')
     },
+    onMountApp ({ state }, jukeboxWindow) {
+      // jukeboxWindow
+      state.display.jukeboxWindow.ref = jukeboxWindow
+    },
     windowOpen ({ state, getters }, property) {
-      console.log(`window open => ${property}`)
+      // console.log(`window open => ${property}`)
       const windowObj = getters.getState(property)
       if (!windowObj.isDisplay) {
         // まだ表示していないウィンドウを開いた場合
@@ -128,7 +133,7 @@ const storeModulePrivate = {
       let maxIndex = 0
       const splits = property.split('.')
       const dispName = splits[splits.length - 1]
-      console.log(`windowActive => ${dispName}`)
+      // console.log(`windowActive => ${dispName}`)
       for (const key in state.display) {
         const value = state.display[key]
         if (!value.isDisplay) { continue }

@@ -79,7 +79,7 @@ export default {
         return
       }
       this.setProperty({property: 'public.room.system', value: this.currentSystem})
-      this.setProperty({property: 'private.connect.password', value: this.password, logOff: false})
+      this.setProperty({property: 'private.connect.password', value: this.password, logOff: true})
       this.emptyMember()
       this.createPeer({
         roomId: this.roomName

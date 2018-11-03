@@ -34,6 +34,16 @@ http://teddy-plaza.sakura.ne.jp/?cat=105
 # フリーで使えるローディング画像各種
 https://www.benricho.org/loading_images/transparent01.html
 【タイトル不明】
+
+## BGM
+# 楽しい・明るい - フリーBGM音楽素材
+http://www.hmix.net/music_gallery/feeling/happy.htm
+【馬車道】ほか
+
+## SE
+# 効果音ラボ
+https://soundeffect-lab.info/sound/anime/
+【出題1】ほか
 ```
 
 ## Build Setup
