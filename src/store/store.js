@@ -85,6 +85,16 @@ const store = new Vuex.Store({
         })
       }
     },
+    windowOperation ({ dispatch }, payload) {
+      dispatch('sendNoticeOperation', { value: payload, method: 'doWindowOperation' })
+    },
+    doWindowOperation ({ rootState, getters }, payload) {
+      const displayProperty = payload.displayProperty
+      const method = payload.method
+      const args = payload.args
+      const target = getters.getState(displayProperty)
+      target.ref[method](...args)
+    },
     sendNoticeOperation ({ dispatch, state }, payload) {
       let type = null
       if (state.public.room.members[0]) {
@@ -170,6 +180,11 @@ const store = new Vuex.Store({
                 } else {
                   propProc2(target[prop], val)
                 }
+                // 配列の場合、リアクティブになるよう、splice関数で更新する
+                if (target instanceof Array) {
+                  const index = parseInt(prop)
+                  target.splice(index, 1, target[index])
+                }
               }
             }
             propProc2(target[prop], value)
@@ -185,7 +200,7 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    getState: (state) => (property) => {
+    getState: state => property => {
       const props = property.split('.')
       let target = state
       props.forEach((prop, index) => {
@@ -193,7 +208,7 @@ const store = new Vuex.Store({
       })
       return target
     },
-    isWindowOpen: (state, getters) => (displayProperty) => {
+    isWindowOpen: (state, getters) => displayProperty => {
       const target = getters.getState(displayProperty)
       if (typeof target === 'boolean') {
         return target
@@ -201,7 +216,7 @@ const store = new Vuex.Store({
         return target.isDisplay
       }
     },
-    parseColor: (state) => (colorText) => {
+    parseColor: state => colorText => {
       let colorObj = null
       if (colorText.startsWith('rgb')) {
         let splits = colorText.replace(/(rgba?\()|\)/g, '').split(',')
@@ -220,7 +235,7 @@ const store = new Vuex.Store({
       colorObj.getRGBReverse = function () { return `rgb(${255 - this.r}, ${255 - this.g}, ${255 - this.b})` }.bind(colorObj)
       return colorObj
     },
-    objToString: (state) => (obj) => {
+    objToString: state => obj => {
       let text = '{ '
       for (let key in obj) {
         let val = obj[key]

@@ -25,7 +25,6 @@ export default {
   },
   mounted () {
     this.volume = this.initVolume
-    // this.changeVolume()
     this.$emit('mounted')
   },
   methods: {
@@ -111,6 +110,10 @@ export default {
   transform: scale(0.7);
   color: white;
   pointer-events: none;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 input[type="range"] {

@@ -16,25 +16,44 @@ const actionOperation = {
      * チャットログを追加する
      */
     addChatLog: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doAddChatLog' }) },
-    doAddChatLog: ({ rootState, rootGetters }, payload) => {
-      const peerId = payload.peerId ? payload.peerId : rootState.private.connect.peerId
-      const activeChatTab = rootGetters.activeChatTab
-      let name = payload.name
+    doAddChatLog: ({ dispatch, rootState, rootGetters }, payload) => {
       let text = payload.text
-      let color = payload.color
-      let tab = payload.tab ? payload.tab : activeChatTab.name
-      let htmlText = '<span style="color: ' + color + '"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
-      let logObj = {
-        peerId: peerId,
-        viewHtml: htmlText
+      if (!text.startsWith('@')) {
+        const activeChatTab = rootGetters.activeChatTab
+        const name = payload.name
+        const color = payload.color
+        const tab = payload.tab ? payload.tab : activeChatTab.name
+        const logObj = {
+          peerId: payload.peerId ? payload.peerId : rootState.private.connect.peerId,
+          viewHtml: '<span style="color: ' + color + '"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
+        }
+        // 未読カウントアップ
+        if (tab !== activeChatTab.name) {
+          const tabObj = rootState.public.chat.tabs.filter(tabObj => tabObj.name === tab)[0]
+          tabObj.unRead++
+          const index = rootState.public.chat.tabs.indexOf(tabObj)
+          rootState.public.chat.tabs.splice(index, 1, tabObj)
+        }
+        rootState.public.chat.logs[tab].push(logObj)
       }
-      if (tab !== activeChatTab.name) {
-        const tabObj = rootState.public.chat.tabs.filter(tabObj => tabObj.name === tab)[0]
-        tabObj.unRead++
-        const index = rootState.public.chat.tabs.indexOf(tabObj)
-        rootState.public.chat.tabs.splice(index, 1, tabObj)
-      }
-      rootState.public.chat.logs[tab].push(logObj)
+      // チャット文字連携処理
+      dispatch('chatLinkage', text)
+    },
+    /** ========================================================================
+     * チャット文字連携処理
+     */
+    chatLinkage: ({ dispatch, rootState, rootGetters }, text) => {
+      rootState.public.bgm.list
+        .filter(bgmObj => bgmObj.chatLinkage && text.endsWith(bgmObj.title))
+        .sort((a, b) => {
+          if( a.title.length > b.title.length ) return -1;
+          if( a.title.length < b.title.length ) return 1;
+          return 0;
+        })
+        .filter((bgmObj, index, self) => self.filter((s, i) => (index > i) && (s.tag === bgmObj.tag)).length === 0)
+        .forEach(bgmObj => {
+          dispatch('windowOperation', { displayProperty: 'private.display.jukeboxWindow', method: 'add', args: [ bgmObj.key ] })
+        })
     },
     /** ========================================================================
      * 画像を追加する

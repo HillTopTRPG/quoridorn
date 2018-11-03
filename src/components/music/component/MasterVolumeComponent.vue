@@ -4,7 +4,7 @@
       <span class="title" title="すべてのBGMの再生音量を割合で補正します">【マスターボリューム】</span>
     </div>
     <div class="controlArea">
-      <VolumeComponent :initVolume="1" @volume="volume" @mute="mute"/>
+      <VolumeComponent :initVolume="0.5" @volume="volume" @mute="mute"/>
     </div>
   </div>
 </template>

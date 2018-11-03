@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="BGM再生画面" display-property="private.display.jukeboxWindow" align="right-bottom" fixSize="150, 209">
+  <WindowFrame titleText="BGM再生画面" display-property="private.display.jukeboxWindow" align="right-bottom" fixSize="150, 209" :isBanClose="true">
     <div class="contents">
       <MasterVolumeComponent @masterMute="setMasterMute" @masterVolume="setMasterVolume"/>
       <BGMComponent
@@ -36,7 +36,7 @@ export default {
     return {
       playList: [],
       masterMute: false,
-      masterVolume: 1
+      masterVolume: 0.5
     }
   },
   methods: {
@@ -45,6 +45,7 @@ export default {
       'windowOpen'
     ]),
     add (bgmKey) {
+      if (!bgmKey) return
       const addBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0]
       // 見つからなかったらタイミング悪く削除されたということなので、処理しない
       if (!addBgmObj) return

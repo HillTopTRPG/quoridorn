@@ -48,7 +48,7 @@ export default {
       second: 0,
       duration: 0,
       masterMute: false,
-      masterVolume: 1
+      masterVolume: 0.5
     }
   },
   beforeMount () {
@@ -57,15 +57,19 @@ export default {
 
     this.jukeboxAudio = new Audio()
     this.jukeboxAudio.autoplay = true
-    this.jukeboxAudio.src = this.path
     this.jukeboxAudio.loop = this.isLoop
-    this.jukeboxAudio.volume = this.initVolume
+    this.jukeboxAudio.volume = this.initVolume * this.masterVolume
     this.jukeboxAudio.addEventListener('timeupdate', this.timeUpdate)
-    this.jukeboxAudio.addEventListener('loadedmetadata', () => {
+    // console.log(111111111, this.path, this.jukeboxAudio)
+    this.jukeboxAudio.addEventListener('play', () => {
+      // console.log(2222222222, this.jukeboxAudio)
+      if (!this.jukeboxAudio) return
       this.duration = this.jukeboxAudio.duration
     })
+    this.jukeboxAudio.src = this.path
   },
   destroyed () {
+    // console.log('!!!! destroyed !!!!')
     this.changePlay(false)
     this.jukeboxAudio = null
   },
@@ -76,7 +80,9 @@ export default {
       this.$refs.volumeComponent.setMasterVolume(this.masterVolume)
     },
     mute (flg) { this.jukeboxAudio.muted = flg },
-    volume (volume) { this.jukeboxAudio.volume = volume },
+    volume (volume) {
+      this.jukeboxAudio.volume = volume
+    },
     setMasterMute (flg) {
       this.masterMute = flg
       this.$refs.volumeComponent.setMasterMute(flg)
@@ -243,6 +249,10 @@ export default {
   transform: scale(0.7);
   color: white;
   pointer-events: none;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 input[type="range"] {

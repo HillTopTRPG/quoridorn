@@ -1,7 +1,7 @@
 <template>
-  <WindowFrame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="390, 400" @open="initWindow" @close="close">
+  <WindowFrame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="390, 334">
     <div class="contents">
-      <div>
+      <div class="playOperationArea">
         <button @click="doPlay">送信</button>
         <span class="space"></span>
         <button @click="doPreview">プレビュー(自分のみ)</button>
@@ -10,67 +10,37 @@
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
           <thead>
             <tr>
-              <th :style="{width: widthList[0] + 'px'}">末尾発動</th>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 0}"
-                @mouseover="hoverDev(0, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 0)"></td>
-              <th :style="{width: widthList[1] + 'px'}">fadeIn</th>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 1}"
-                @mouseover="hoverDev(1, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 1)"></td>
-              <th :style="{width: widthList[2] + 'px'}">タイトル</th>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 2}"
-                @mouseover="hoverDev(2, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 2)"></td>
-              <th :style="{width: widthList[3] + 'px'}">音楽ファイル名</th>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 3}"
-                @mouseover="hoverDev(3, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 3)"></td>
-              <th :style="{width: widthList[4] + 'px'}">時間</th>
+              <th :style="colStyle(0)">末尾発動</th><Divider :index="0"/>
+              <th :style="colStyle(1)">タグ</th><Divider :index="1"/>
+              <th :style="colStyle(2)">タイトル</th><Divider :index="2"/>
+              <th :style="colStyle(3)">fadeIn</th><Divider :index="3"/>
+              <th :style="colStyle(4)">fadeOut</th><Divider :index="4"/>
+              <th :style="colStyle(5)">時間</th>
             </tr>
           </thead>
           <tbody>
             <!-- ===============================================================
               コンテンツ
             -->
-            <tr v-for="(bgmObj, index) in bgmList"
-              :key="index"
-              @click="selectLine(index)"
-              @dblclick="playBGM(bgmObj.key)"
-              :class="{isActive: selectLineIndex === index, space: bgmObj.isEmpty}">
-              <td :style="{width: widthList[0] + 'px'}"><input type="checkbox" v-model="bgmObj.charHandle" v-if="!bgmObj.isEmpty"></td>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 0}"
-                @mouseover="hoverDev(0, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 0)"></td>
-              <td :style="{width: widthList[1] + 'px'}"><input type="checkbox" v-model="bgmObj.charHandle" v-if="!bgmObj.isEmpty"></td>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 1}"
-                @mouseover="hoverDev(1, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 1)"></td>
-              <td :style="{width: widthList[2] + 'px'}">{{bgmObj.isEmpty ? '' : bgmObj.title}}</td>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 2}"
-                @mouseover="hoverDev(2, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 2)"></td>
-              <td :style="{width: widthList[2] + 'px'}">{{bgmObj.isEmpty ? '' : bgmObj.path}}</td>
-              <td class="dev"
-                :class="{isHover: hoverDevIndex === 3}"
-                @mouseover="hoverDev(3, true)"
-                @mouseout="hoverDev()"
-                @mousedown="event => moveDevStart(event, 3)"></td>
-              <td :style="{width: widthList[4] + 'px'}">{{bgmObj.isEmpty ? '' : convertSecond(bgmObj.second)}}</td>
+            <tr v-for="bgmObj in bgmList"
+              :key="bgmObj.key"
+              @click="selectLine(bgmObj.key)"
+              @dblclick="playBGM()"
+              :class="{isActive: selectBgmKey === bgmObj.key}">
+              <td :style="colStyle(0)"><PropCheckBox baseProperty="public.bgm.list" :objKey="bgmObj.key" property="chatLinkage"/></td><Divider :index="0"/>
+              <td :style="colStyle(1)">{{bgmObj.tag}}</td><Divider :index="1"/>
+              <td :style="colStyle(2)" class="selectable">{{bgmObj.title}}</td><Divider :index="2"/>
+              <td :style="colStyle(3)"><PropCheckBox baseProperty="public.bgm.list" :objKey="bgmObj.key" property="fadeIn"/></td><Divider :index="3"/>
+              <td :style="colStyle(4)"><PropCheckBox baseProperty="public.bgm.list" :objKey="bgmObj.key" property="fadeOut"/></td><Divider :index="4"/>
+              <td :style="colStyle(5)">{{convertSecond(bgmObj.second)}}</td>
+            </tr>
+            <tr class="space">
+              <td :style="colStyle(0)"></td><Divider :index="0"/>
+              <td :style="colStyle(1)"></td><Divider :index="1"/>
+              <td :style="colStyle(2)"></td><Divider :index="2"/>
+              <td :style="colStyle(3)"></td><Divider :index="3"/>
+              <td :style="colStyle(4)"></td><Divider :index="4"/>
+              <td :style="colStyle(5)"></td>
             </tr>
           </tbody>
         </table>
@@ -80,6 +50,7 @@
         <button @click="doModify">変更</button>
         <button @click="doDelete">削除</button>
         <label><input type="checkbox" @change="changeSortMode" />並べ替え許可</label>
+        <span class="comment">※ fadeIn/fadeOutは未実装</span>
       </div>
     </div>
   </WindowFrame>
@@ -88,68 +59,59 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
+import Divider from './component/Divider'
+import PropCheckBox from './component/PropCheckBox'
 
 export default {
   name: 'settingBGMWindow',
   components: {
-    WindowFrame: WindowFrame
-  },
-  data () {
-    return {
-      widthList: [50, 50, 120, 100, 30],
-      hoverDevIndex: -1,
-      movingIndex: -1,
-      startX: -1,
-      startLeftWidth: -1,
-      startRightWidth: -1,
-      selectLineIndex: -1,
-      bgmList: []
-    }
+    WindowFrame: WindowFrame,
+    Divider: Divider,
+    PropCheckBox: PropCheckBox
   },
   methods: {
-    ...mapActions([]),
-    initWindow () {
-      // クリア
-      this.bgmList.splice(0, this.bgmList.length)
-      // 10件追加
-      const storeBGMList = this.storeBGMList
-      storeBGMList.forEach((bgmObj, index) => {
-        this.bgmList.push(JSON.parse(JSON.stringify(bgmObj)))
-      })
-      this.bgmList.push({ isEmpty: true })
-    },
+    ...mapActions([
+      'setProperty',
+      'windowOperation',
+      'doWindowOperation'
+    ]),
     doPlay () {
-      console.log(`doPlay: ${this.selectLineIndex}`)
+      this.playBGM()
     },
     doPreview () {
-      console.log(`doPreview: ${this.selectLineIndex}`)
+      this.playBGM(true)
     },
     doAdd () {
       console.log(`doAdd`)
+      alert('未実装の機能です。')
     },
     doModify () {
-      console.log(`doModify: ${this.selectLineIndex}`)
+      console.log(`doModify: ${this.selectBgmKey}`)
+      alert('未実装の機能です。')
     },
     doDelete () {
-      console.log(`doDelete: ${this.selectLineIndex}`)
+      console.log(`doDelete: ${this.selectBgmKey}`)
+      alert('未実装の機能です。')
     },
     changeSortMode (event) {
       const val = event.target.checked
       console.log(`changeSortMode: ${val}`)
+      alert('未実装の機能です。')
     },
-    hoverDev (index) {
-      if (this.movingIndex === -1) {
-        this.hoverDevIndex = index !== undefined ? index : -1
-      }
+    selectLine (bgmKey) {
+      this.setProperty({
+        property: 'private.display.settingBGMWindow.selectBgmKey',
+        value: bgmKey,
+        logOff: true
+      })
     },
-    selectLine (index) {
-      this.selectLineIndex = index
-    },
-    moveDevStart (event, index) {
-      this.movingIndex = index
-      this.startX = event.clientX
-      this.startLeftWidth = this.widthList[index]
-      this.startRightWidth = this.widthList[index + 1]
+    playBGM (isPreview = false) {
+      // this.jukebox.add(this.selectBgmKey)
+      this[isPreview ? 'doWindowOperation' : 'windowOperation']({
+        displayProperty: 'private.display.jukeboxWindow',
+        method: 'add',
+        args: [this.selectBgmKey]
+      })
     },
     moveDev (event, index) {
       if (this.movingIndex > -1) {
@@ -157,29 +119,29 @@ export default {
         const afterLeftWidth = this.startLeftWidth + diff
         const afterRightWidth = this.startRightWidth - diff
         if (afterLeftWidth >= 10 && afterRightWidth >= 10) {
-          this.widthList.splice(this.movingIndex, 1, afterLeftWidth)
-          this.widthList.splice(this.movingIndex + 1, 1, afterRightWidth)
+          const paramObj = {}
+          paramObj[this.movingIndex] = afterLeftWidth
+          paramObj[this.movingIndex + 1] = afterRightWidth
+          this.setProperty({
+            property: 'private.display.settingBGMWindow.widthList',
+            value: paramObj,
+            logOff: true
+          })
         }
       }
     },
-    playBGM (key) {
-      this.jukebox.add(key)
-    },
     moveDevEnd () {
-      this.movingIndex = -1
-      this.startX = -1
-      this.startLeftWidth = -1
-      this.startRightWidth = -1
-      // this.hoverDevIndex = -1
-    },
-    close () {
-      // クリア
-      this.bgmList.splice(0, this.bgmList.length)
-    }
-  },
-  watch: {
-    storeBGMList () {
-      this.initWindow()
+      this.setProperty({
+        property: 'private.display.settingBGMWindow',
+        value: {
+          hoverDevIndex: -1,
+          movingIndex: -1,
+          startX: -1,
+          startLeftWidth: -1,
+          startRightWidth: -1
+        },
+        logOff: true
+      })
     }
   },
   computed: mapState({
@@ -188,10 +150,17 @@ export default {
       if (second > 0) {
         return `${second}秒`
       }
-      return '全'
+      return 'All'
     },
-    storeBGMList: state => state.public.bgm.list,
-    jukebox: state => state.private.display.jukeboxWindow.ref
+    bgmList: state => state.public.bgm.list,
+    selectBgmKey: state => state.private.display.settingBGMWindow.selectBgmKey,
+    widthList: state => state.private.display.settingBGMWindow.widthList,
+    hoverDevIndex: state => state.private.display.settingBGMWindow.hoverDevIndex,
+    movingIndex: state => state.private.display.settingBGMWindow.movingIndex,
+    startX: state => state.private.display.settingBGMWindow.startX,
+    startLeftWidth: state => state.private.display.settingBGMWindow.startLeftWidth,
+    startRightWidth: state => state.private.display.settingBGMWindow.startRightWidth,
+    colStyle: state => function (index) { return { width: `${this.widthList[index]}px` } }
   })
 }
 </script>
@@ -216,11 +185,13 @@ export default {
 }
 button {
   font-size: 10px;
-  margin-bottom: 5px;
   border-radius: 5px;
 }
+.playOperationArea button {
+  margin-bottom: 5px;
+}
 .operateArea {
-  margin-top: 10px;
+  margin-top: 5px;
   text-align: center;
 }
 .tableContainer {
@@ -237,29 +208,32 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
   table-layout: fixed;
+  background-image: linear-gradient( 0deg, white 0%, white 50%, rgb(247, 247, 247) 51%, rgb(247, 247, 247) 100% );
+  background-size: 4em 4em;
+}
+tr { height: 2em; }
+tr.space { height: auto; }
+th, td {
+  padding: 0;
+  white-space: nowrap;
+  cursor: default;
+}
+th, td:not(.selectable) {
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-    background-image: linear-gradient( 0deg, #f5eeed 0%, #f5eeed 50%, #f4e2de 50%, #f4e2de 100% );
-    background-size: 4em 4em;
 }
-tr { height: 2em; }
-tr.space { height: auto; }
-th,
-td {
-  padding: 0;
-  white-space: nowrap;
-}
-th,
-td:not(.dev) {
+th, td:not(.divider) {
   overflow: hidden;
 }
 table tbody {
   height: 100%;
 }
+table thead {
+  background: linear-gradient( to bottom, rgba(255, 255, 255, 1) 0%, rgba(234, 234, 234, 1) 100%);
+}
 table thead tr {
-  background: linear-gradient(rgba(255, 255, 255, 1), rgba(234, 234, 234, 1));
   border-bottom: 1px solid rgb(183, 186, 188);
 }
 table tbody tr {
@@ -302,5 +276,13 @@ table td.dev:after {
 }
 table td.dev.isHover:after {
   /* background-color: rgb(183, 186, 188); */
+}
+.comment {
+  font-size: 10px;
+  font-weight: bold;
+  color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
