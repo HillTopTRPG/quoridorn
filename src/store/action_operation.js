@@ -45,10 +45,13 @@ const actionOperation = {
     chatLinkage: ({ dispatch, rootState, rootGetters }, text) => {
       rootState.public.bgm.list
         .filter(bgmObj => {
-          if (bgmObj.chatLinkage === 1 && text.endsWith(bgmObj.title)) {
-
+          if (bgmObj.chatLinkage === 1 && text.endsWith(bgmObj.chatLinkageSearch)) {
+            return true
           }
-          bgmObj.chatLinkage > 0 && text.endsWith(bgmObj.title)
+          if (bgmObj.chatLinkage === 2 && new RegExp(bgmObj.chatLinkageSearch).test(text)) {
+            return true
+          }
+          return false
         })
         .sort((a, b) => {
           if (a.title.length > b.title.length) return -1
