@@ -90,13 +90,12 @@ export default {
         width *= zoom
         height *= zoom
       }
-      let result = {
+      return {
         width: width + 'px',
         height: height + 'px',
         'background-color': this.rgba,
         color: this.fontColor
       }
-      return result
     },
     rgba () {
       const colorObj = this.parseColor(this.color)

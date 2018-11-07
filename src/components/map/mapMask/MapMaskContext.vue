@@ -17,8 +17,8 @@ export default {
   components: {
     ContextFrame: ContextFrame
   },
+  mixins: [WindowMixin],
   methods: {
-    mixins: [WindowMixin],
     ...mapActions([
       'windowOpen',
       'setProperty',
