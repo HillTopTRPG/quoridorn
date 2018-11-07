@@ -90,7 +90,7 @@ const storeModulePrivate = {
         startLeftWidth: -1,
         startRightWidth: -1
       },
-      jukeboxWindow: { command: null, isDisplay: false, zIndex: 1, ref: null },
+      jukeboxWindow: { command: null, isDisplay: false, zIndex: 1 },
       editBGMWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
       mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       characterContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
@@ -105,15 +105,6 @@ const storeModulePrivate = {
     doResetWindowLocate () {
       // TODO 実装
       alert('未実装の機能です。')
-    },
-
-    /**
-     * BGM再生画面の実体を設定する
-     * @param state
-     * @param jukeboxWindow
-     */
-    setJukeboxWindow: ({ state }, jukeboxWindow) => {
-      state.display.jukeboxWindow.ref = jukeboxWindow
     },
 
     /**

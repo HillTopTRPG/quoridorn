@@ -79,13 +79,8 @@ const app = new Vue({
     App: App,
     JukeboxWindow: JukeboxWindow
   },
-  mounted () {
-    this.setJukeboxWindow(this.$refs.jukeboxWindow)
-  },
   methods: {
-    ...mapActions([
-      'setJukeboxWindow'
-    ])
+    ...mapActions([])
   },
   // render: h => h(App),
   template: `<div style="width: 100%; height: 100%;"><App/><JukeboxWindow ref="jukeboxWindow"/></div>`

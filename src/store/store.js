@@ -128,26 +128,6 @@ const store = new Vuex.Store({
 
     /**
      * =================================================================================================================
-     * 指定されたパラメータパスで取得できる画面の実体のメソッドを直接呼び出す
-     * @param dispatch
-     * @param payload
-     * @returns {*}
-     */
-    windowOperation: ({ dispatch }, payload) =>
-      dispatch('sendNoticeOperation', { value: payload, method: 'doWindowOperation' }),
-    /**
-     * 指定されたパラメータパスで取得できる画面の実体のメソッドを直接呼び出す
-     * @param getters
-     * @param displayProperty
-     * @param method
-     * @param args
-     * @returns {*}
-     */
-    doWindowOperation: ({ getters }, { displayProperty, method, args }) =>
-      getters.getStateValue(displayProperty).ref[method](...args),
-
-    /**
-     * =================================================================================================================
      * 指定されたプロパティパスの値を反転させる
      * @param dispatch
      * @param payload
@@ -251,6 +231,9 @@ const store = new Vuex.Store({
                 if (!(val instanceof Object) || (val instanceof Array)) {
                   target[prop] = val
                 } else {
+                  if (!target[prop]) {
+                    target[prop] = {}
+                  }
                   propProc2(target[prop], val)
                 }
                 // 配列の場合、リアクティブになるよう、splice関数で更新する
@@ -259,6 +242,9 @@ const store = new Vuex.Store({
                   target.splice(index, 1, target[index])
                 }
               }
+            }
+            if (!target[prop]) {
+              target[prop] = {}
             }
             propProc2(target[prop], value)
           }

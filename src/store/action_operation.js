@@ -57,7 +57,7 @@ const actionOperation = {
         })
         .filter((bgmObj, index, self) => self.filter((s, i) => (index > i) && (s.tag === bgmObj.tag)).length === 0)
         .forEach(bgmObj => {
-          dispatch('windowOperation', { displayProperty: 'private.display.jukeboxWindow', method: 'add', args: [ bgmObj.key ] })
+          dispatch('setProperty', {property: 'private.display.jukeboxWindow.command', isNotice: true, value: {command: 'add', payload: bgmObj.key}})
         })
     },
     /** ========================================================================

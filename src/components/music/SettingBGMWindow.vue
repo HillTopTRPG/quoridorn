@@ -77,9 +77,7 @@ export default {
   methods: {
     ...mapActions([
       'setProperty',
-      'windowOpen',
-      'windowOperation',
-      'doWindowOperation'
+      'windowOpen'
     ]),
     initWindow () {
       this.setProperty({
@@ -128,12 +126,7 @@ export default {
       })
     },
     playBGM (isPreview = false) {
-      // this.jukebox.add(this.selectBgmKey)
-      this[isPreview ? 'doWindowOperation' : 'windowOperation']({
-        displayProperty: 'private.display.jukeboxWindow',
-        method: 'add',
-        args: [this.selectBgmKey]
-      })
+      this.setProperty({property: 'private.display.jukeboxWindow.command', isNotice: !isPreview, value: {command: 'add', payload: this.selectBgmKey}})
     },
     moveDev (event) {
       if (this.movingIndex > -1) {
