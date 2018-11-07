@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="390, 334">
+  <WindowFrame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="393, 334" @open="initWindow">
     <div class="contents">
       <div class="playOperationArea">
         <button @click="doPlay">送信</button>
@@ -10,12 +10,13 @@
         <table @mousemove="event => moveDev(event)" @mouseup="moveDevEnd">
           <thead>
             <tr>
-              <th :style="colStyle(0)">末尾発動</th><Divider :index="0"/>
+              <th :style="colStyle(0)">連動</th><Divider :index="0"/>
               <th :style="colStyle(1)">タグ</th><Divider :index="1"/>
               <th :style="colStyle(2)">タイトル</th><Divider :index="2"/>
-              <th :style="colStyle(3)">fadeIn</th><Divider :index="3"/>
-              <th :style="colStyle(4)">fadeOut</th><Divider :index="4"/>
-              <th :style="colStyle(5)">時間</th>
+              <th :style="colStyle(3)">時間</th><Divider :index="3"/>
+              <th :style="colStyle(4)">繰</th><Divider :index="4"/>
+              <th :style="colStyle(5)">音量</th><Divider :index="5"/>
+              <th :style="colStyle(6)">fade</th>
             </tr>
           </thead>
           <tbody>
@@ -27,12 +28,13 @@
               @click="selectLine(bgmObj.key)"
               @dblclick="playBGM()"
               :class="{isActive: selectBgmKey === bgmObj.key}">
-              <td :style="colStyle(0)"><PropCheckBox baseProperty="public.bgm.list" :objKey="bgmObj.key" property="chatLinkage"/></td><Divider :index="0"/>
+              <td :style="colStyle(0)" :title="linkageStr(bgmObj)">{{bgmObj.chatLinkage > 0 ? 'あり' : 'なし'}}</td><Divider :index="0"/>
               <td :style="colStyle(1)">{{bgmObj.tag}}</td><Divider :index="1"/>
-              <td :style="colStyle(2)" class="selectable">{{bgmObj.title}}</td><Divider :index="2"/>
-              <td :style="colStyle(3)"><PropCheckBox baseProperty="public.bgm.list" :objKey="bgmObj.key" property="fadeIn"/></td><Divider :index="3"/>
-              <td :style="colStyle(4)"><PropCheckBox baseProperty="public.bgm.list" :objKey="bgmObj.key" property="fadeOut"/></td><Divider :index="4"/>
-              <td :style="colStyle(5)">{{convertSecond(bgmObj.second)}}</td>
+              <td :style="colStyle(2)">{{bgmObj.title}}</td><Divider :index="2"/>
+              <td :style="colStyle(3)">{{convertSecond(bgmObj.playLength)}}</td><Divider :index="3"/>
+              <td :style="colStyle(4)"><i class="icon-infinite" v-if="bgmObj.isLoop"></i>{{bgmObj.isLoop ? '' : '-'}}</td><Divider :index="4"/>
+              <td :style="colStyle(5)">{{bgmObj.volume * 100}}</td><Divider :index="5"/>
+              <td :style="colStyle(6)" :title="fadeTitle(bgmObj)">{{fadeStr(bgmObj)}}</td>
             </tr>
             <tr class="space">
               <td :style="colStyle(0)"></td><Divider :index="0"/>
@@ -40,7 +42,8 @@
               <td :style="colStyle(2)"></td><Divider :index="2"/>
               <td :style="colStyle(3)"></td><Divider :index="3"/>
               <td :style="colStyle(4)"></td><Divider :index="4"/>
-              <td :style="colStyle(5)"></td>
+              <td :style="colStyle(5)"></td><Divider :index="5"/>
+              <td :style="colStyle(6)"></td>
             </tr>
           </tbody>
         </table>
@@ -60,21 +63,29 @@
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 import Divider from './component/Divider'
-import PropCheckBox from './component/PropCheckBox'
+import PropNumber from './component/PropNumber'
 
 export default {
   name: 'settingBGMWindow',
   components: {
     WindowFrame: WindowFrame,
     Divider: Divider,
-    PropCheckBox: PropCheckBox
+    PropNumber: PropNumber
   },
   methods: {
     ...mapActions([
       'setProperty',
+      'windowOpen',
       'windowOperation',
       'doWindowOperation'
     ]),
+    initWindow () {
+      this.setProperty({
+        property: 'private.display.settingBGMWindow.selectBgmKey',
+        value: -1,
+        logOff: true
+      })
+    },
     doPlay () {
       this.playBGM()
     },
@@ -87,7 +98,16 @@ export default {
     },
     doModify () {
       console.log(`doModify: ${this.selectBgmKey}`)
-      alert('未実装の機能です。')
+      if (this.selectBgmKey < 0) {
+        alert('BGMを選択してください')
+        return
+      }
+      this.setProperty({
+        property: 'private.display.editBGMWindow.key',
+        value: this.selectBgmKey,
+        logOff: true
+      })
+      this.windowOpen('private.display.editBGMWindow')
     },
     doDelete () {
       console.log(`doDelete: ${this.selectBgmKey}`)
@@ -113,7 +133,7 @@ export default {
         args: [this.selectBgmKey]
       })
     },
-    moveDev (event, index) {
+    moveDev (event) {
       if (this.movingIndex > -1) {
         const diff = event.clientX - this.startX
         const afterLeftWidth = this.startLeftWidth + diff
@@ -146,9 +166,9 @@ export default {
   },
   computed: mapState({
     importData: state => state.private.display.confirmLoadRoomWindow.importData,
-    convertSecond: state => second => {
-      if (second > 0) {
-        return `${second}秒`
+    convertSecond: () => playLength => {
+      if (playLength > 0) {
+        return `${playLength}秒`
       }
       return 'All'
     },
@@ -160,7 +180,24 @@ export default {
     startX: state => state.private.display.settingBGMWindow.startX,
     startLeftWidth: state => state.private.display.settingBGMWindow.startLeftWidth,
     startRightWidth: state => state.private.display.settingBGMWindow.startRightWidth,
-    colStyle: state => function (index) { return { width: `${this.widthList[index]}px` } }
+    colStyle: () => function (index) { return { width: `${this.widthList[index]}px` } },
+    fadeStr: () => bgmObj => {
+      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut > 0) return 'in/out'
+      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut === 0) return 'in'
+      if (bgmObj.fadeIn === 0 && bgmObj.fadeOut > 0) return 'out'
+      return '-'
+    },
+    fadeTitle: () => bgmObj => {
+      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut > 0) return `in:${bgmObj.fadeIn}\nout:${bgmObj.fadeOut}`
+      if (bgmObj.fadeIn > 0 && bgmObj.fadeOut === 0) return `in:${bgmObj.fadeIn}`
+      if (bgmObj.fadeIn === 0 && bgmObj.fadeOut > 0) return `out:${bgmObj.fadeOut}`
+      return '-'
+    },
+    linkageStr: () => bgmObj => {
+      if (bgmObj.chatLinkage === 1) return `【末尾文字】\n${bgmObj.chatLinkageSearch}`
+      if (bgmObj.chatLinkage === 2) return `【正規表現】\n${bgmObj.chatLinkageSearch}`
+      return 'なし'
+    }
   })
 }
 </script>
@@ -201,6 +238,7 @@ button {
   height: 216px;
   border: 1px solid rgb(183, 186, 188);
   font-size: 8px;
+  box-sizing: border-box;
 }
 table {
   width: calc(100% - 19px);
@@ -245,14 +283,8 @@ table tbody tr:not(.space).isActive {
 table thead tr th:hover {
   background: rgb(178, 225, 255);
 }
-table tbody tr:nth-child(odd) {
-  /* background-color: rgb(247, 247, 247); */
-}
 table tbody tr:not(.space):nth-child(odd):hover {
   background: rgb(178, 225, 255);
-}
-table tbody tr:nth-child(even) {
-  /* background-color: rgb(255, 255, 255); */
 }
 table tbody tr:not(.space):nth-child(even):hover {
   background: rgb(178, 225, 255);
@@ -273,9 +305,6 @@ table td.dev:after {
   left: -2px;
   content: '';
   width: 5px;
-}
-table td.dev.isHover:after {
-  /* background-color: rgb(183, 186, 188); */
 }
 .comment {
   font-size: 10px;

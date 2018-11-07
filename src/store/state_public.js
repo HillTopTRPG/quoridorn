@@ -8,18 +8,25 @@ Vue.use(Vuex)
 
 /**
  * Store
- * @type {Vuex}
  */
 const storeModulePublic = {
   // publicデータは、ルーム参加者に展開したりデータ保存に利用するデータ
   state: {
+    /** 設定(public) */
     setting: {
-      gridLine: true, // マス目を表示するか
-      gridId: true, // 座標を表示するか
-      pieceRotateMarker: true, // 回転マーカーを表示するかどうか
-      isFitGrid: true // マス目に合わせて動かすかどうか
+      /** マス目を表示するか */
+      gridLine: true,
+      /** 座標を表示するか */
+      gridId: true,
+      /** 回転マーカーを表示するかどうか */
+      pieceRotateMarker: true,
+      /** マス目に合わせて動かすかどうか */
+      isFitGrid: true
     },
+
+    /** 画像 */
     image: {
+      /** 画像のタグ */
       tags: {
         list: [
           { key: 'imgTag-0', name: '(全て)' },
@@ -30,6 +37,8 @@ const storeModulePublic = {
         ],
         maxKey: 4
       },
+
+      /** 画像のプリセットデータ */
       list: [
         { key: 'image-0', tag: 'マップ', data: require('../assets/background-default.jpg'), password: '' },
         { key: 'image-1', tag: 'キャラクター', data: require('../assets/charactor/pawnBlack.png'), password: '' },
@@ -59,24 +68,33 @@ const storeModulePublic = {
       ],
       maxKey: 24
     },
+
+    /** BGM */
     bgm: {
+      /** BGMのプリセット */
       list: [
-        { key: 'bgm-0', chatLinkage: false, tag: 'BGM', title: 'BGM停止', path: '', second: 0, volume: 0.5, isLoop: false, fadeIn: false, fadeOut: false },
-        { key: 'bgm-1', chatLinkage: false, tag: 'BGM', title: '馬車道', path: require('../assets/BGM/o12.mp3'), second: 0, volume: 0.8, isLoop: true, fadeIn: false, fadeOut: false },
-        { key: 'bgm-2', chatLinkage: false, tag: 'BGM', title: '羊飼いの夕餉', path: require('../assets/BGM/n122.mp3'), second: 0, volume: 0.8, isLoop: true, fadeIn: false, fadeOut: false },
-        { key: 'bgm-3', chatLinkage: false, tag: 'BGM', title: '小さな行進曲', path: require('../assets/BGM/n26.mp3'), second: 0, volume: 0.8, isLoop: true, fadeIn: false, fadeOut: false },
-        { key: 'bgm-4', chatLinkage: false, tag: 'SE', title: 'チーン1', path: require('../assets/BGM/tin1.mp3'), second: 0, volume: 0.8, isLoop: false, fadeIn: false, fadeOut: false },
-        { key: 'bgm-5', chatLinkage: true, tag: 'SE', title: '出題1', path: require('../assets/BGM/question1.mp3'), second: 0, volume: 0.8, isLoop: false, fadeIn: false, fadeOut: false },
-        { key: 'bgm-6', chatLinkage: true, tag: 'SE', title: '正解1', path: require('../assets/BGM/correct1.mp3'), second: 0, volume: 0.8, isLoop: false, fadeIn: false, fadeOut: false },
-        { key: 'bgm-7', chatLinkage: true, tag: 'SE', title: '不正解1', path: require('../assets/BGM/incorrect1.mp3'), second: 0, volume: 0.8, isLoop: false, fadeIn: false, fadeOut: false }
+        { key: 'bgm-0', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM', title: 'BGM停止', url: '', playLength: 0, volume: 0.5, isLoop: false, fadeIn: 1, fadeOut: 1 },
+        { key: 'bgm-1', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM', title: '馬車道', url: require('../assets/BGM/o12.mp3'), playLength: 0, volume: 0.8, isLoop: true, fadeIn: 1, fadeOut: 0 },
+        { key: 'bgm-2', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM', title: '羊飼いの夕餉', url: require('../assets/BGM/n122.mp3'), playLength: 0, volume: 1, isLoop: true, fadeIn: 0, fadeOut: 1 },
+        { key: 'bgm-3', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM', title: '小さな行進曲', url: require('../assets/BGM/n26.mp3'), playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-4', chatLinkage: 0, chatLinkageSearch: 'チーン1', tag: 'SE', title: 'チーン1', url: require('../assets/BGM/tin1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-5', chatLinkage: 1, chatLinkageSearch: '出題1', tag: 'SE', title: '出題1', url: require('../assets/BGM/question1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-6', chatLinkage: 1, chatLinkageSearch: '正解1', tag: 'SE', title: '正解1', url: require('../assets/BGM/correct1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-7', chatLinkage: 1, chatLinkageSearch: '不正解1', tag: 'SE', title: '不正解1', url: require('../assets/BGM/incorrect1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 }
       ],
       maxKey: 7,
+
+      /** 再生リスト */
       playList: {
         list: [],
         maxKey: -1
       }
     },
+
+    /** 部屋情報 */
     room: { id: '', members: [], system: 'DiceBot', password: '' },
+
+    /** マップ */
     map: {
       imageTag: 'マップ',
       imageKey: 'image-0',
@@ -94,12 +112,24 @@ const storeModulePublic = {
       background: '#92A8B3',
       isEditting: null
     },
+
+    /** マップマスク */
     mapMask: { list: [], maxKey: -1 },
+
+    /** キャラクター */
     character: { list: [], maxKey: -1 },
+
+    /** チット */
     chit: { list: [], maxKey: -1 },
+
+    /** チャット */
     chat: {
+      /** チャットのタブ */
       tabs: [ { name: 'メイン', isActive: true, isHover: false, unRead: 0 } ],
+
+      /** チャットのリスト */
       logs: {
+        // TODO データの持ち方を変えたい(タブ名が被ってもいいように)
         'メイン': [
           { peerId: 12345, viewHtml: '<b>HillTop</b>：Hello World!!' },
           { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>' },
@@ -108,9 +138,14 @@ const storeModulePublic = {
           { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：9月末までは休みを利用して開発できますが、10月からは新しい仕事が始まるので、開発スピードが落ちます。</span>' }
         ]
       },
+
+      /** 入力中のルームメイトのpeerId一覧 */
       inputting: {}
     },
+
+    /** 共有メモ */
     publicMemo: {
+      /** TODO 内容は未実装につき未定 */
       editTab: '',
       contents: [
         {
@@ -121,27 +156,75 @@ const storeModulePublic = {
         }
       ]
     }
-  },
+  }, /* end of state */
+
   actions: {
-    emptyMember: ({ commit }) => commit('emptyMember'),
-    chatTabSelect: ({ commit }, tab) => commit('chatTabSelect', tab),
-    imageTagChange: ({ commit }, payload) => commit('imageTagChange', payload),
-    changeChatTab ({ getters, commit }, tabsText) {
-      commit('changeChatTab', {
-        tabsText: tabsText,
-        lastActiveTab: getters.activeChatTab
-      })
-    },
+    /**
+     * ルームメンバを空にする
+     * @param commit
+     * @returns {*}
+     */
+    emptyMember: ({ commit }) =>
+      commit('emptyMember'),
+
+    /**
+     * チャットのタブを選択したことをデータに反映する
+     * @param commit
+     * @param tab
+     * @returns {*}
+     */
+    chatTabSelect: ({ commit }, tab) =>
+      commit('chatTabSelect', tab),
+
+    /**
+     * 画像のタブの構成を変更する
+     * @param commit
+     * @param payload
+     * @returns {*}
+     */
+    imageTagChange: ({ commit }, payload) =>
+      commit('imageTagChange', payload),
+
+    /**
+     * チャットのタブの構成を変更する
+     * @param getters
+     * @param commit
+     * @param tabsText
+     * @returns {*}
+     */
+    changeChatTab: ({ getters, commit }, tabsText) =>
+      commit('changeChatTab', { tabsText: tabsText, lastActiveTab: getters.activeChatTab }),
+
+    /**
+     * ルームメンバの入力中状態の通知
+     * @param commit
+     * @param state
+     * @param peerId
+     */
     noticeInput: ({ commit, state }, peerId) => {
+      // 即時入力カウントアップ
       commit('inputPeerId', { peerId: peerId, add: 1 })
+      // 少し経ったらカウントダウン
       setTimeout(() => {
         commit('inputPeerId', { peerId: peerId, add: -1 })
       }, 400)
     }
-  },
+  }, /* end of actions */
+
   mutations: {
-    emptyMember: state => state.room.members.splice(0, state.room.members.length),
-    /** チャットのタブを選択したことをデータに反映する */
+    /**
+     * ルームメンバを空にする
+     * @param state
+     * @returns {*[]}
+     */
+    emptyMember: state =>
+      state.room.members.splice(0, state.room.members.length),
+
+    /**
+     * チャットのタブを選択したことをデータに反映する
+     * @param state
+     * @param tab
+     */
     chatTabSelect (state, tab) {
       for (let tabObj of state.chat.tabs) {
         tabObj.isActive = tab === tabObj.name
@@ -151,16 +234,28 @@ const storeModulePublic = {
         }
       }
     },
-    inputPeerId (state, payload) {
-      if (!state.chat.inputting[payload.peerId]) {
-        this._vm.$set(state.chat.inputting, payload.peerId, 0)
+
+    /**
+     * ルームメンバの入力中状態の変化
+     * @param state
+     * @param payload
+     */
+    inputPeerId (state, { peerId, add }) {
+      // プロパティが無ければ、リアクティブになる形式で登録をする
+      if (!state.chat.inputting[peerId]) {
+        this._vm.$set(state.chat.inputting, peerId, 0)
       }
-      state.chat.inputting[payload.peerId] += payload.add
+      // 値の足し込み
+      state.chat.inputting[peerId] += add
     },
-    /** 画像のタブの構成を変更する */
-    imageTagChange (state, payload) {
-      const key = payload.key
-      const imageList = payload.imageList
+
+    /**
+     * 画像のタブの構成を変更する
+     * @param state
+     * @param key
+     * @param imageList
+     */
+    imageTagChange (state, { key, imageList }) {
       const imageObj = imageList.filter(imageObj => imageObj.key === key)[0]
       const useTexts = []
       /* eslint no-control-regex: 0 */
@@ -210,7 +305,13 @@ const storeModulePublic = {
       // リアクティブ発火
       imageList.splice(imageList.indexOf(imageObj), 1, imageObj)
     },
-    /** チャットのタブの構成を変更する */
+
+    /**
+     * チャットのタブの構成を変更する
+     * @param state
+     * @param tabsText
+     * @param lastActiveTab
+     */
     changeChatTab (state, {tabsText, lastActiveTab}) {
       // 配列を空にする
       state.chat.tabs.splice(0, state.chat.tabs.length)
@@ -237,8 +338,9 @@ const storeModulePublic = {
       // 削除されたタブの検知
       let deleteLogTabList = []
       for (let tab in state.chat.logs) {
+        if (!state.chat.logs.hasOwnProperty(tab)) continue
         let findFlg = false
-        for (let tabsTab of state.chat.tabs) {
+        for (const tabsTab of state.chat.tabs) {
           if (tabsTab.name === tab) {
             findFlg = true
             break
@@ -259,31 +361,61 @@ const storeModulePublic = {
         }
       }
     }
-  },
+  }, /* end of mutations */
+
   getters: {
+    /**
+     * 選択済みのチャットのタブのオブジェクト
+     * @param state
+     * @returns {T}
+     */
     activeChatTab: state => state.chat.tabs.filter(tabObj => tabObj.isActive)[0],
+
+    /**
+     * 選択済みのタブのチャットログ一覧
+     * @param state
+     * @param getters
+     * @returns {*}
+     */
     chatLogs: (state, getters) => state.chat.logs[getters.activeChatTab.name],
+
+    /**
+     * グリッドに合わせるかどうか
+     * @param state
+     * @returns {boolean}
+     */
     isFitGrid: state => state.setting.isFitGrid,
-    getPieceObj: (state, getters) => (type, key, logFlg) => {
-      const filteredList = state[type].list.filter(obj => obj.key === key)
-      if (filteredList.length === 0) {
-        console.error(`指定されたピースは見つからなかった。type:"${type}", key:"${key}"`)
-        return null
-      }
-      if (filteredList.length > 1) {
-        console.error(`指定されたピースは複数Hitした。type:"${type}", key:"${key}"`)
-        for (let obj of filteredList) {
-          console.log('$$$', obj)
+
+    getPieceObj: (state, getters) =>
+      /**
+       * 指定されたタイプのオブジェクトの中から、指定されたキーのオブジェクトを絞り込んで取得する
+       * @param type
+       * @param key
+       * @param logOff
+       * @returns {*}
+       */
+      (type, key, logOff = true) => {
+        const result = getters.getKeyObj(state[type].list, key)
+        if (!logOff) {
+          console.log(`  [getters] pieceObj[${type}]#${key} => ${getters.objToString(result)}`)
         }
-        return null
-      }
-      if (logFlg) {
-        console.log(`  [getters] pieceObj[${type}]#${key} => ${getters.objToString(filteredList[0])}`)
-      }
-      return filteredList[0]
-    },
-    pieceList: state => type => state[type].list.map(pieceObj => ({ key: pieceObj.key })),
+        return result
+      },
+
+    pieceKeyList: state =>
+      /**
+       * 指定されたタイプのオブジェクトの、キーの一覧を取得する
+       * @param type
+       * @returns {*}
+       */
+      (type) => state[type].list.map(pieceObj => pieceObj.key),
+
+    /**
+     * 現在の背景画像
+     * @param state
+     * @returns {*}
+     */
     getBackgroundImage: state => state.image.list.filter(d => d.key === state.map.imageKey)[0].data
-  }
+  } /* end of getters */
 }
 export default storeModulePublic

@@ -70,16 +70,17 @@ export default {
     }
   },
   mounted () {
-    document.addEventListener('mousemove', function (event) {
-      this.mouse.x = event.pageX
-      this.mouse.y = event.pageY
-      this.reflesh()
-    }.bind(this))
-    document.addEventListener('touchmove', function (event) {
-      this.mouse.x = event.changedTouches[0].pageX
-      this.mouse.y = event.changedTouches[0].pageY
-      this.reflesh()
-    }.bind(this))
+    const _ = this
+    document.addEventListener('mousemove', event => {
+      _.mouse.x = event.pageX
+      _.mouse.y = event.pageY
+      _.reflesh()
+    })
+    document.addEventListener('touchmove', event => {
+      _.mouse.x = event.changedTouches[0].pageX
+      _.mouse.y = event.changedTouches[0].pageY
+      _.reflesh()
+    })
     this.addEventForIFrame()
   },
   methods: {
@@ -177,38 +178,39 @@ export default {
       const elms = document.getElementsByTagName('iframe')
       for (const iframeElm of elms) {
         // マウス移動
-        const mouseMoveListener = function (event) {
+        const mouseMoveListener = event => {
           const iframeRect = iframeElm.getBoundingClientRect()
           const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top }
           document.dispatchEvent(new MouseEvent('mousemove', evtObj))
         }
         // タッチ移動
-        const touchMoveListener = function (event) {
+        const touchMoveListener = event => {
           const iframeRect = iframeElm.getBoundingClientRect()
           const evtObj = { changedTouches: [{ clientX: event.changedTouches[0].pageX + iframeRect.left, clientY: event.changedTouches[0].pageY + iframeRect.top }] }
           document.dispatchEvent(new MouseEvent('touchmove', evtObj))
         }
         // クリック
-        const clickListener = function (event) {
+        const clickListener = event => {
           const iframeRect = iframeElm.getBoundingClientRect()
           const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top, button: event.button }
           document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('click', evtObj))
         }
         // マウス離す
-        const mouseupListener = function (event) {
+        const _ = this
+        const mouseupListener = event => {
           const iframeRect = iframeElm.getBoundingClientRect()
           const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top, button: event.button }
           if (event.button === 2) {
-            this.setProperty({property: `map.isOverEvent`, value: true})
+            _.setProperty({property: `map.isOverEvent`, value: true})
           }
           document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
-        }.bind(this)
+        }
         // コンテキストメニュー防止
-        const contextmenuListener = function (event) {
+        const contextmenuListener = () => {
           return false
         }
         if (!iframeElm.onload) {
-          iframeElm.onload = function () {
+          iframeElm.onload = () => {
             const bodyElm = iframeElm.contentWindow.document
             if (!bodyElm.onmousemove) { bodyElm.onmousemove = mouseMoveListener }
             if (!bodyElm.ontouchmove) { bodyElm.ontouchmove = touchMoveListener }
@@ -236,8 +238,8 @@ export default {
     }
   },
   watch: {
-    isDisplay (newValue, oldValue) {
-      if (newValue) {
+    isDisplay (isDisplay) {
+      if (isDisplay) {
         // console.log(`    [watch] window open => ${this.displayProperty}`)
         this.windowFactor.l = 0
         this.windowFactor.r = 0
@@ -246,14 +248,15 @@ export default {
         this.windowFactor.w = 0
         this.windowFactor.h = 0
         setTimeout(this.addEventForIFrame, 0)
-        setTimeout(function () { this.$emit('open') }.bind(this), 0)
+        const _ = this
+        setTimeout(() => _.$emit('open'), 0)
       } else {
         // console.log(`    [watch] window close => ${this.displayProperty}`)
         this.$emit('close')
       }
     },
-    isResetPosition (newValue, oldValue) {
-      if (newValue) {
+    isResetPosition (isResetPosition) {
+      if (isResetPosition) {
         // console.log(`    [watch] window reset => ${this.displayProperty}`)
         this.windowFactor.l = 0
         this.windowFactor.r = 0
@@ -271,26 +274,26 @@ export default {
   computed: mapState({
     ...mapGetters([
       'isWindowOpen',
-      'getState'
+      'getStateValue'
     ]),
     isDisplay () { return !this.displayProperty ? false : this.isWindowOpen(this.displayProperty) },
-    isResetPosition () { return !this.displayProperty ? false : this.getState(this.displayProperty).doResetPosition },
-    zIndex () { return this.getState(this.displayProperty).zIndex },
+    isResetPosition () { return !this.displayProperty ? false : this.getStateValue(this.displayProperty).doResetPosition },
+    zIndex () { return this.getStateValue(this.displayProperty).zIndex },
     isFix () { return this.fixSize !== undefined },
-    fixW () { return !this.isFix ? -1 : parseInt(this.fixSize.split(',')[0].trim()) },
-    fixH () { return !this.isFix ? -1 : parseInt(this.fixSize.split(',')[1].trim()) },
+    fixW () { return !this.isFix ? -1 : parseInt(this.fixSize.split(',')[0].trim(), 10) },
+    fixH () { return !this.isFix ? -1 : parseInt(this.fixSize.split(',')[1].trim(), 10) },
     base () {
       if (!this.baseSize) { return { w: 0, h: 0 } }
       return {
-        w: parseInt(this.baseSize.split(',')[0].trim()),
-        h: parseInt(this.baseSize.split(',')[1].trim())
+        w: parseInt(this.baseSize.split(',')[0].trim(), 10),
+        h: parseInt(this.baseSize.split(',')[1].trim(), 10)
       }
     },
     min () {
       if (!this.minSize) { return { w: 0, h: 0 } }
       return {
-        w: parseInt(this.minSize.split(',')[0].trim()),
-        h: parseInt(this.minSize.split(',')[1].trim())
+        w: parseInt(this.minSize.split(',')[0].trim(), 10),
+        h: parseInt(this.minSize.split(',')[1].trim(), 10)
       }
     },
     windowStyle () {
@@ -413,7 +416,7 @@ export default {
   display: flex; align-items: center; justify-content: center;
 }
 .title.fix {
-  background: linear-gradient(rgba(170, 233, 203, 1), rgba(142, 226, 186, 1));
+  background: linear-gradient(rgba(170, 233, 203, 0.8), rgba(142, 226, 186, 0.8));
 }
 .title span {
   position: absolute;

@@ -1,7 +1,7 @@
 <template>
-  <input type="checkbox"
-    @change="event => changeProperty(event.target.checked)"
-    :checked="storePropertyValue"
+  <input type="number"
+    @change="event => changeProperty(event.target.value)"
+    :value="storePropertyValue"
     @dblclick.stop>
 </template>
 
@@ -9,7 +9,7 @@
 import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
-  name: 'propCheckBox',
+  name: 'propNumber',
   props: {
     baseProperty: { type: String, required: true },
     objKey: { type: String, required: true },
@@ -47,4 +47,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+input {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: gray;
+  padding: 0;
+  /* border: none; */
+  background-color: transparent;
+}
 </style>

@@ -17,11 +17,11 @@
       <MapBoard/>
     </div>
 
-    <MapMask v-for="mapMaskObj in pieceList('mapMask')" type="mapMask" :objKey="mapMaskObj.key" :key="mapMaskObj.key"
+    <MapMask v-for="key in pieceKeyList('mapMask')" type="mapMask" :objKey="key" :key="key"
       @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
-    <Character v-for="characterObj in pieceList('character')" type="character" :objKey="characterObj.key" :key="characterObj.key"
+    <Character v-for="key in pieceKeyList('character')" type="character" :objKey="key" :key="key"
       @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
-    <Chit v-for="chitObj in pieceList('chit')" type="chit" :objKey="chitObj.key" :key="chitObj.key"
+    <Chit v-for="key in pieceKeyList('chit')" type="chit" :objKey="key" :key="key"
       @leftDown="leftDown" @leftUp="leftUp" @rightDown="rightDown" @rightUp="rightUp" @drag="dragging"/>
 
   </div>
@@ -85,8 +85,7 @@ export default {
         y: (mouseOnTable.y - center.y)
       }
       // 中心点と指定された座標とを結ぶ線の角度を求める
-      const angle = Math.atan2(loc.y, loc.x) * 180 / Math.PI
-      return angle
+      return Math.atan2(loc.y, loc.x) * 180 / Math.PI
     },
     leftDown () {
       // console.log(`  [methods] mousedown left on GameTable`)
@@ -244,8 +243,8 @@ export default {
         const name = event.dataTransfer.getData('name')
         const color = event.dataTransfer.getData('color')
         const fontColor = event.dataTransfer.getData('fontColor')
-        const columns = parseInt(event.dataTransfer.getData('columns'))
-        const rows = parseInt(event.dataTransfer.getData('rows'))
+        const columns = parseInt(event.dataTransfer.getData('columns'), 10)
+        const rows = parseInt(event.dataTransfer.getData('rows'), 10)
 
         // 必須項目
         pieceObj.propName = 'mapMask'
@@ -268,7 +267,7 @@ export default {
         const isHide = event.dataTransfer.getData('isHide') === 'true'
         const url = event.dataTransfer.getData('urlStr')
         const text = event.dataTransfer.getData('description')
-        const useImageIndex = parseInt(event.dataTransfer.getData('useImageIndex'))
+        const useImageIndex = parseInt(event.dataTransfer.getData('useImageIndex'), 10)
         const currentImageTag = event.dataTransfer.getData('currentImageTag')
 
         // 必須項目
@@ -286,7 +285,7 @@ export default {
 
         if (this.$store.state.private.display.addCharacterWindow.isContinuous) {
           const splits = name.split('_')
-          const continuousNum = parseInt(splits[splits.length - 1])
+          const continuousNum = parseInt(splits[splits.length - 1], 10)
           this.setProperty({property: 'private.display.addCharacterWindow.continuousNum', value: continuousNum + 1})
         } else {
           this.windowClose('private.display.addCharacterWindow')
@@ -444,7 +443,7 @@ export default {
   },
   computed: mapState({
     ...mapGetters([
-      'pieceList',
+      'pieceKeyList',
       'isFitGrid',
       'parseColor',
       'getBackgroundImage'
@@ -458,8 +457,8 @@ export default {
     angle: state => state.private.map.angle,
     angleVolatil: state => state.map.angle,
     currentAngle () { return this.arrangeAngle(this.angle.total + this.angleVolatil.dragging) },
-    sizeW () { return (this.columns + this.marginGridSize * 2) * this.gridSize + 0 },
-    sizeH () { return (this.rows + this.marginGridSize * 2) * this.gridSize + 0 },
+    sizeW () { return (this.columns + this.marginGridSize * 2) * this.gridSize },
+    sizeH () { return (this.rows + this.marginGridSize * 2) * this.gridSize },
     marginGridColor: state => state.public.map.margin.gridColor,
     marginMaskColor: state => state.public.map.margin.maskColor,
     marginMaskAlpha: state => state.public.map.margin.maskAlpha,
@@ -532,16 +531,14 @@ export default {
   text-align: center;
   vertical-align: middle;
   -khtml-user-drag: element;
-  background-position: 0px 0px;
+  background-position: 0 0;
   background-size: 100% 100%;
   cursor: crosshair;
-  border: none;
   /*
   box-sizing: border-box;
   */
   perspective: 1000px;
-  border-style: ridge;
-  border-color: gray;
+  border: ridge gray;
   overflow: hidden;
 }
 #gameTable:before{
@@ -558,7 +555,7 @@ export default {
   left: -10px;
   right: -10px;
   bottom: -10px;
-  z-index: -1;/*重なり順序を一番下にしておく*/
+  z-index: -1; /*重なり順序を一番下にしておく*/
 }
 #gameTable > div {
   background-position: 1px 1px;
@@ -574,7 +571,6 @@ export default {
   height: 100%;
   box-sizing: border-box;
   border: none;
-  border-width: 0;
   text-align: center;
   vertical-align: middle;
 }

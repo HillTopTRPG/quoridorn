@@ -40,7 +40,7 @@ export default {
     },
     addTab () {
       let tabs = ''
-      this.texts.forEach(function (textObj, index) {
+      this.texts.forEach(function (textObj) {
         textObj.replace(/"/g, '\\"')
         tabs += `"${textObj.tab}",`
       })
@@ -82,10 +82,9 @@ export default {
   font-size: 10px;
   background: linear-gradient(rgba(240, 240, 240, 1), rgba(0, 0, 0, 0.2));
   padding: 4px 10px;
-  border-style: solid;
-  border-width: 1px 1px 0px 1px;
-  border-color: gray;
-  border-radius: 5px 5px 0px 0px;
+  border: 1px solid gray;
+  border-bottom-width: 0;
+  border-radius: 5px 5px 0 0;
   margin-right: -1px;
   z-index: 10;
   white-space: nowrap;
@@ -99,7 +98,6 @@ export default {
 }
 .tab.active,
 .tab:active {
-  background: none;
   background-color: white;
 }
 .tab:hover {
@@ -108,14 +106,11 @@ export default {
 }
 .log {
   display: block;
-  margin-top: 0px;
   background-color: white;
   flex: 1;
 -moz-box-flex: 1;
   -webkit-box-flex: 1;
-  border-style: solid;
-  border-width: 1px 1px 1px 1px;
-  border-color: gray;
+  border: 1px solid gray;
   overflow-y: scroll;
   overflow-x: auto;
   margin: 0;

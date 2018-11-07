@@ -49,6 +49,7 @@ export default {
       this.saveDataList.forEach(saveData => {
         const propProc = (target, props) => {
           for (const prop in props) {
+            if (!props.hasOwnProperty(prop)) continue
             const val = props[prop]
             if (!(val instanceof Object) || (val instanceof Array)) {
               target[prop] = val
@@ -110,12 +111,12 @@ export default {
     }
   },
   watch: {
-    storeZipList (newValue, oldValue) {
+    storeZipList (storeZipList) {
       this.saveDataList = []
-      if (!newValue) {
+      if (!storeZipList) {
         return
       }
-      newValue.forEach(saveDataObj => {
+      storeZipList.forEach(saveDataObj => {
         const useList = []
         const publicData = saveDataObj.saveData.public
         if (publicData.setting) {

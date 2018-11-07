@@ -10,7 +10,6 @@ Vue.use(Vuex)
 
 /**
  * Store
- * @type {Vuex}
  */
 const actionFile = {
   actions: {
@@ -33,6 +32,7 @@ const actionFile = {
       }))
       // 開いてないディスプレイ情報は保存データには含めない
       for (const key in saveData.private.display) {
+        if (!saveData.private.display.hasOwnProperty(key)) continue
         if (!saveData.private.display[key].isDisplay) {
           delete saveData.private.display[key]
         }
@@ -70,7 +70,7 @@ const actionFile = {
           useImageKeys.forEach(uiKey => {
             const matchKey = imageKeys.filter(iKey => iKey === uiKey)[0]
             if (!matchKey) return
-            const afterKey = matchKey.replace(/[0-9]+/, s => `$${imageKeys.indexOf(matchKey)}`)
+            const afterKey = matchKey.replace(/[0-9]+/, () => `$${imageKeys.indexOf(matchKey)}`)
             useImageList = useImageList.replace(matchKey, afterKey)
           })
           hiObj.useImageList = useImageList
@@ -79,7 +79,7 @@ const actionFile = {
         if (imageKey) {
           const matchKey = imageKeys.filter(iKey => iKey === imageKey)[0]
           if (matchKey) {
-            const afterKey = matchKey.replace(/[0-9]+/, s => `$${imageKeys.indexOf(matchKey)}`)
+            const afterKey = matchKey.replace(/[0-9]+/, () => `$${imageKeys.indexOf(matchKey)}`)
             imageKey = imageKey.replace(matchKey, afterKey)
             hiObj.imageKey = imageKey
           }
@@ -90,10 +90,10 @@ const actionFile = {
       const func = hisObj => {
         const prefex = hisObj.key.split('-')[0]
         if (prefex === 'image') {
-          hisObj.key = hisObj.key.replace(/[0-9]+/, s => `$${imageKeys.indexOf(hisObj.key)}`)
+          hisObj.key = hisObj.key.replace(/[0-9]+/, () => `$${imageKeys.indexOf(hisObj.key)}`)
         }
         if (prefex === 'character' || prefex === 'chit') {
-          hisObj.key = hisObj.key.replace(/[0-9]+/, s => `$${hasImgKeys.indexOf(hisObj.key)}`)
+          hisObj.key = hisObj.key.replace(/[0-9]+/, () => `$${hasImgKeys.indexOf(hisObj.key)}`)
         }
       }
       saveData.private.history.forEach(func)
@@ -149,7 +149,7 @@ const actionFile = {
       const zipList = []
       const promiseList = []
       for (const file of zipFiles) {
-        promiseList.push(new Promise((resolve, reject) => {
+        promiseList.push(new Promise((resolve) => {
           zip.loadAsync(file)
             .then(zip => {
               // you now have every files contained in the loaded zip
@@ -193,9 +193,7 @@ const actionFile = {
         if (publicData.image) {
           addImageKeyList = publicData.image.list.map(imgObj => {
             dispatch('doAddImage', imgObj)
-            const currentImageKeyNum = rootState.public.image.maxKey
-            const imageKey = `image-${currentImageKeyNum}`
-            return imageKey
+            return `image-${rootState.public.image.maxKey}`
           })
           const func = hisObj => {
             let key = hisObj.key
@@ -203,7 +201,7 @@ const actionFile = {
             if (key.split('-')[0] === 'image') {
               const matchObj = key.match(/\$([0-9]+)/)
               console.log(matchObj[1])
-              const index = parseInt(matchObj[1])
+              const index = parseInt(matchObj[1], 10)
               hisObj.key = addImageKeyList[index]
             }
           }

@@ -123,7 +123,7 @@ export default {
       "viewImage  viewImage  imageInfo"
       "viewImage  viewImage  otherText"
       "rowsNum    columnsNum otherText"
-      "buttonArea buttonArea buttonArea"
+      "buttonArea buttonArea buttonArea";
 }
 .tagImages {
   display: flex;

@@ -60,8 +60,8 @@ export default {
     }
   },
   watch: {
-    yourPeerId (newValue, oldValue) {
-      this.currentPeerId = newValue
+    yourPeerId (yourPeerId) {
+      this.currentPeerId = yourPeerId
     }
   },
   computed: mapState({

@@ -3,7 +3,7 @@
     <div class="container">
       <div class="name">{{name}}</div>
       <div class="image"><img class="img" v-img="imageObj.data" @dragstart="dragStart" draggable="true" :class="{reverse : imageObj.isReverse}" @mousedown.stop/></div>
-      <div class="controllArea">
+      <div class="controlArea">
         <label><input type="checkbox" v-model="is_Continuous"/>複数作成</label>
         <span>連番：</span><input type="number" min="0" v-model="continuous_Num" :disabled="!isContinuous"/>
       </div>
@@ -31,6 +31,10 @@ export default {
       'setProperty',
       'windowClose'
     ]),
+    /**
+     * ドラッグ開始時
+     * @param event
+     */
     dragStart (event) {
       event.dataTransfer.setData('kind', 'character')
       event.dataTransfer.setData('name', this.name)
@@ -70,11 +74,11 @@ export default {
     }
   },
   watch: {
-    is_Continuous (newVal, oldVal) {
-      this.setProperty({property: `private.display.addCharacterWindow.isContinuous`, value: newVal})
+    is_Continuous (value) {
+      this.setProperty({property: `private.display.addCharacterWindow.isContinuous`, value: value})
     },
-    continuousNum (newVal, oldVal) {
-      this.continuous_Num = newVal
+    continuousNum (continuousNum) {
+      this.continuous_Num = continuousNum
     }
   },
   computed: mapState({
@@ -135,9 +139,6 @@ export default {
 }
 .image img.reverse {
   transform: scale(-1, 1);
-}
-.controllArea {
-
 }
 label {
   display: flex;

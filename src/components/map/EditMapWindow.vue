@@ -147,8 +147,8 @@ export default {
             imageKey: this.edit.imageKey,
             isReverse: this.edit.isReverse,
             margin: {
-              gridSize: parseInt(this.edit.marginGridSize),
-              borderWidth: parseInt(this.edit.borderWidth),
+              gridSize: parseInt(this.edit.marginGridSize, 10),
+              borderWidth: parseInt(this.edit.borderWidth, 10),
               gridColor: this.edit.marginGridColor,
               isUseGridColor: this.edit.isUseGridColor,
               isUseImage: this.edit.isUseImage,
@@ -156,8 +156,8 @@ export default {
               maskAlpha: parseFloat(this.edit.maskAlpha)
             },
             grid: {
-              totalColumn: parseInt(this.edit.totalColumn),
-              totalRow: parseInt(this.edit.totalRow),
+              totalColumn: parseInt(this.edit.totalColumn, 10),
+              totalRow: parseInt(this.edit.totalRow, 10),
               color: this.edit.gridColor
             },
             background: this.edit.backgroundColor,
@@ -180,8 +180,8 @@ export default {
             imageKey: this.original.imageKey,
             isReverse: this.original.isReverse,
             margin: {
-              gridSize: parseInt(this.original.marginGridSize),
-              borderWidth: parseInt(this.original.borderWidth),
+              gridSize: parseInt(this.original.marginGridSize, 10),
+              borderWidth: parseInt(this.original.borderWidth, 10),
               gridColor: this.original.marginGridColor,
               isUseGridColor: this.original.isUseGridColor,
               isUseImage: this.original.isUseImage,
@@ -189,8 +189,8 @@ export default {
               maskAlpha: parseFloat(this.original.maskAlpha)
             },
             grid: {
-              totalColumn: parseInt(this.original.totalColumn),
-              totalRow: parseInt(this.original.totalRow),
+              totalColumn: parseInt(this.original.totalColumn, 10),
+              totalRow: parseInt(this.original.totalRow, 10),
               color: this.original.gridColor
             },
             background: this.original.backgroundColor,
@@ -229,7 +229,7 @@ export default {
       this.setProperty({property: 'public.map.isReverse', value: isReverse})
     },
     'edit.marginGridSize': function (marginGridSize) {
-      this.setProperty({property: 'public.map.margin.gridSize', value: parseInt(marginGridSize)})
+      this.setProperty({property: 'public.map.margin.gridSize', value: parseInt(marginGridSize, 10)})
     },
     'edit.isUseGridColor': function (isUseGridColor) {
       this.setProperty({property: 'public.map.margin.isUseGridColor', value: isUseGridColor})
@@ -247,13 +247,13 @@ export default {
       this.setProperty({property: 'public.map.margin.maskAlpha', value: parseFloat(maskAlpha)})
     },
     'edit.borderWidth': function (borderWidth) {
-      this.setProperty({property: 'public.map.margin.borderWidth', value: parseInt(borderWidth)})
+      this.setProperty({property: 'public.map.margin.borderWidth', value: parseInt(borderWidth, 10)})
     },
     'edit.totalColumn': function (totalColumn) {
-      this.setProperty({property: 'public.map.grid.totalColumn', value: parseInt(totalColumn)})
+      this.setProperty({property: 'public.map.grid.totalColumn', value: parseInt(totalColumn, 10)})
     },
     'edit.totalRow': function (totalRow) {
-      this.setProperty({property: 'public.map.grid.totalRow', value: parseInt(totalRow)})
+      this.setProperty({property: 'public.map.grid.totalRow', value: parseInt(totalRow, 10)})
     },
     'edit.gridColor': function (gridColor) {
       this.setProperty({property: 'public.map.grid.color', value: gridColor})
@@ -263,9 +263,7 @@ export default {
     }
   },
   computed: mapState({
-    ...mapGetters([
-      'getPieceObj'
-    ]),
+    ...mapGetters([]),
     selectedTagIndexText () {
       const imageList = this.imageList
       const keyObj = this.getKeyObj(imageList, this.edit.imageKey)
@@ -309,7 +307,7 @@ p {
       "imageAreaSettings"
       "marginAreaSettings"
       "backgroundAreaSettings"
-      "buttonArea"
+      "buttonArea";
 }
 .tagImages {
   display: flex;
@@ -362,10 +360,10 @@ fieldset > div > div {
   margin-left: 10px;
 }
 fieldset > div > div > label {
-  display: inline-block;
+  user-select: none;
+  -ms-user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none;
   display: flex;
   display: -moz-flex;
   display: -o-flex;

@@ -32,22 +32,23 @@ import EditMapWindow from './components/map/EditMapWindow'
 import EditCharacterWindow from './components/map/character/EditCharacterWindow'
 import SettingBGMWindow from './components/music/SettingBGMWindow'
 import JukeboxWindow from './components/music/JukeboxWindow'
+import EditBGMWindow from './components/music/EditBGMWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
 
 Vue.config.productionTip = false
 
-Vue.directive('img', function (el, binding, compornent) {
+Vue.directive('img', (el, binding) => {
   const imgData = binding.value
   if (imgData === '') {
     el.src = ''
     return
   }
-  var img = new Image()
+  const img = new Image()
   img.src = imgData
 
-  img.onload = function () {
+  img.onload = () => {
     el.src = imgData
     el.style.opacity = 1
     el.classList.add('loaded')
@@ -57,12 +58,12 @@ Vue.directive('img', function (el, binding, compornent) {
   }
 })
 
-Vue.directive('bg-img', function (el, binding, compornent) {
+Vue.directive('bg-img', (el, binding) => {
   const imgData = binding.value
-  var img = new Image()
+  const img = new Image()
   img.src = imgData
 
-  img.onload = function () {
+  img.onload = () => {
     el.style['background-image'] = `url(${imgData})`
     el.style.opacity = 1
     el.classList.add('loaded')
@@ -79,11 +80,11 @@ const app = new Vue({
     JukeboxWindow: JukeboxWindow
   },
   mounted () {
-    this.onMountApp(this.$refs.jukeboxWindow)
+    this.setJukeboxWindow(this.$refs.jukeboxWindow)
   },
   methods: {
     ...mapActions([
-      'onMountApp'
+      'setJukeboxWindow'
     ])
   },
   // render: h => h(App),
@@ -168,3 +169,6 @@ editCharacterWindow.$mount('#editCharacterWindow')
 
 const settingBGMWindow = new Vue({ store, components: { SettingBGMWindow: SettingBGMWindow }, template: `<SettingBGMWindow/>` })
 settingBGMWindow.$mount('#settingBGMWindow')
+
+const editBGMWindow = new Vue({ store, components: { EditBGMWindow: EditBGMWindow }, template: `<EditBGMWindow/>` })
+editBGMWindow.$mount('#editBGMWindow')

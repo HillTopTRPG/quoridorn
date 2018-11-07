@@ -10,10 +10,8 @@
           <label class="passwordLabel">隠し画像パスワード：{{imageObj.password !== '' ? 'あり' : 'なし'}}</label>
           <span class="tagLabel">付与するタグ(半角・全角スペースで区切り)</span>
           <input class="tagInput" type="text" @change="changeTag(imageObj.key)" v-model="imageObj.currentTag" />
-          <select class="tagSelect" list="dropImageWindowTags" @change="selectTag(imageObj.key)" v-model="imageObj.selectTag">
-          <!-- <datalist id="dropImageWindowTags"> -->
+          <select class="tagSelect" @change="selectTag(imageObj.key)" v-model="imageObj.selectTag">
             <option v-for="tagObj in tagList" :key="tagObj.key" :value="tagObj.name">{{tagObj.name}}</option>
-          <!-- </datalist> -->
           </select>
         </div>
       </fieldset>
@@ -85,9 +83,9 @@ export default {
     }
   },
   watch: {
-    storeImageList (newValue, oldValue) {
+    storeImageList (storeImageList) {
       this.imageList = []
-      newValue.forEach(imgObj => {
+      storeImageList.forEach(imgObj => {
         this.imageList.push({
           image: imgObj.image,
           name: imgObj.name,

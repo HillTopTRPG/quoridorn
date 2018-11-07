@@ -1,7 +1,7 @@
 <template>
   <WindowFrame titleText="隠しダイスロール結果" display-property="private.display.secretDiceWindow" align="center" baseSize="300, 10">
-    <div class="result" v-for="(obj, index) in results">
-      <textarea v-model="obj.text"></textarea>
+    <div class="contents" v-for="(obj, index) in results" :key="index">
+      <textarea v-model="obj.text" title=""></textarea>
       <button @click="clickOpen(obj.key)">結果公開</button>
     </div>
   </WindowFrame>

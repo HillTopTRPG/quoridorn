@@ -29,40 +29,40 @@ export default {
       'windowClose',
       'doResetWindowLocate'
     ]),
-    addCharacter (event) {
+    addCharacter () {
       console.log(`  [methods] select context item => GameTable.addCharacter`)
       this.windowOpen('private.display.addCharacterSettingWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    addMapMask (event) {
+    addMapMask () {
       console.log(`  [methods] select context item => GameTable.addMapMask`)
       this.windowOpen('private.display.addMapMaskWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    addMapMarker (event) {
+    addMapMarker () {
       console.log(`  [methods] select context item => GameTable.addMapMarker`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップマーカー追加'})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    addDiceSymbol (event) {
+    addDiceSymbol () {
       console.log(`  [methods] select context item => GameTable.addDiceSymbol`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスシンボル追加'})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    createHandCardArea (event) {
+    createHandCardArea () {
       console.log(`  [methods] select context item => GameTable.createHandCardArea`)
       alert('未実装の機能です。')
       this.windowClose('private.display.gameTableContext')
     },
-    createMessageCard (event) {
+    createMessageCard () {
       console.log(`  [methods] select context item => GameTable.createMessageCard`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'メッセージカード追加'})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
-    resetWindowLocate (event) {
+    resetWindowLocate () {
       console.log(`  [methods] select context item => GameTable.resetWindowLocate`)
       this.doResetWindowLocate()
       this.windowClose('private.display.gameTableContext')

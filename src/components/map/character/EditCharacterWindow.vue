@@ -137,7 +137,7 @@ export default {
         return
       }
       let useImageList = ''
-      this.switchImageList.forEach(function (imgObj, index) {
+      this.switchImageList.forEach(imgObj => {
         const isReverseStr = imgObj.isReverse ? ':R' : ''
         const imgStr = imgObj.imgKey + isReverseStr
         useImageList += imgStr + '|'

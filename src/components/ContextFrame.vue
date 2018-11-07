@@ -23,18 +23,17 @@ export default {
   computed: mapState({
     ...mapGetters([
       'isWindowOpen',
-      'getState'
+      'getStateValue'
     ]),
     isDisplay () {
       return this.isWindowOpen(this.displayProperty)
     },
     contextStyle () {
-      const displayObj = this.getState(this.displayProperty)
-      const obj = {
+      const displayObj = this.getStateValue(this.displayProperty)
+      return {
         top: displayObj.y - 5 + 'px',
         left: displayObj.x - 5 + 'px'
       }
-      return obj
     }
   })
 }

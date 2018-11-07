@@ -13,7 +13,7 @@ Vue.use(Vuex)
 
 /**
  * Store
- * @type {Vuex}
+ * @type {Store}
  */
 const store = new Vuex.Store({
   modules: {
@@ -58,26 +58,39 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    onMount ({ dispatch, state }, jukeboxWindow) {
+    /**
+     * =================================================================================================================
+     * 起動時の最初の処理
+     * @param dispatch
+     * @param state
+     */
+    onMount ({ dispatch, state }) {
+      // 特定の画面は最初に開く
       dispatch('windowOpen', 'private.display.chatWindow')
       // dispatch('windowOpen', 'private.display.initiativeWindow')
       // dispatch('windowOpen', 'private.display.resourceWindow')
-      // dispatch('windowOpen', 'private.display.chatpaletteWindow')
+      // dispatch('windowOpen', 'private.display.chatPaletteWindow')
       // dispatch('windowOpen', 'private.display.counterRemoConWindow')
       dispatch('windowOpen', 'private.display.functionListWindow')
+
+      // URLパラメータ取得処理
       const getParam = (name, url = window.location.href) => {
         name = name.replace(/[[\]]/g, '\\$&')
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-        var results = regex.exec(url)
+        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+        let results = regex.exec(url)
         if (!results) return null
         if (!results[2]) return ''
         return decodeURIComponent(results[2].replace(/\+/g, ' '))
       }
+
+      // URLパラメータの処理
       // const webif = getParam('webif')
       const roomId = getParam('roomId')
       const peerId = getParam('peerId')
       const password = getParam('password')
       state.private.connect.password = !password ? '' : password
+
+      // 部屋が指定されていたら接続しにいく
       if (roomId) {
         dispatch('createPeer', {
           roomId: roomId,
@@ -85,37 +98,69 @@ const store = new Vuex.Store({
         })
       }
     },
-    windowOperation ({ dispatch }, payload) {
-      dispatch('sendNoticeOperation', { value: payload, method: 'doWindowOperation' })
-    },
-    doWindowOperation ({ rootState, getters }, payload) {
-      const displayProperty = payload.displayProperty
-      const method = payload.method
-      const args = payload.args
-      const target = getters.getState(displayProperty)
-      target.ref[method](...args)
-    },
-    sendNoticeOperation ({ dispatch, state }, payload) {
+
+    /**
+     * =================================================================================================================
+     * ルームメンバがいる場合は部屋主に対して処理の通知を出し、そうでない場合はこの場で処理を実行する
+     * @param dispatch
+     * @param state
+     * @param method
+     * @param value
+     */
+    sendNoticeOperation ({ dispatch, state }, { method, value }) {
       let type = null
       if (state.public.room.members[0]) {
-        payload.value.ownerPeerId = state.private.connect.peerId
+        value.ownerPeerId = state.private.connect.peerId
         if (state.public.room.members[0].peerId === state.private.connect.peerId) {
           type = 'DO_METHOD'
-          dispatch(payload.method, payload.value)
+          dispatch(method, value)
         } else {
           type = 'NOTICE_OPERATION'
         }
-        dispatch('sendRoomData', { type: type, value: payload.value, method: payload.method })
+        dispatch('sendRoomData', { type: type, value: value, method: method })
       } else {
-        payload.value.ownerPeerId = null
-        dispatch(payload.method, payload.value)
+        value.ownerPeerId = null
+        dispatch(method, value)
       }
     },
-    changeDisplay ({ dispatch }, payload) {
-      dispatch('sendNoticeOperation', { value: payload, method: 'doChangeDisplay' })
-    },
-    doChangeDisplay ({ getters, commit }, {property}) {
-      const target = getters.getState(property)
+
+    /**
+     * =================================================================================================================
+     * 指定されたパラメータパスで取得できる画面の実体のメソッドを直接呼び出す
+     * @param dispatch
+     * @param payload
+     * @returns {*}
+     */
+    windowOperation: ({ dispatch }, payload) =>
+      dispatch('sendNoticeOperation', { value: payload, method: 'doWindowOperation' }),
+    /**
+     * 指定されたパラメータパスで取得できる画面の実体のメソッドを直接呼び出す
+     * @param getters
+     * @param displayProperty
+     * @param method
+     * @param args
+     * @returns {*}
+     */
+    doWindowOperation: ({ getters }, { displayProperty, method, args }) =>
+      getters.getStateValue(displayProperty).ref[method](...args),
+
+    /**
+     * =================================================================================================================
+     * 指定されたプロパティパスの値を反転させる
+     * @param dispatch
+     * @param payload
+     * @returns {*}
+     */
+    changeDisplay: ({ dispatch }, payload) =>
+      dispatch('sendNoticeOperation', { value: payload, method: 'doChangeDisplay' }),
+    /**
+     * 指定されたプロパティパスの値を反転させる
+     * @param getters
+     * @param commit
+     * @param property
+     */
+    doChangeDisplay: ({ getters, commit }, { property }) => {
+      const target = getters.getStateValue(property)
       const payload = {}
       if (typeof target === 'boolean') {
         payload.property = property
@@ -126,7 +171,14 @@ const store = new Vuex.Store({
       }
       commit('doSetProperty', payload)
     },
-    setProperty ({ dispatch }, payload) {
+
+    /**
+     * =================================================================================================================
+     * stateに対するあらゆるデータ格納を代理する関数
+     * @param dispatch
+     * @param payload
+     */
+    setProperty: ({ dispatch }, payload) => {
       if (payload.isNotice) {
         dispatch('sendNoticeOperation', { value: payload, method: 'doSetProperty' })
       } else {
@@ -135,32 +187,50 @@ const store = new Vuex.Store({
     },
     /**
      * stateに対するあらゆるデータ格納を代理する関数
+     * @param commit
+     * @param payload
+     * @returns {*}
      */
-    doSetProperty ({ commit }, payload) {
-      commit('doSetProperty', payload)
-    },
-    emptyProperty ({ dispatch }, payload) {
+    doSetProperty: ({ commit }, payload) => commit('doSetProperty', payload),
+
+    /**
+     * =================================================================================================================
+     * 指定されたプロパティパスにある配列を空にする
+     * @param dispatch
+     * @param payload
+     */
+    emptyProperty: ({ dispatch }, payload) => {
       if (payload.isNotice) {
         dispatch('sendNoticeOperation', { value: payload, method: 'doEmptyProperty' })
       } else {
         dispatch('doEmptyProperty', payload)
       }
     },
-    doEmptyProperty ({ getters }, payload) {
-      if (!payload.logOff) {
-        console.log(`#empty ${payload.property}:`)
+    /**
+     * 指定されたプロパティパスにある配列を空にする
+     * @param getters
+     * @param property
+     * @param logOff
+     */
+    doEmptyProperty: ({ getters }, { property, logOff }) => {
+      if (!logOff) {
+        console.log(`#empty ${property}:`)
       }
-      const target = getters.getState(payload.property)
+      const target = getters.getStateValue(property)
       target.splice(0, target.length)
     }
   },
   mutations: {
     /**
      * stateに対するあらゆるデータ格納を代理する関数
+     * @param state
+     * @param property プロパティパス
+     * @param value 代入する値
+     * @param logOff true:ログを出力しない
      */
-    doSetProperty (state, payload) {
-      if (!payload.logOff) {
-        console.log(`#set ${payload.property}:`, payload.value)
+    doSetProperty: (state, {property, value, logOff = false}) => {
+      if (!logOff) {
+        console.log(`#set ${property}:`, value)
       }
 
       const propProc = (target, props, value) => {
@@ -174,6 +244,7 @@ const store = new Vuex.Store({
           } else {
             const propProc2 = (target, props) => {
               for (const prop in props) {
+                if (!props.hasOwnProperty(prop)) continue
                 const val = props[prop]
                 if (!(val instanceof Object) || (val instanceof Array)) {
                   target[prop] = val
@@ -182,7 +253,7 @@ const store = new Vuex.Store({
                 }
                 // 配列の場合、リアクティブになるよう、splice関数で更新する
                 if (target instanceof Array) {
-                  const index = parseInt(prop)
+                  const index = parseInt(prop, 10)
                   target.splice(index, 1, target[index])
                 }
               }
@@ -192,62 +263,106 @@ const store = new Vuex.Store({
         }
         // 配列の場合、リアクティブになるよう、splice関数で更新する
         if (target instanceof Array) {
-          const index = parseInt(prop)
+          const index = parseInt(prop, 10)
           target.splice(index, 1, target[index])
         }
       }
-      propProc(state, payload.property.split('.'), payload.value)
+      propProc(state, property.split('.'), value)
     }
   },
   getters: {
-    getState: state => property => {
-      const props = property.split('.')
-      let target = state
-      props.forEach((prop, index) => {
-        target = target[prop]
-      })
-      return target
-    },
-    isWindowOpen: (state, getters) => displayProperty => {
-      const target = getters.getState(displayProperty)
-      if (typeof target === 'boolean') {
+    getStateValue: state =>
+      /**
+       * stateから指定されたプロパティパスの値を取得する
+       * @param property
+       * @returns {*}
+       */
+      (property) => {
+        let target = state
+        property.split('.').forEach(prop => {
+          target = target[prop]
+        })
         return target
-      } else {
-        return target.isDisplay
-      }
-    },
-    parseColor: state => colorText => {
-      let colorObj = null
-      if (colorText.startsWith('rgb')) {
-        let splits = colorText.replace(/(rgba?\()|\)/g, '').split(',')
-        colorObj = { r: parseInt(splits[0].trim()), g: parseInt(splits[1].trim()), b: parseInt(splits[2].trim()), a: colorText.startsWith('rgb(') ? 1 : parseFloat(splits[3].trim()) }
-      } else if (colorText.startsWith('#')) {
-        colorObj = { r: parseInt(colorText.substr(1, 2), 16), g: parseInt(colorText.substr(3, 2), 16), b: parseInt(colorText.substr(5, 2), 16), a: 1 }
-      }
-      colorObj.getColorCode = function () {
-        return `#${('00' + this.r.toString(16)).slice(-2)}${('00' + this.g.toString(16)).slice(-2)}${('00' + this.b.toString(16)).slice(-2)}`
-      }.bind(colorObj)
-      colorObj.getColorCodeReverse = function () {
-        return `#${('00' + (255 - this.r).toString(16)).slice(-2)}${('00' + (255 - this.g).toString(16)).slice(-2)}${('00' + (255 - this.b).toString(16)).slice(-2)}`
-      }.bind(colorObj)
-      colorObj.getRGB = function () { return `rgb(${this.r}, ${this.g}, ${this.b})` }.bind(colorObj)
-      colorObj.getRGBA = function () { return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})` }.bind(colorObj)
-      colorObj.getRGBReverse = function () { return `rgb(${255 - this.r}, ${255 - this.g}, ${255 - this.b})` }.bind(colorObj)
-      return colorObj
-    },
-    objToString: state => obj => {
-      let text = '{ '
-      for (let key in obj) {
-        let val = obj[key]
-        if (typeof val === 'string') {
-          val = `"${val}"`
+      },
+
+    isWindowOpen: (state, getters) =>
+      /**
+       * isDisplayに相当するプロパティ値を取得する
+       * @param displayProperty
+       * @returns {*}
+       */
+      (displayProperty) => {
+        const target = getters.getStateValue(displayProperty)
+        return typeof target === 'boolean' ? target : target.isDisplay
+      },
+
+    getKeyObj: () =>
+      /**
+       * keyをプロパティとして持つオブジェクトの配列から指定されたkeyを持つオブジェクトを検索する
+       * @param list
+       * @param key
+       * @returns {*}
+       */
+      (list, key) => {
+        const filteredList = list.filter(obj => obj.key === key)
+        if (filteredList.length === 0) {
+          console.warn(`key:"${key}" is not find.`)
+          return null
         }
-        text += `${key}:${val}, `
+        if (filteredList.length > 1) {
+          console.warn(`key:"(${key})" is duplicate.`)
+          return null
+        }
+        return filteredList[0]
+      },
+
+    parseColor: () =>
+      /**
+       * 文字をparseしてカラー編集オブジェクトを生成する
+       * @param colorText
+       * @returns {*}
+       */
+      (colorText) => {
+        let _c = null
+        if (colorText.startsWith('rgb')) {
+          let splits = colorText.replace(/(rgba?\()|\)/g, '').split(',')
+          _c = { r: parseInt(splits[0].trim(), 10), g: parseInt(splits[1].trim(), 10), b: parseInt(splits[2].trim(), 10), a: colorText.startsWith('rgb(') ? 1 : parseFloat(splits[3].trim()) }
+        } else if (colorText.startsWith('#')) {
+          _c = { r: parseInt(colorText.substr(1, 2), 16), g: parseInt(colorText.substr(3, 2), 16), b: parseInt(colorText.substr(5, 2), 16), a: 1 }
+        }
+        _c.getColorCode = () =>
+          `#${('00' + _c.r.toString(16)).slice(-2)}${('00' + _c.g.toString(16)).slice(-2)}${('00' + _c.b.toString(16)).slice(-2)}`
+        _c.getColorCodeReverse = () =>
+          `#${('00' + (255 - _c.r).toString(16)).slice(-2)}${('00' + (255 - _c.g).toString(16)).slice(-2)}${('00' + (255 - _c.b).toString(16)).slice(-2)}`
+        _c.getRGB = () =>
+          `rgb(${_c.r}, ${_c.g}, ${_c.b})`
+        _c.getRGBA = () =>
+          `rgba(${_c.r}, ${_c.g}, ${_c.b}, ${_c.a})`
+        _c.getRGBReverse = () =>
+          `rgb(${255 - _c.r}, ${255 - _c.g}, ${255 - _c.b})`
+        return _c
+      },
+
+    objToString: () =>
+      /**
+       * 指定されたオブジェクトの内容を示す文字列を生成する
+       * @param obj
+       * @returns {string}
+       */
+      (obj) => {
+        let text = '{ '
+        for (const key in obj) {
+          if (!obj.hasOwnProperty(key)) continue
+          let val = obj[key]
+          if (typeof val === 'string') {
+            val = `"${val}"`
+          }
+          text += `${key}:${val}, `
+        }
+        text = text.substr(0, text.length - 2)
+        text += ' }'
+        return text
       }
-      text = text.substr(0, text.length - 2)
-      text += ' }'
-      return text
-    }
   }
 })
 export default store

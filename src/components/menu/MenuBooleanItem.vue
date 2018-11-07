@@ -40,7 +40,6 @@ export default {
   vertical-align: middle;
 }
 .item .check {
-  display: inline-block;
   width: 10px;
   height: 10px;
   min-width: 10px;

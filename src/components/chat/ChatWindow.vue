@@ -10,7 +10,7 @@
       </ul>
       <div class="oneLine">
         <span class="label">名前</span>
-        <input type="text" :value="name" :tabindex="chatTabList.length + 2" @change="changeName">
+        <input type="text" :value="name" :tabindex="chatTabList.length + 2" @change="changeName" title="">
         <select :tabindex="chatTabList.length + 5"></select>
         <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select><!--
      --><span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabList.length + 7"></i></span><!--
@@ -42,11 +42,17 @@ export default {
   },
   data () {
     return {
+      /** 利用可能なダイスボットの配列 */
       diceBotSystems: [],
+      /** 入力されたチャット文字 */
       currentMessage: '',
+      /** 選択されているシステム */
       currentDiceBotSystem: 'DiceBot',
+      /** bc-dice本体 */
       bcDice: new BCDice(),
+      /** 入力中のルームメンバーのpeerIdの配列 */
       inputtingPeerIdList: [],
+      /** ダイスボットの説明文の定型部分 */
       baseHelpMessage:
         '【ダイスボット】チャットにダイス用の文字を入力するとダイスロールが可能\n' +
         '入力例）2d6+1 攻撃！\n' +
@@ -66,8 +72,7 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('changeChatTab', '雑談')
-    // this.changeChatTab('雑談')
+    this.$store.dispatch('changeChatTab', '雑談').then()
 
     this.diceBotSystems.push({
       name: 'ダイスボット(指定なし)',
@@ -93,7 +98,7 @@ export default {
         })
       }.bind(this))
 
-      var elm = document.getElementById('chatLog')
+      const elm = document.getElementById('chatLog')
       if (elm) {
         elm.scrollTop = elm.scrollHeight
       }
@@ -107,7 +112,7 @@ export default {
       'setProperty',
       'sendRoomData'
     ]),
-    onInput (event) {
+    onInput () {
       this.sendRoomData({ type: 'NOTICE_INPUT', value: name })
     },
     changeName (event) {
@@ -195,7 +200,7 @@ export default {
     },
     chatLogList () {
       setTimeout(function () {
-        var elm = document.getElementById('chatLog')
+        const elm = document.getElementById('chatLog')
         if (elm) {
           elm.scrollTop = elm.scrollHeight
         }
@@ -254,10 +259,9 @@ export default {
   font-size: 10px;
   background: linear-gradient(rgba(240, 240, 240, 1), rgba(0, 0, 0, 0.2));
   padding: 4px 10px;
-  border-style: solid;
-  border-width: 1px 1px 0px 1px;
-  border-color: gray;
-  border-radius: 5px 5px 0px 0px;
+  border: 1px solid gray;
+  border-bottom-width: 0;
+  border-radius: 5px 5px 0 0;
   margin-right: -1px;
   z-index: 10;
   white-space: nowrap;
@@ -271,8 +275,7 @@ export default {
 }
 .tab.active,
 .tab:active {
-  background: none;
-  background-color: white;
+  background: white none;
 }
 .tab:hover {
   border-color: #0092ED;
@@ -283,14 +286,11 @@ export default {
 }
 #chatLog {
   display: block;
-  margin-top: 0px;
   background-color: white;
   flex: 1;
 -moz-box-flex: 1;
   -webkit-box-flex: 1;
-  border-style: solid;
-  border-width: 1px 1px 1px 1px;
-  border-color: gray;
+  border: 1px solid gray;
   overflow-y: scroll;
   overflow-x: auto;
   margin: 0;
@@ -336,7 +336,6 @@ export default {
 }
 textarea {
   resize: none;
-  width: 100%;
   padding: 0;
   box-sizing: border-box;
   width: calc(100% - 85px);

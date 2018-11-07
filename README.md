@@ -44,6 +44,17 @@ http://www.hmix.net/music_gallery/feeling/happy.htm
 # 効果音ラボ
 https://soundeffect-lab.info/sound/anime/
 【出題1】ほか
+
+## favicon
+# LOGO Maker
+https://supalogo.com/#
+text: Q
+SPECIFY THE EFFECT TO APPLY: Gradient colors #1e90ff #00ffff
+SPECIFY A FONT FOR YOUR LOGO: Facon(new)
+size: 21px
+
+# icoファイルジェレネータ
+http://www.xiconeditor.com/
 ```
 
 ## Build Setup

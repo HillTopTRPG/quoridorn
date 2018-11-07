@@ -8,13 +8,13 @@
     </div>
     <div class="menu-button" v-show="isConnected && !isConnectHover" @click="clickConnect" @mouseenter="hoverConnect(true)">接続</div>
     <div class="span-group">
-      <span @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')" :class="{isHover : hover2}">ファイル</span><!--
-    --><span @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')" :class="{isHover : hover3}">表示</span><!--
-    --><span @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')" :class="{isHover : hover4}">コマ</span><!--
-    --><span @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')" :class="{isHover : hover5}">マップ</span><!--
-    --><span @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')" :class="{isHover : hover6}">画像</span><!--
-    --><span @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')" :class="{isHover : hover7}">ヘルプ</span><!--
-  --><span @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')" :class="{isHover : hover8}">デモ</span>
+      <span @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')" :class="{isHover : menu['ファイル']}">ファイル</span><!--
+    --><span @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')" :class="{isHover : menu['表示']}">表示</span><!--
+    --><span @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')" :class="{isHover : menu['コマ']}">コマ</span><!--
+    --><span @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')" :class="{isHover : menu['マップ']}">マップ</span><!--
+    --><span @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')" :class="{isHover : menu['画像']}">画像</span><!--
+    --><span @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')" :class="{isHover : menu['ヘルプ']}">ヘルプ</span><!--
+  --><span @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')" :class="{isHover : menu['デモ']}">デモ</span>
     </div>
     <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
       ルームID.<span :class="{isDisconnect : !isConnected}">{{ roomId }}</span>
@@ -82,7 +82,7 @@
       <BooleanItem property="private.display.initiativeWindow">イニシアティブ表示</BooleanItem>
       <BooleanItem property="private.display.resourceWindow">リソース表示</BooleanItem>
       <hr>
-      <BooleanItem property="private.display.chatpaletteWindow">チャットパレット表示</BooleanItem>
+      <BooleanItem property="private.display.chatPaletteWindow">チャットパレット表示</BooleanItem>
       <BooleanItem property="private.display.counterRemoConWindow">カウンターリモコン表示</BooleanItem>
     </div>
     <div class="hoverMenu hoverMenu9" v-show="menu['デモ']" @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')">
@@ -143,8 +143,7 @@ export default {
     clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
     clickLogOut () {
       this.menuHover(false, 'ファイル')
-      const baseUrl = location.href.replace(/\?.+$/, '')
-      location.href = baseUrl
+      location.href = location.href.replace(/\?.+$/, '')
     },
     clickSettingFontSize () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
     clickResetWindowLocate () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
@@ -155,7 +154,7 @@ export default {
     clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
     clickChangeMap () { this.windowOpen('private.display.editMapWindow'); this.menuHover(false, 'マップ') },
     clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickAddMapMask (target) { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
+    clickAddMapMask () { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
     clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
     clickSaveMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
     clickSwitchMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
@@ -177,14 +176,6 @@ export default {
     }
   },
   computed: mapState({
-    hover1 () { return this.menuHoverNum === 1 },
-    hover2 () { return this.menuHoverNum === 2 },
-    hover3 () { return this.menuHoverNum === 3 },
-    hover4 () { return this.menuHoverNum === 4 },
-    hover5 () { return this.menuHoverNum === 5 },
-    hover6 () { return this.menuHoverNum === 6 },
-    hover7 () { return this.menuHoverNum === 7 },
-    hover8 () { return this.menuHoverNum === 8 },
     isConnected () {
       const peerId = this.$store.state.private.connect.peerId
       if (!peerId) return false
@@ -211,7 +202,7 @@ export default {
   width: 100%;
   background: linear-gradient(rgba(247, 248, 249, 1), rgba(0, 0, 0, 0));
   border-bottom: solid gray 1px;
-  padding: 0px 10px;
+  padding: 0 10px;
   font-size: 16px;
   z-index: 900000000;
 }
@@ -233,7 +224,7 @@ span.isDisconnect {
   display: inline-block;
   background-color: rgba(250, 250, 250, 0.2);
   border: solid gray 1px;
-  padding: 0px 15px;
+  padding: 0 15px;
 }
 .span-group span {
   display: inline-block;
@@ -317,14 +308,14 @@ span.isDisconnect {
   margin: auto;
   display: inline-block;
   vertical-align: middle;
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
   border-left: 6px solid black;
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
 }
 
-@import url(https://fonts.googleapis.com/css?family=Bitter);
+/*@import url(https://fonts.googleapis.com/css?family=Bitter);*/
 .first,
 .second,
 .third {

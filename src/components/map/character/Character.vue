@@ -10,7 +10,7 @@
     @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
     @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
     @contextmenu.prevent>
-    <div class="border"/>
+    <div class="border"></div>
     <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
     <div class="name">{{name}}</div>
     <span class="rotate" v-show="isHover || isThisRolling" draggable="false"><i class="icon-redo2"
@@ -92,7 +92,6 @@ export default {
   box-sizing: border-box;
   */
   position: fixed;
-  cursor: default;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -160,8 +159,7 @@ img.image.reverse {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  border-width: 2px;
-  border: solid rgb(187, 187, 0) 3px;
+  border: 3px solid rgb(187, 187, 0);
   border-radius: 1px;
 }
 </style>

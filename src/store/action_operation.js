@@ -25,7 +25,7 @@ const actionOperation = {
         const tab = payload.tab ? payload.tab : activeChatTab.name
         const logObj = {
           peerId: payload.peerId ? payload.peerId : rootState.private.connect.peerId,
-          viewHtml: '<span style="color: ' + color + '"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
+          viewHtml: '<span style="color: ' + color + ';"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
         }
         // 未読カウントアップ
         if (tab !== activeChatTab.name) {
@@ -44,11 +44,16 @@ const actionOperation = {
      */
     chatLinkage: ({ dispatch, rootState, rootGetters }, text) => {
       rootState.public.bgm.list
-        .filter(bgmObj => bgmObj.chatLinkage && text.endsWith(bgmObj.title))
+        .filter(bgmObj => {
+          if (bgmObj.chatLinkage === 1 && text.endsWith(bgmObj.title)) {
+
+          }
+          bgmObj.chatLinkage > 0 && text.endsWith(bgmObj.title)
+        })
         .sort((a, b) => {
-          if( a.title.length > b.title.length ) return -1;
-          if( a.title.length < b.title.length ) return 1;
-          return 0;
+          if (a.title.length > b.title.length) return -1
+          if (a.title.length < b.title.length) return 1
+          return 0
         })
         .filter((bgmObj, index, self) => self.filter((s, i) => (index > i) && (s.tag === bgmObj.tag)).length === 0)
         .forEach(bgmObj => {
@@ -93,6 +98,7 @@ const actionOperation = {
         isLock: false
       }
       for (let prop in payload) {
+        if (!payload.hasOwnProperty(prop)) continue
         obj[prop] = payload[prop]
       }
 
@@ -119,6 +125,7 @@ const actionOperation = {
 
       const pieceObj = rootGetters.getPieceObj(propName, key)
       for (let prop in payload) {
+        if (!payload.hasOwnProperty(prop)) continue
         if (prop === 'key' || prop === 'propName') { continue }
         if (pieceObj[prop] !== payload[prop]) {
           console.log(`[mutations] update ${propName}(${key}) => ${prop}: ${pieceObj[prop]} -> ${payload[prop]}`)

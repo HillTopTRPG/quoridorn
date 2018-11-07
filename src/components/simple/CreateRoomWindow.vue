@@ -56,7 +56,7 @@ export default {
     }.bind(this), 0)
   },
   watch: {
-    roomName (newValue) {
+    roomName () {
       this.existCheckMessage = ''
     }
   },
@@ -95,10 +95,11 @@ export default {
         return
       }
       this.existCheckMessage = '存在確認中です...'
+      const _ = this
       this.checkRoomName({
         roomName: this.roomName,
-        roomFindFunc: function (message) { this.existCheckMessage = message }.bind(this),
-        roomNonFindFunc: function () { this.existCheckMessage = 'この部屋は存在しません。新しく部屋を作ることになります。' }.bind(this)
+        roomFindFunc: message => (_.existCheckMessage = message),
+        roomNonFindFunc: () => (_.existCheckMessage = 'この部屋は存在しません。新しく部屋を作ることになります。')
       })
     }
   }

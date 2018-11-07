@@ -117,10 +117,10 @@ export default {
   grid-template-columns: 100px 100px 1fr;
   grid-template-rows: auto auto auto 1fr auto;
   grid-template-areas:
-      "viewImage viewImage choseImage"
-      "viewImage viewImage imageInfo"
-      "viewImage viewImage otherText"
-      "rowsNum    columnsNum    otherText"
+      "viewImage viewImage  choseImage"
+      "viewImage viewImage  imageInfo"
+      "viewImage viewImage  otherText"
+      "rowsNum   columnsNum otherText";
 }
 .tagImages {
   display: flex;

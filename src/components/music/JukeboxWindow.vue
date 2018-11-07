@@ -12,9 +12,9 @@
         :initVolume="bgmObj.volume"
         :paramMasterMute="masterMute"
         :paramMasterVolume="masterVolume"
-        :path="bgmObj.path"
+        :url="bgmObj.url"
         @end="remove(bgmObj.key)"
-        :maxSecond="bgmObj.second"></BGMComponent>
+        :maxSecond="bgmObj.playLength"></BGMComponent>
     </div>
   </WindowFrame>
 </template>
@@ -44,6 +44,11 @@ export default {
       'windowClose',
       'windowOpen'
     ]),
+    /**
+     * =========================================================================
+     * 【削除禁止】
+     * $refs越しに呼ばれるメソッド
+     */
     add (bgmKey) {
       if (!bgmKey) return
       const addBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0]
@@ -65,7 +70,7 @@ export default {
       })
 
       // 追加処理
-      if (addBgmObj.path !== '') {
+      if (addBgmObj.url !== '') {
         setTimeout(() => {
           this.playList.unshift(addBgmObj)
           this.windowOpen('private.display.jukeboxWindow')
@@ -122,6 +127,7 @@ export default {
   flex-direction : column;
   overflow-y: auto;
 }
+
 .bgmComponent {
   padding-top: 5px;
   margin-top: 5px;

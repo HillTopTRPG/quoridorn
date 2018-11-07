@@ -136,7 +136,7 @@ export default {
         return
       }
       let useImageList = ''
-      this.switchImageList.forEach(function (imgObj, index) {
+      this.switchImageList.forEach(imgObj => {
         const isReverseStr = imgObj.isReverse ? ':R' : ''
         const imgStr = imgObj.imgKey + isReverseStr
         useImageList += imgStr + '|'
@@ -269,9 +269,4 @@ export default {
 .buttonArea { grid-area: buttonArea; text-align: center; padding-top: 15px; padding-bottom: 10px; }
 .buttonArea > div { display: inline-block; }
 input { padding: 2px; }
-/*
-button {
-  border-radius: 5px;
-}
-*/
 </style>

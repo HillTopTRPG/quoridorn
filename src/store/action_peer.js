@@ -9,7 +9,6 @@ Vue.use(Vuex)
 
 /**
  * Store
- * @type {Vuex}
  */
 const actionPeer = {
   actions: {
@@ -45,7 +44,7 @@ const actionPeer = {
         if (roomId) {
           console.log(`Room: ${roomId} に接続を試みます...`)
           const room = rootState.connect.webRtcPeer.joinRoom(roomId)
-          room.on('open', function () {
+          room.on('open', () => {
             rootState.room.webRtcRoom = room
             dispatch('connectFunc', room)
           })
@@ -72,7 +71,7 @@ const actionPeer = {
       rootState.connect.webRtcPeer = peer
 
       // 画面が閉じられたらPeer接続を破棄
-      window.onunload = window.onbeforeunload = e => {
+      window.onunload = window.onbeforeunload = () => {
         if (rootState.public.map.isEditting === rootState.private.connect.peerId) {
           dispatch('setProperty', {property: 'public.map.isEditting', isNotice: true, value: null})
         }
@@ -281,7 +280,7 @@ const actionPeer = {
       peer.on('open', id => {
         peerId = id
         const room = peer.joinRoom(roomName)
-        room.on('open', function () {
+        room.on('open', () => {
           connectFunc(room)
           setTimeout(() => {
             if (peer && !peer.destroyed) {

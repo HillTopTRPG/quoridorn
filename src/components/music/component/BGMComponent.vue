@@ -15,9 +15,9 @@
         @mounted="volumeMounted"
         ref="volumeComponent"/>
     </div>
-    <div class="secondArea">
-      <input class="second" :class="{isPlay: isPlay}" :style="secondStyle" type="range" min="0" :max="Math.round(bgmLength * 100) / 100" step="0.01" v-model="second" @input="changeTime">
-      <span class="secondText">{{Math.round(second)}}/{{Math.round(bgmLength)}}</span>
+    <div class="playLengthArea">
+      <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(bgmLength * 100) / 100" step="0.01" v-model="playLength" @input="changeTime">
+      <span class="playLengthText">{{Math.round(playLength)}}/{{Math.round(bgmLength)}}</span>
     </div>
   </div>
 </template>
@@ -35,7 +35,7 @@ export default {
     'initVolume': { type: Number, required: true },
     'paramMasterMute': { type: Boolean, required: true },
     'paramMasterVolume': { type: Number, required: true },
-    'path': { type: String, required: true },
+    'url': { type: String, required: true },
     'maxSecond': { type: Number, required: true }
   },
   components: {
@@ -45,7 +45,7 @@ export default {
     return {
       jukeboxAudio: null,
       isPlay: true,
-      second: 0,
+      playLength: 0,
       duration: 0,
       masterMute: false,
       masterVolume: 0.5
@@ -60,13 +60,13 @@ export default {
     this.jukeboxAudio.loop = this.isLoop
     this.jukeboxAudio.volume = this.initVolume * this.masterVolume
     this.jukeboxAudio.addEventListener('timeupdate', this.timeUpdate)
-    // console.log(111111111, this.path, this.jukeboxAudio)
+    // console.log(111111111, this.url, this.jukeboxAudio)
     this.jukeboxAudio.addEventListener('play', () => {
       // console.log(2222222222, this.jukeboxAudio)
       if (!this.jukeboxAudio) return
       this.duration = this.jukeboxAudio.duration
     })
-    this.jukeboxAudio.src = this.path
+    this.jukeboxAudio.src = this.url
   },
   destroyed () {
     // console.log('!!!! destroyed !!!!')
@@ -100,15 +100,15 @@ export default {
       }
     },
     changeTime () {
-      this.jukeboxAudio.currentTime = this.second
+      this.jukeboxAudio.currentTime = this.playLength
       this.changePlay(true)
     },
     timeUpdate (event) {
       if (!this.jukeboxAudio) return
-      this.second = this.jukeboxAudio.currentTime
-      if (this.second >= this.bgmLength) {
+      this.playLength = this.jukeboxAudio.currentTime
+      if (this.playLength >= this.bgmLength) {
         if (this.jukeboxAudio.loop) {
-          this.second = 0
+          this.playLength = 0
           this.jukeboxAudio.currentTime = 0
         } else {
           this.jukeboxAudio.pause()
@@ -118,8 +118,8 @@ export default {
     }
   },
   computed: mapState({
-    secondStyle () {
-      const per = this.second * 100 / this.bgmLength
+    playLengthStyle () {
+      const per = this.playLength * 100 / this.bgmLength
       const useColor = this.isPlay ? 'black' : '#8A084B'
       return {
         background: `linear-gradient(to right, ${useColor} 0%, ${useColor} ${per}%, rgba(100, 100, 100, 1) ${per}%, rgba(100, 100, 100, 1) 100%)`,
@@ -241,7 +241,7 @@ export default {
   color: white;
   pointer-events: none;
 }
-.secondText {
+.playLengthText {
   position: absolute;
   right: 24px;
   bottom: 6px;
@@ -280,7 +280,7 @@ input[type="range"].volume::-webkit-slider-thumb {
   border: 2px solid black;
 }
 
-input[type="range"].second {
+input[type="range"].playLength {
   height: 8px;
   position: relative;
   cursor: pointer;
@@ -288,12 +288,12 @@ input[type="range"].second {
   flex: 1;
   width: 100%;
 }
-input[type=range].second::-webkit-slider-runnable-track{
+input[type=range].playLength::-webkit-slider-runnable-track{
   height: 8px;
   background: rgba(0,0,0,0);
   box-sizing: border-box;
 }
-input[type="range"].second::-webkit-slider-thumb {
+input[type="range"].playLength::-webkit-slider-thumb {
   box-sizing: border-box;
   width: 6px;
   height: 16px;

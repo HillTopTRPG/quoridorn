@@ -6,7 +6,7 @@
     :width="canvasSize.w"
     :height="canvasSize.h"
     v-bg-img="getBackgroundImage"
-    @contextmenu.prevent />
+    @contextmenu.prevent ></canvas>
 </template>
 
 <script>
@@ -22,7 +22,7 @@ export default {
       const ctx = document.getElementById('map-canvas').getContext('2d')
       // console.log('paint')
 
-      var img = new Image()
+      const img = new Image()
       img.src = this.getBackgroundImage
       img.onload = function () {
         ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
@@ -159,7 +159,6 @@ canvas {
   bottom: 0;
   margin: auto;
   border: none;
-  border-width: 0;
   /*
   border: 1px solid gray;
   */

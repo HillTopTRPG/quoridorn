@@ -11,9 +11,10 @@ export default {
     },
     /**
      * 指定されたスクリーン座標を元に、座標計算を行う
-     * @param  {Number} screenX スクリーン上のX座標
-     * @param  {Number} screenY スクリーン上のY座標
-     * @return {Object}         ソース参照
+     * @param screenX
+     * @param screenY
+     * @param oldAngle
+     * @returns {{angle: number, planeLocateScreen: {x: *, y: *}, planeLocateCanvas: {x: *, y: *}, planeLocateTable: {x: *, y: *}}}
      */
     calcCoordinate (screenX, screenY, oldAngle) {
       // スクロール倍率を考慮
@@ -70,14 +71,13 @@ export default {
         `planeLocate(${f(planeLocate.x)}, ${f(planeLocate.y)}) ` +
         `planeLocateC(${f(planeLocateFromCenter.x)}, ${f(planeLocateFromCenter.y)}) `)
       */
-      const result = {
+      // console.log(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
+      return {
         angle: angle, // 角度
         planeLocateScreen: planeLocateScreen, // マップ回転前のスクリーンベースの座標
         planeLocateCanvas: planeLocateCanvas, // マップ回転前のキャンバスベースの座標
         planeLocateTable: planeLocateTable // マップ回転前のテーブルベースの座標
       }
-      // console.log(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
-      return result
     },
     f (v) {
       return Math.floor(v * 100) / 100
@@ -89,11 +89,10 @@ export default {
         x: canvasRect.x + canvasRect.width / 2,
         y: canvasRect.y + canvasRect.height / 2
       }
-      const leftTop = {
+      return {
         x: center.x - this.columns * this.gridSize / 2,
         y: center.y - this.rows * this.gridSize / 2
       }
-      return leftTop
     },
     calcAddress (screenX, screenY, oldAngle, offsetX = 0, offsetY = 0) {
       // 回転やズームの前のスクリーン座標がどこになるかを計算し、そこをベースにマップ上の座標を算出する
