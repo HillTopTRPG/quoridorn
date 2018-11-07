@@ -73,10 +73,12 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 import VolumeComponent from './component/VolumeComponent'
 
 export default {
   name: 'editBGMWindow',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame,
     VolumeComponent: VolumeComponent

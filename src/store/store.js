@@ -66,12 +66,14 @@ const store = new Vuex.Store({
      */
     onMount ({ dispatch, state }) {
       // 特定の画面は最初に開く
-      dispatch('windowOpen', 'private.display.chatWindow')
-      // dispatch('windowOpen', 'private.display.initiativeWindow')
-      // dispatch('windowOpen', 'private.display.resourceWindow')
-      // dispatch('windowOpen', 'private.display.chatPaletteWindow')
-      // dispatch('windowOpen', 'private.display.counterRemoConWindow')
-      dispatch('windowOpen', 'private.display.functionListWindow')
+      setTimeout(() => {
+        dispatch('windowOpen', 'private.display.chatWindow')
+        // dispatch('windowOpen', 'private.display.initiativeWindow')
+        // dispatch('windowOpen', 'private.display.resourceWindow')
+        // dispatch('windowOpen', 'private.display.chatPaletteWindow')
+        // dispatch('windowOpen', 'private.display.counterRemoConWindow')
+        dispatch('windowOpen', 'private.display.functionListWindow')
+      }, 0)
 
       // URLパラメータ取得処理
       const getParam = (name, url = window.location.href) => {

@@ -22,11 +22,13 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 import BGMComponent from './component/BGMComponent'
 import MasterVolumeComponent from './component/MasterVolumeComponent'
 
 export default {
   name: 'jukeboxWindow',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame,
     BGMComponent: BGMComponent,

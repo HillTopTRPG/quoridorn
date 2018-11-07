@@ -26,9 +26,11 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 
 export default {
   name: 'dropImageWindow',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame
   },

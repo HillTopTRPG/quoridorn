@@ -49,7 +49,6 @@ export default {
   },
   data () {
     return {
-      isOpen: true,
       moveMode: '',
       mouse: {
         x: 0,
@@ -238,37 +237,28 @@ export default {
     }
   },
   watch: {
-    isDisplay (isDisplay) {
-      if (isDisplay) {
-        // console.log(`    [watch] window open => ${this.displayProperty}`)
+    command (command) {
+      if (!command) { return }
+      if (command.command === 'open' || command.command === 'reset') {
         this.windowFactor.l = 0
         this.windowFactor.r = 0
         this.windowFactor.t = 0
         this.windowFactor.b = 0
         this.windowFactor.w = 0
         this.windowFactor.h = 0
+      }
+      const val = { command: null }
+      if (command.command === 'open') {
+        val.isDisplay = true
         setTimeout(this.addEventForIFrame, 0)
-        const _ = this
-        setTimeout(() => _.$emit('open'), 0)
-      } else {
-        // console.log(`    [watch] window close => ${this.displayProperty}`)
-        this.$emit('close')
       }
-    },
-    isResetPosition (isResetPosition) {
-      if (isResetPosition) {
-        // console.log(`    [watch] window reset => ${this.displayProperty}`)
-        this.windowFactor.l = 0
-        this.windowFactor.r = 0
-        this.windowFactor.t = 0
-        this.windowFactor.b = 0
-        this.windowFactor.w = 0
-        this.windowFactor.h = 0
-        this.setProperty({property: `${this.displayProperty}.doResetPosition`, value: false, logOff: true})
-        this.$emit('reset')
-      } else {
-        // console.log(`    [watch] window resetted => ${this.displayProperty}`)
+      if (command.command === 'close') {
+        val.isDisplay = false
       }
+      this.setProperty({property: `${this.displayProperty}`, value: val, logOff: true})
+      this.$emit('command', command)
+      const _ = this
+      setTimeout(() => _.$emit(command.command, command.payload), 0)
     }
   },
   computed: mapState({
@@ -276,8 +266,8 @@ export default {
       'isWindowOpen',
       'getStateValue'
     ]),
-    isDisplay () { return !this.displayProperty ? false : this.isWindowOpen(this.displayProperty) },
-    isResetPosition () { return !this.displayProperty ? false : this.getStateValue(this.displayProperty).doResetPosition },
+    isDisplay () { return !this.displayProperty ? '' : this.getStateValue(this.displayProperty).isDisplay },
+    command () { return !this.displayProperty ? '' : this.getStateValue(this.displayProperty).command },
     zIndex () { return this.getStateValue(this.displayProperty).zIndex },
     isFix () { return this.fixSize !== undefined },
     fixW () { return !this.isFix ? -1 : parseInt(this.fixSize.split(',')[0].trim(), 10) },

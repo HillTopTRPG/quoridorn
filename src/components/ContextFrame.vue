@@ -17,14 +17,31 @@ export default {
   },
   methods: {
     ...mapActions([
-      'windowClose'
+      'windowClose',
+      'setProperty'
     ])
+  },
+  watch: {
+    command (command) {
+      if (!command) { return }
+      const val = { command: null }
+      if (command.command === 'open') {
+        val.isDisplay = true
+      }
+      if (command.command === 'close') {
+        val.isDisplay = false
+      }
+      this.setProperty({property: `${this.displayProperty}`, value: val, logOff: true})
+      const _ = this
+      setTimeout(() => _.$emit(command.command, command.payload), 0)
+    }
   },
   computed: mapState({
     ...mapGetters([
       'isWindowOpen',
       'getStateValue'
     ]),
+    command () { return !this.displayProperty ? '' : this.getStateValue(this.displayProperty).command },
     isDisplay () {
       return this.isWindowOpen(this.displayProperty)
     },

@@ -12,9 +12,11 @@
 <script>
 import { mapState } from 'vuex'
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 
 export default {
   name: 'inviteLinkWindow',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame
   },

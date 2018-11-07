@@ -6,8 +6,10 @@
 
 <script>
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 
 export default {
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame
   }
@@ -25,7 +27,7 @@ export default {
     position: absolute;
     height: 710px;
     overflow-y: scroll;
-    width: ;
+    width: 450px;
     transform: scale(0.8) translate(-51px, -90px);
   }
 </style>

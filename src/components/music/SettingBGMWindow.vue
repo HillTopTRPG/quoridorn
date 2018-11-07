@@ -62,11 +62,13 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 import Divider from './component/Divider'
 import PropNumber from './component/PropNumber'
 
 export default {
   name: 'settingBGMWindow',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame,
     Divider: Divider,

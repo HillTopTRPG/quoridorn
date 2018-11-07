@@ -33,10 +33,12 @@
 // import 'bcdice-js/lib/preload-dicebots'
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 import BCDice, { DiceBotLoader } from 'bcdice-js' // ES Modules
 
 export default {
   name: 'chat',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame
   },

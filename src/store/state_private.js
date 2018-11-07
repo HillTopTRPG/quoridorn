@@ -37,20 +37,21 @@ const storeModulePrivate = {
 
     /** 子画面 */
     display: {
-      unSupportWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, title: 'default' },
-      chatWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      initiativeWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      resourceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      chatPaletteWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      counterRemoConWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      functionListWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      addMapMaskWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      editMapMaskWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
-      devLogWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      publicMemoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
-      secretDiceWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      addCharacterSettingWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
+      unSupportWindow: { command: null, isDisplay: false, zIndex: 1, title: 'default' },
+      chatWindow: { command: null, isDisplay: false, zIndex: 1 },
+      initiativeWindow: { command: null, isDisplay: false, zIndex: 1 },
+      resourceWindow: { command: null, isDisplay: false, zIndex: 1 },
+      chatPaletteWindow: { command: null, isDisplay: false, zIndex: 1 },
+      counterRemoConWindow: { command: null, isDisplay: false, zIndex: 1 },
+      functionListWindow: { command: null, isDisplay: false, zIndex: 1 },
+      addMapMaskWindow: { command: null, isDisplay: false, zIndex: 1 },
+      editMapMaskWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
+      devLogWindow: { command: null, isDisplay: false, zIndex: 1 },
+      publicMemoWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
+      secretDiceWindow: { command: null, isDisplay: false, zIndex: 1 },
+      addCharacterSettingWindow: { command: null, isDisplay: false, zIndex: 1 },
       addCharacterWindow: {
+        command: null,
         isDisplay: false,
         doResetPosition: false,
         zIndex: 1,
@@ -65,18 +66,19 @@ const storeModulePrivate = {
         isContinuous: false,
         continuousNum: 1
       },
-      roomInfoWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      dropImageWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, imageDataList: null },
-      dropZipWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, zipList: null },
-      inviteLinkWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      createRoomWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      selectPeerWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      confirmLoadRoomWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, importData: null },
-      addChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      editChitWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
-      editMapWindow: { isDisplay: false, doResetPosition: false, zIndex: 1 },
-      editCharacterWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
+      roomInfoWindow: { command: null, isDisplay: false, zIndex: 1 },
+      dropImageWindow: { command: null, isDisplay: false, zIndex: 1, imageDataList: null },
+      dropZipWindow: { command: null, isDisplay: false, zIndex: 1, zipList: null },
+      inviteLinkWindow: { command: null, isDisplay: false, zIndex: 1 },
+      createRoomWindow: { command: null, isDisplay: false, zIndex: 1 },
+      selectPeerWindow: { command: null, isDisplay: false, zIndex: 1 },
+      confirmLoadRoomWindow: { command: null, isDisplay: false, zIndex: 1, importData: null },
+      addChitWindow: { command: null, isDisplay: false, zIndex: 1 },
+      editChitWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
+      editMapWindow: { command: null, isDisplay: false, zIndex: 1 },
+      editCharacterWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
       settingBGMWindow: {
+        command: null,
         isDisplay: false,
         doResetPosition: false,
         zIndex: 1,
@@ -88,12 +90,12 @@ const storeModulePrivate = {
         startLeftWidth: -1,
         startRightWidth: -1
       },
-      jukeboxWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, ref: null },
-      editBGMWindow: { isDisplay: false, doResetPosition: false, zIndex: 1, key: -1 },
-      mapMaskContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
-      characterContext: { isDisplay: false, doResetPosition: false, key: -1, x: 0, y: 0 },
-      gameTableContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0 },
-      chitContext: { isDisplay: false, doResetPosition: false, x: 0, y: 0, key: -1 }
+      jukeboxWindow: { command: null, isDisplay: false, zIndex: 1, ref: null },
+      editBGMWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
+      mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
+      characterContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
+      gameTableContext: { command: null, isDisplay: false, x: 0, y: 0 },
+      chitContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 }
     }
   }, /* end of state */
   actions: {
@@ -125,7 +127,8 @@ const storeModulePrivate = {
       const windowObj = getters.getStateValue(property)
       if (!windowObj.isDisplay) {
         // まだ表示していないウィンドウを開いた場合
-        windowObj.isDisplay = true
+        windowObj.command = { command: 'open' }
+
         // ウィンドウの表示前後の調整(z-index)
         let maxIndex = 0
         for (const key in state.display) {
@@ -137,7 +140,8 @@ const storeModulePrivate = {
         windowObj.zIndex = maxIndex + 1
       } else {
         // 既に表示しているウィンドウを開いた場合
-        windowObj.doResetPosition = true
+        windowObj.command = { command: 'reset' }
+
         // ウィンドウの表示前後の調整(z-index)
         let maxIndex = 0
         for (const key in state.display) {
@@ -160,7 +164,11 @@ const storeModulePrivate = {
      */
     windowClose ({ state, getters }, property) {
       const windowObj = getters.getStateValue(property)
-      windowObj.isDisplay = false
+
+      // 閉じる
+      windowObj.command = { command: 'close' }
+
+      // ウィンドウの表示前後の調整(z-index)
       if (windowObj.key !== undefined) {
         windowObj.key = -1
       }

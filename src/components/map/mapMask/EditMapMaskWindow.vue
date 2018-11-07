@@ -34,9 +34,11 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
 import WindowFrame from '../../WindowFrame'
+import WindowMixin from '../../WindowMixin'
 
 export default {
   name: 'editMapMaskWindow',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame
   },

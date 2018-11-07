@@ -24,9 +24,11 @@
 import { mapActions } from 'vuex'
 import { DiceBotLoader } from 'bcdice-js' // ES Modules
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 
 export default {
   name: 'createRoomWindow',
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame
   },

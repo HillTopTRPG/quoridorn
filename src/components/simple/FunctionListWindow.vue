@@ -6,8 +6,10 @@
 
 <script>
 import WindowFrame from '../WindowFrame'
+import WindowMixin from '../WindowMixin'
 
 export default {
+  mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame
   },

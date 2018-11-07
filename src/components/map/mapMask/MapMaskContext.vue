@@ -11,12 +11,14 @@
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
 import ContextFrame from '../../ContextFrame'
+import WindowMixin from '../../WindowMixin'
 
 export default {
   components: {
     ContextFrame: ContextFrame
   },
   methods: {
+    mixins: [WindowMixin],
     ...mapActions([
       'windowOpen',
       'setProperty',
