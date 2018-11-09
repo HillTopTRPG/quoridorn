@@ -1,8 +1,8 @@
 <template>
   <div class="volumeComponent">
-    <input class="volume" :class="{muted: isMuted, masterMute: masterMute, mutable: mutable}" type="range" min="0" max="1" step="0.01" v-model="volume" @input="changeVolume">
-    <span class="icon mute" :class="{muted: isMuted, masterMute: masterMute}" @click="clickMuted()" v-show="mutable && !isMuted"><i class="icon-volume-high"></i></span>
-    <span class="icon mute" :class="{muted: isMuted, masterMute: masterMute}" @click="clickMuted()" v-show="mutable && isMuted"><i class="icon-volume-mute"></i></span>
+    <input class="volume" :class="{muted: mute, masterMute: masterMute, mutable: mutable}" type="range" min="0" max="1" step="0.01" v-model="volume">
+    <span class="icon mute" :class="{muted: mute, masterMute: masterMute}" @click="setMute()" v-show="mutable && !mute"><i class="icon-volume-high"></i></span>
+    <span class="icon mute" :class="{muted: mute, masterMute: masterMute}" @click="setMute()" v-show="mutable && mute"><i class="icon-volume-mute"></i></span>
     <span class="volumeText" :class="{mutable: mutable}">{{Math.round(volume * 100)}}</span>
   </div>
 </template>
@@ -19,39 +19,32 @@ export default {
   data () {
     return {
       volume: 0,
-      isMuted: false,
-      masterVolume: 1,
-      masterMute: false
+      mute: false
     }
   },
   mounted () {
     this.volume = this.initVolume
-    this.$emit('mounted')
   },
   methods: {
     ...mapActions([]),
-    clickMuted (flg = !this.isMuted) {
-      if (this.isMuted === flg) return
-      this.isMuted = flg
-      this.changeMuted()
+    setMute (mute = !this.mute) {
+      this.mute = mute
     },
-    changeMuted () {
-      this.$emit('mute', this.masterMute || this.isMuted)
+    setVolume (volume) {
+      this.volume = volume
+    }
+  },
+  watch: {
+    mute (mute) {
+      this.$emit('mute', mute)
     },
-    changeVolume () {
-      this.clickMuted(false)
-      this.$emit('volume', this.volume * this.masterVolume)
-    },
-    setMasterMute (flg) {
-      this.masterMute = flg
-      this.$emit('mute', this.masterMute || this.isMuted)
-    },
-    setMasterVolume (volume) {
-      this.masterVolume = volume
-      this.changeVolume()
+    volume (volume) {
+      this.mute = false
+      this.$emit('volume', volume)
     }
   },
   computed: mapState({
+    masterMute: state => state.private.display.jukeboxWindow.masterMute
   })
 }
 </script>

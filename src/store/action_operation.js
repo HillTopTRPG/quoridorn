@@ -48,10 +48,7 @@ const actionOperation = {
           if (bgmObj.chatLinkage === 1 && text.endsWith(bgmObj.chatLinkageSearch)) {
             return true
           }
-          if (bgmObj.chatLinkage === 2 && new RegExp(bgmObj.chatLinkageSearch).test(text)) {
-            return true
-          }
-          return false
+          return bgmObj.chatLinkage === 2 && new RegExp(bgmObj.chatLinkageSearch).test(text)
         })
         .sort((a, b) => {
           if (a.title.length > b.title.length) return -1
@@ -67,19 +64,31 @@ const actionOperation = {
      * 画像を追加する
      */
     addImage: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doAddImage' }) },
-    doAddImage: ({ rootState }, payload) => {
+    doAddImage: ({ rootState }, { tag, data, ownerPeerId }) => {
       // 欠番を埋める方式は不採用
       let maxKey = rootState.public.image.maxKey
       const key = `image-${++maxKey}`
       rootState.public.image.maxKey = maxKey
       rootState.public.image.list.push({
-        tag: payload.tag,
-        data: payload.data,
+        tag: tag,
+        data: data,
         key: key
       })
-      if (rootState.private.connect.peerId === payload.ownerPeerId) {
+      if (rootState.private.connect.peerId === ownerPeerId) {
         rootState.private.history.push({ type: 'add', key: key })
       }
+    },
+    /** ========================================================================
+     * BGMを追加する
+     */
+    addBGM: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doAddBGM' }) },
+    doAddBGM: ({ rootState }, payload) => {
+      // 欠番を埋める方式は不採用
+      let maxKey = rootState.public.bgm.maxKey
+      const key = `bgm-${++maxKey}`
+      rootState.public.bgm.maxKey = maxKey
+      payload.key = key
+      rootState.public.bgm.list.push(payload)
     },
     /** ========================================================================
      * マップオブジェクトを追加する

@@ -93,11 +93,9 @@ export default {
       this.playBGM(true)
     },
     doAdd () {
-      console.log(`doAdd`)
-      alert('未実装の機能です。')
+      this.windowOpen('private.display.addBGMWindow')
     },
     doModify () {
-      console.log(`doModify: ${this.selectBgmKey}`)
       if (this.selectBgmKey < 0) {
         alert('BGMを選択してください')
         return

@@ -48,7 +48,7 @@ export default {
     ]),
     commit () {
       this.imageList.forEach(imageObj => {
-        this.addImage({ tag: imageObj.currentTag, data: imageObj.image, isNotice: true })
+        this.addImage({ tag: imageObj.currentTag, data: imageObj.image })
       })
       this.windowClose('private.display.dropImageWindow')
       this.emptyProperty({property: 'private.display.dropImageWindow.imageDataList'})

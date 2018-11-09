@@ -1,7 +1,7 @@
 <template>
   <WindowFrame titleText="BGM再生画面" display-property="private.display.jukeboxWindow" align="right-bottom" fixSize="150, 209" :isBanClose="true" @add="add">
     <div class="contents">
-      <MasterVolumeComponent @masterMute="setMasterMute" @masterVolume="setMasterVolume"/>
+      <MasterVolumeComponent/>
       <BGMComponent
         v-for="bgmObj in playList"
         :key="bgmObj.key"
@@ -10,8 +10,6 @@
         :isLoop="bgmObj.isLoop"
         :title="bgmObj.title"
         :initVolume="bgmObj.volume"
-        :paramMasterMute="masterMute"
-        :paramMasterVolume="masterVolume"
         :url="bgmObj.url"
         @end="remove(bgmObj.key)"
         :maxSecond="bgmObj.playLength"></BGMComponent>
@@ -36,9 +34,7 @@ export default {
   },
   data () {
     return {
-      playList: [],
-      masterMute: false,
-      masterVolume: 0.5
+      playList: []
     }
   },
   methods: {
@@ -46,11 +42,6 @@ export default {
       'windowClose',
       'windowOpen'
     ]),
-    /**
-     * =========================================================================
-     * 【削除禁止】
-     * $refs越しに呼ばれるメソッド
-     */
     add (bgmKey) {
       if (!bgmKey) return
       const addBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === bgmKey)[0]
@@ -93,22 +84,6 @@ export default {
 
       if (this.playList.length === 0) {
         this.windowClose('private.display.jukeboxWindow')
-      }
-    },
-    setMasterMute (flg) {
-      this.masterMute = flg
-      for (const ref in this.$refs) {
-        if (this.$refs[ref].length > 0) {
-          this.$refs[ref][0].setMasterMute(flg)
-        }
-      }
-    },
-    setMasterVolume (value) {
-      this.masterVolume = value
-      for (const ref in this.$refs) {
-        if (this.$refs[ref].length > 0) {
-          this.$refs[ref][0].setMasterVolume(value)
-        }
       }
     }
   },

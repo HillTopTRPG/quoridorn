@@ -10,9 +10,8 @@
       <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="!isPlay"><i class="icon-pause"></i></span>
       <VolumeComponent
         :initVolume="initVolume"
-        @volume="volume"
-        @mute="mute"
-        @mounted="volumeMounted"
+        @mute="setMute"
+        @volume="setVolume"
         ref="volumeComponent"/>
     </div>
     <div class="playLengthArea">
@@ -33,8 +32,6 @@ export default {
     'isLoop': { type: Boolean, required: true },
     'title': { type: String, required: true },
     'initVolume': { type: Number, required: true },
-    'paramMasterMute': { type: Boolean, required: true },
-    'paramMasterVolume': { type: Number, required: true },
     'url': { type: String, required: true },
     'maxSecond': { type: Number, required: true }
   },
@@ -46,64 +43,45 @@ export default {
       jukeboxAudio: null,
       isPlay: true,
       playLength: 0,
-      duration: 0,
-      masterMute: false,
-      masterVolume: 0.5
+      duration: 0
     }
   },
-  beforeMount () {
-    this.masterMute = this.paramMasterMute
-    this.masterVolume = this.paramMasterVolume
-
+  mounted () {
     this.jukeboxAudio = new Audio()
     this.jukeboxAudio.autoplay = true
     this.jukeboxAudio.loop = this.isLoop
-    this.jukeboxAudio.volume = this.initVolume * this.masterVolume
+    this.$refs.volumeComponent.setVolume(this.initVolume)
+    this.$refs.volumeComponent.setMute(false)
     this.jukeboxAudio.addEventListener('timeupdate', this.timeUpdate)
-    // console.log(111111111, this.url, this.jukeboxAudio)
     this.jukeboxAudio.addEventListener('play', () => {
-      // console.log(2222222222, this.jukeboxAudio)
       if (!this.jukeboxAudio) return
       this.duration = this.jukeboxAudio.duration
     })
     this.jukeboxAudio.src = this.url
   },
   destroyed () {
-    // console.log('!!!! destroyed !!!!')
     this.changePlay(false)
     this.jukeboxAudio = null
   },
   methods: {
     ...mapActions([]),
-    volumeMounted () {
-      this.$refs.volumeComponent.setMasterMute(this.masterMute)
-      this.$refs.volumeComponent.setMasterVolume(this.masterVolume)
+    audioMute () {
+      this.jukeboxAudio.muted = this.masterMute || this.$refs.volumeComponent.mute
     },
-    mute (flg) { this.jukeboxAudio.muted = flg },
-    volume (volume) {
-      this.jukeboxAudio.volume = volume
+    audioVolume () {
+      this.jukeboxAudio.volume = this.masterVolume * this.$refs.volumeComponent.volume
     },
-    setMasterMute (flg) {
-      this.masterMute = flg
-      this.$refs.volumeComponent.setMasterMute(flg)
-    },
-    setMasterVolume (volume) {
-      this.masterVolume = volume
-      this.$refs.volumeComponent.setMasterVolume(volume)
-    },
+    setMute (mute) { this.audioMute(this.masterMute || mute) },
+    setVolume (volume) { this.audioVolume(this.masterVolume * volume) },
     changePlay (flg = !this.isPlay) {
       this.isPlay = flg
-      if (this.isPlay) {
-        this.jukeboxAudio.play()
-      } else {
-        this.jukeboxAudio.pause()
-      }
+      this.isPlay ? this.jukeboxAudio.play() : this.jukeboxAudio.pause()
     },
     changeTime () {
       this.jukeboxAudio.currentTime = this.playLength
       this.changePlay(true)
     },
-    timeUpdate (event) {
+    timeUpdate () {
       if (!this.jukeboxAudio) return
       this.playLength = this.jukeboxAudio.currentTime
       if (this.playLength >= this.bgmLength) {
@@ -117,18 +95,27 @@ export default {
       }
     }
   },
+  watch: {
+    masterMute: {
+      handler () { setTimeout(() => this.audioMute(), 0) },
+      immediate: true
+    },
+    masterVolume: {
+      handler () { setTimeout(() => this.audioVolume(), 0) },
+      immediate: true
+    }
+  },
   computed: mapState({
     playLengthStyle () {
-      const per = this.playLength * 100 / this.bgmLength
       const useColor = this.isPlay ? 'black' : '#8A084B'
+      const per = this.playLength * 100 / this.bgmLength
       return {
-        background: `linear-gradient(to right, ${useColor} 0%, ${useColor} ${per}%, rgba(100, 100, 100, 1) ${per}%, rgba(100, 100, 100, 1) 100%)`,
-        'border-color': 'black'
+        background: `linear-gradient(to right, ${useColor} 0%, ${useColor} ${per}%, rgba(100, 100, 100, 1) ${per}%, rgba(100, 100, 100, 1) 100%)`
       }
     },
-    bgmLength () {
-      return this.maxSecond > 0 ? this.maxSecond : this.duration
-    }
+    bgmLength () { return this.maxSecond > 0 ? this.maxSecond : this.duration },
+    masterMute: state => state.private.display.jukeboxWindow.masterMute,
+    masterVolume: state => state.private.display.jukeboxWindow.masterVolume
   })
 }
 </script>
@@ -287,6 +274,7 @@ input[type="range"].playLength {
   margin-bottom: 8px;
   flex: 1;
   width: 100%;
+  border-color: black;
 }
 input[type=range].playLength::-webkit-slider-runnable-track{
   height: 8px;

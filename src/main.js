@@ -33,6 +33,7 @@ import EditCharacterWindow from './components/map/character/EditCharacterWindow'
 import SettingBGMWindow from './components/music/SettingBGMWindow'
 import JukeboxWindow from './components/music/JukeboxWindow'
 import EditBGMWindow from './components/music/EditBGMWindow'
+import AddBGMWindow from './components/music/AddBGMWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -167,3 +168,6 @@ settingBGMWindow.$mount('#settingBGMWindow')
 
 const editBGMWindow = new Vue({ store, components: { EditBGMWindow: EditBGMWindow }, template: `<EditBGMWindow/>` })
 editBGMWindow.$mount('#editBGMWindow')
+
+const addBGMWindow = new Vue({ store, components: { AddBGMWindow: AddBGMWindow }, template: `<AddBGMWindow/>` })
+addBGMWindow.$mount('#addBGMWindow')

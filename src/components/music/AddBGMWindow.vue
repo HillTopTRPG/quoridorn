@@ -1,13 +1,11 @@
 <template>
-  <WindowFrame titleText="BGM編集画面" display-property="private.display.editBGMWindow" align="right-bottom" fixSize="300, 350" @open="initWindow">
+  <WindowFrame titleText="BGM追加画面" display-property="private.display.addBGMWindow" align="right-bottom" fixSize="300, 350" @open="initWindow">
     <div class="contents">
       <fieldset>
         <legend>読込</legend>
         <!-- URL -->
         <label class="url"><span>URL</span>
-          <input type="text" v-model="url" v-if="!isHideUrl" ref="urlElm">
-          <!-- URLマスク -->
-          <div class="mask" v-if="isHideUrl" @click="isHideUrl = !isHideUrl">編集するにはここをクリックしてください。</div>
+          <input type="text" v-model="url" ref="urlElm">
         </label>
       </fieldset>
       <fieldset>
@@ -84,7 +82,7 @@ import WindowMixin from '../WindowMixin'
 import VolumeComponent from './component/VolumeComponent'
 
 export default {
-  name: 'editBGMWindow',
+  name: 'addBGMWindow',
   mixins: [WindowMixin],
   components: {
     WindowFrame: WindowFrame,
@@ -92,7 +90,6 @@ export default {
   },
   data () {
     return {
-      isHideUrl: true,
       url: '',
       title: '',
       creditUrl: '',
@@ -122,34 +119,12 @@ export default {
     ...mapActions([
       'windowClose',
       'windowOpen',
-      'setProperty'
+      'addBGM'
     ]),
     initWindow () {
-      const key = this.key
-      const bgmObj = this.bgmList.filter(bgmObj => bgmObj.key === key)[0]
-      if (!bgmObj) {
-        alert('そのBGMは既に削除されたようです。')
-        this.windowClose('private.display.editBGMWindow')
-      }
-      this.isHideUrl = true
-      this.url = bgmObj.url
-      this.title = bgmObj.title
-      this.creditUrl = bgmObj.creditUrl
-      this.tag = bgmObj.tag
-      this.isLoop = bgmObj.isLoop
-      this.fadeIn = bgmObj.fadeIn
-      this.fadeOut = bgmObj.fadeOut
-      this.playLength = bgmObj.playLength
-      this.isMute = bgmObj.isMute
-      this.volume = Math.floor(parseFloat(bgmObj.volume) * 100) / 100
-      this.$refs.volumeComponent.setVolume(this.volume)
-      this.chatLinkage = bgmObj.chatLinkage
-      this.chatLinkageSearch = bgmObj.chatLinkageSearch
+      setTimeout(() => this.$refs.urlElm.focus(), 0)
     },
     commit () {
-      const key = this.key
-      const storeBgmObj = this.bgmList.filter(bgmObj => bgmObj.key === key)[0]
-      const index = this.bgmList.indexOf(storeBgmObj)
       const bgmObj = {
         url: this.url,
         title: this.title,
@@ -164,12 +139,12 @@ export default {
         chatLinkage: this.chatLinkage,
         chatLinkageSearch: this.chatLinkageSearch
       }
-      this.setProperty({property: `public.bgm.list.${index}`, value: bgmObj, logOff: false})
+      this.addBGM(bgmObj)
 
-      this.windowClose('private.display.editBGMWindow')
+      this.windowClose('private.display.addBGMWindow')
     },
     cancel () {
-      this.windowClose('private.display.editBGMWindow')
+      this.windowClose('private.display.addBGMWindow')
     },
     getCredit () {
       this.creditUrl = this.url.replace(/^(https?:\/\/[^/]+).+$/, '$1')
@@ -181,16 +156,7 @@ export default {
     setIsMute (isMute) { this.isMute = isMute },
     setVolume (volume) { this.volume = Math.floor(parseFloat(volume) * 100) / 100 }
   },
-  watch: {
-    isHideUrl (isHideUrl) {
-      if (!isHideUrl) {
-        this.url = ''
-        setTimeout(() => this.$refs.urlElm.focus(), 0)
-      }
-    }
-  },
   computed: mapState({
-    key: state => state.private.display['editBGMWindow'].key,
     bgmList: state => state.public.bgm.list
   })
 }

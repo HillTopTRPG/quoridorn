@@ -90,8 +90,9 @@ const storeModulePrivate = {
         startLeftWidth: -1,
         startRightWidth: -1
       },
-      jukeboxWindow: { command: null, isDisplay: false, zIndex: 1 },
+      jukeboxWindow: { command: null, isDisplay: false, zIndex: 1, masterMute: false, masterVolume: 0.5 },
       editBGMWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
+      addBGMWindow: { command: null, isDisplay: false, zIndex: 1 },
       mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       characterContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       gameTableContext: { command: null, isDisplay: false, x: 0, y: 0 },

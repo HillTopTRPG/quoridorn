@@ -49,7 +49,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setProperty',
       'windowOpen',
       'windowClose',
       'changePieceInfo'

@@ -4,7 +4,11 @@
       <span class="title" title="すべてのBGMの再生音量を割合で補正します">【マスターボリューム】</span>
     </div>
     <div class="controlArea">
-      <VolumeComponent :initVolume="0.5" @volume="volume" @mute="mute"/>
+      <VolumeComponent
+        :initVolume="0.5"
+        @mute="mute"
+        @volume="volume"
+        ref="volumeComponent"/>
     </div>
   </div>
 </template>
@@ -18,19 +22,27 @@ export default {
   components: {
     VolumeComponent: VolumeComponent
   },
-  data () {
-    return {}
+  mounted () {
+    this.$refs.volumeComponent.setMute(this.masterMute)
+    this.$refs.volumeComponent.setVolume(this.masterVolume)
   },
   methods: {
-    ...mapActions([]),
-    mute (flg) {
-      this.$emit('masterMute', flg)
+    ...mapActions([
+      'setProperty'
+    ]),
+    mute (mute) {
+      this.$refs.volumeComponent.setMute(mute)
+      this.setProperty({property: `private.display.jukeboxWindow.masterMute`, value: mute, logOff: true})
     },
     volume (volume) {
-      this.$emit('masterVolume', volume)
+      this.$refs.volumeComponent.setVolume(volume)
+      this.setProperty({property: `private.display.jukeboxWindow.masterVolume`, value: volume, logOff: true})
     }
   },
-  computed: mapState({})
+  computed: mapState({
+    masterMute: state => state.private.display.jukeboxWindow.masterMute,
+    masterVolume: state => state.private.display.jukeboxWindow.masterVolume
+  })
 }
 </script>
 
