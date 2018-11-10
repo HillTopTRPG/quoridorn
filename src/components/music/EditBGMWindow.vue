@@ -5,9 +5,9 @@
         <legend>読込</legend>
         <!-- URL -->
         <label class="url"><span>URL</span>
-          <input type="text" v-model="url" v-if="!isHideUrl" ref="urlElm">
+          <input type="text" v-model="url" v-if="!url || isYoutube || !isHideUrl" ref="urlElm" placeholder="指定なしで「停止」の操作になります">
           <!-- URLマスク -->
-          <div class="mask" v-if="isHideUrl" @click="isHideUrl = !isHideUrl">編集するにはここをクリックしてください。</div>
+          <div class="mask" v-if="url && !isYoutube && isHideUrl" @click="isHideUrl = !isHideUrl">編集するにはここをクリックしてください。</div>
         </label>
       </fieldset>
       <fieldset>
@@ -16,9 +16,9 @@
           <!-- 表示タイトル -->
           <label class="titleStr"><span>タイトル</span><input type="text" v-model="title"></label>
         </div>
-        <div class="firstWide">
+        <div class="firstWide" v-if="!isYoutube">
           <!-- クレジットURL -->
-          <label class="creditUrl"><span>CreditURL</span><input type="text" v-model="creditUrl"></label>
+          <label class="creditUrl"><span>CreditURL</span><input type="text" v-model="creditUrl" placeholder="未実装"></label>
           <!-- クレジット取得 -->
           <button class="getCredit" @click="getCredit">取得</button>
         </div>
@@ -93,6 +93,7 @@ export default {
   data () {
     return {
       isHideUrl: true,
+      isYoutube: false,
       url: '',
       title: '',
       creditUrl: '',
@@ -100,6 +101,8 @@ export default {
       isLoop: false,
       fadeIn: 0,
       fadeOut: 0,
+      start: 0,
+      end: 0,
       playLength: 0,
       isMute: false,
       volume: 0.8,
@@ -113,9 +116,7 @@ export default {
         'SE'
       ],
       chatLinkage: 0,
-      chatLinkageSearch: '',
-      masterMute: false,
-      masterVolume: 0.5
+      chatLinkageSearch: ''
     }
   },
   methods: {
@@ -133,6 +134,7 @@ export default {
       }
       this.isHideUrl = true
       this.url = bgmObj.url
+      this.isYoutube = /www\.youtube\.com/.test(this.url)
       this.title = bgmObj.title
       this.creditUrl = bgmObj.creditUrl
       this.tag = bgmObj.tag
@@ -165,20 +167,7 @@ export default {
         chatLinkageSearch: this.chatLinkageSearch
       }
       this.setProperty({property: `public.bgm.list.${index}`, value: bgmObj, logOff: false})
-
-      const videoId = window['getUrlParam']('v', this.url)
-      if (videoId) {
-        const xhr = new XMLHttpRequest()
-        xhr.open('get', 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related', true)
-        xhr.send('')
-        xhr.onload = function () {
-          console.log(xhr.responseXML)
-          let title = xhr.responseXML.getElementsByTagName('title')[0].textContent
-          title = title.replace('Videos related to', '')
-          alert(title)
-        }
-      }
-      // this.windowClose('private.display.editBGMWindow')
+      this.windowClose('private.display.editBGMWindow')
     },
     cancel () {
       this.windowClose('private.display.editBGMWindow')

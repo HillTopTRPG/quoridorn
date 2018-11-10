@@ -209,23 +209,27 @@ export default {
           return false
         }
         if (!iframeElm.onload) {
-          iframeElm.onload = () => {
-            const bodyElm = iframeElm.contentWindow.document
-            if (!bodyElm.onmousemove) { bodyElm.onmousemove = mouseMoveListener }
-            if (!bodyElm.ontouchmove) { bodyElm.ontouchmove = touchMoveListener }
-            if (!bodyElm.onmouseup) { bodyElm.onmouseup = mouseupListener }
-            if (!bodyElm.oncontextmenu) { bodyElm.oncontextmenu = contextmenuListener }
-            if (!bodyElm.onclick) { bodyElm.onclick = clickListener }
-            /*
-            const aElms = bodyElm.getElementsByTagName('a')
-            for (const aElm of aElms) {
-              if (!aElm.onmousemove) { aElm.onmousemove = mouseMoveListener }
-              if (!aElm.ontouchmove) { aElm.ontouchmove = touchMoveListener }
-              if (!aElm.oncontextmenu) { aElm.oncontextmenu = contextmenuListener }
-              if (!aElm.onclick) { aElm.onclick = clickListener }
+          try {
+            iframeElm.onload = () => {
+              try {
+                const bodyElm = iframeElm.contentWindow.document
+                if (!bodyElm.onmousemove) { bodyElm.onmousemove = mouseMoveListener }
+                if (!bodyElm.ontouchmove) { bodyElm.ontouchmove = touchMoveListener }
+                if (!bodyElm.onmouseup) { bodyElm.onmouseup = mouseupListener }
+                if (!bodyElm.oncontextmenu) { bodyElm.oncontextmenu = contextmenuListener }
+                if (!bodyElm.onclick) { bodyElm.onclick = clickListener }
+                /*
+                const aElms = bodyElm.getElementsByTagName('a')
+                for (const aElm of aElms) {
+                  if (!aElm.onmousemove) { aElm.onmousemove = mouseMoveListener }
+                  if (!aElm.ontouchmove) { aElm.ontouchmove = touchMoveListener }
+                  if (!aElm.oncontextmenu) { aElm.oncontextmenu = contextmenuListener }
+                  if (!aElm.onclick) { aElm.onclick = clickListener }
+                }
+                */
+              } catch (error) { /* Nothing */ }
             }
-            */
-          }
+          } catch (error) { /* Nothing */ }
         }
         /*
         */

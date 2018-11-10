@@ -3,6 +3,9 @@ script.src = 'https://www.youtube.com/player_api'
 const firstScript = document.getElementsByTagName('script')[0]
 firstScript.parentNode.insertBefore(script, firstScript)
 
+/**
+ * 複数のYoutubeを再生するための特製のクラス！
+ */
 const YoutubeControlManager = () => {
   let playerArr = []
   const playerMapping = {}
@@ -63,7 +66,11 @@ const YoutubeControlManager = () => {
     const yPlayer = playerMapping[args.shift()]
     if (!yPlayer) return
     // console.log('doPlayerMethod', methodName, ...args)
-    return yPlayer.player[methodName](...args)
+    let result = null
+    try {
+      result = yPlayer.player[methodName](...args)
+    } catch (error) { /* Nothing */ }
+    return result
   }
   const youtubeMethod = {
     /** IDを指定して読み込ませる */
@@ -188,12 +195,11 @@ const YoutubeControlManager = () => {
     }
   }
   const eventHandler = {
-    onReady: (index) => {
+    onReady: index => {
       callEventHandler(index, 'onReady')
     },
-    onEnded: (index, event) => {
+    onEnded: index => {
       callEventHandler(index, 'onEnded')
-      event.target.playVideo()
     },
     onPlaying: (index, event) => {
       try {
@@ -201,7 +207,7 @@ const YoutubeControlManager = () => {
         if (!playerObj) return
 
         // 既にタイマーが張られていたら停止する
-        if (playerObj.timeUpdateTimer) clearInterval(playerObj.timer)
+        if (playerObj.timeUpdateTimer) clearInterval(playerObj.timeUpdateTimer)
 
         // 100ミリ秒毎に現在の再生経過時間を通知する
         playerObj.timeUpdateTimer = setInterval(() => {
@@ -213,9 +219,21 @@ const YoutubeControlManager = () => {
       callEventHandler(index, 'onPlaying', event.target.getDuration(), event.target)
     },
     onPaused: index => {
+      let playerObj = getPlayerObj(index)
+      if (!playerObj) return
+
+      // 既にタイマーが張られていたら停止する
+      if (playerObj.timeUpdateTimer) clearInterval(playerObj.timeUpdateTimer)
+
       callEventHandler(index, 'onPaused')
     },
     onBuffering: index => {
+      let playerObj = getPlayerObj(index)
+      if (!playerObj) return
+
+      // 既にタイマーが張られていたら停止する
+      if (playerObj.timeUpdateTimer) clearInterval(playerObj.timeUpdateTimer)
+
       callEventHandler(index, 'onBuffering')
     },
     onCued: index => {
@@ -270,15 +288,15 @@ const YoutubeControlManager = () => {
             'onApiChange': event => eventHandler.onApiChange(i, event)
           },
           'playerVars': {
-            autoplay: 0, // 0:自動再生しない or 1:自動再生
-            controls: 1, // 再生ボタンとか出さない
-            disablekb: 1, // ショートカットキー無効
-            enablejsapi: 1, // JavaScript API 有効
-            list: 'search', // 検索クエリ使用
-            listType: 'search', // 検索クエリ使用
-            loop: 1, // 0:ループしない or 1:ループする 後で再設定する
-            rel: 0, // 関連動画出さない
-            showinfo: 0 // 動画名とか出さない
+            'autoplay': 0, // 0:自動再生しない or 1:自動再生
+            'controls': 1, // 再生ボタンとか出さない
+            'disablekb': 1, // ショートカットキー無効
+            'enablejsapi': 1, // JavaScript API 有効
+            'list': 'search', // 検索クエリ使用
+            'listType': 'search', // 検索クエリ使用
+            'loop': 1, // 0:ループしない or 1:ループする 後で再設定する
+            'rel': 0, // 関連動画出さない
+            'showinfo': 0 // 動画名とか出さない
           }
         })
         playerArr.push(player)

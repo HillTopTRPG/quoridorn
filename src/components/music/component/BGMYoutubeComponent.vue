@@ -1,24 +1,21 @@
 <template>
-  <div>
-    <img v-for="imgStr in images" :key="imgStr" v-img="imgStr" >
-    <BGMCoreComponent
-      :tag="tag"
-      :isLoop="isLoop"
-      :title="title"
-      :initVolume="initVolume"
-      :url="url"
-      :maxSecond="maxSecond"
-      @mounted="mounted"
-      @destroyed="destroyed"
-      @mute="mute"
-      @volume="volume"
-      @play="play"
-      @pause="pause"
-      @seekTo="seekTo"
-      @end="end"
-      ref="core"
-    ></BGMCoreComponent>
-  </div>
+  <BGMCoreComponent
+    :tag="tag"
+    :isLoop="isLoop"
+    :title="title"
+    :initVolume="initVolume"
+    :url="url"
+    :maxSecond="maxSecond"
+    @mounted="mounted"
+    @destroyed="destroyed"
+    @mute="mute"
+    @volume="volume"
+    @play="play"
+    @pause="pause"
+    @seekTo="seekTo"
+    @end="end"
+    ref="core"
+  ></BGMCoreComponent>
 </template>
 
 <script>
@@ -39,19 +36,9 @@ export default {
     BGMCoreComponent: BGMCoreComponent
   },
   data () {
-    return {
-      id: null,
-      images: []
-    }
+    return {}
   },
   mounted () {
-    this.id = window['getUrlParam']('v', this.url)
-    this.images.splice(0, this.images.length)
-    this.images.push(`http://i.ytimg.com/vi/${this.id}/default.jpg`)
-    this.images.push(`http://i.ytimg.com/vi/${this.id}/1.jpg`)
-    this.images.push(`http://i.ytimg.com/vi/${this.id}/2.jpg`)
-    this.images.push(`http://i.ytimg.com/vi/${this.id}/3.jpg`)
-    console.log(this.images)
   },
   destroyed () {
     this.destroyed()
@@ -63,11 +50,15 @@ export default {
     onPlaying (duration, target) {
       this.$refs.core.setDuration(duration)
     },
+    onError (event) {
+      console.log(event)
+    },
     mounted () {
       const result = window.youtube.registration(this.tag, this.url, 0, {
         onReady: this.onReady,
         timeUpdate: this.timeUpdate,
-        onPlaying: this.onPlaying
+        onPlaying: this.onPlaying,
+        onError: this.onError
       })
       // this.jukeboxAudio.loop = this.isLoop
       if (!result) {

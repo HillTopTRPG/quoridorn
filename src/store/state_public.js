@@ -73,20 +73,22 @@ const storeModulePublic = {
     bgm: {
       /** BGMのプリセット */
       list: [
-        { key: 'bgm-0', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM1', title: 'BGM停止', url: '', playLength: 0, volume: 0.5, isLoop: false, fadeIn: 1, fadeOut: 1 },
-        { key: 'bgm-1', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM2', title: 'BGM2停止', url: '', playLength: 0, volume: 0.5, isLoop: false, fadeIn: 1, fadeOut: 1 },
-        { key: 'bgm-2', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM3', title: 'BGM3停止', url: '', playLength: 0, volume: 0.5, isLoop: false, fadeIn: 1, fadeOut: 1 },
-        { key: 'bgm-3', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM1', title: '馬車道', url: require('../assets/BGM/o12.mp3'), playLength: 0, volume: 0.8, isLoop: true, fadeIn: 1, fadeOut: 0 },
-        { key: 'bgm-4', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM2', title: '羊飼いの夕餉', url: require('../assets/BGM/n122.mp3'), playLength: 0, volume: 1, isLoop: true, fadeIn: 0, fadeOut: 1 },
-        { key: 'bgm-5', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM3', title: '小さな行進曲', url: require('../assets/BGM/n26.mp3'), playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
-        { key: 'bgm-6', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM2', title: 'ECHO【Gumi English】', url: 'https://www.youtube.com/watch?v=cQKGUgOfD8U', playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
-        { key: 'bgm-7', chatLinkage: 0, chatLinkageSearch: '', tag: 'BGM3', title: 'LUVORATORRRRRY! ver れをる feat.nqrse', url: 'https://www.youtube.com/watch?v=p-o_bMkzOW0', playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
-        { key: 'bgm-8', chatLinkage: 0, chatLinkageSearch: 'チーン1', tag: 'SE', title: 'チーン1', url: require('../assets/BGM/tin1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
-        { key: 'bgm-9', chatLinkage: 1, chatLinkageSearch: '出題1', tag: 'SE', title: '出題1', url: require('../assets/BGM/question1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
-        { key: 'bgm-10', chatLinkage: 1, chatLinkageSearch: '正解1', tag: 'SE', title: '正解1', url: require('../assets/BGM/correct1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
-        { key: 'bgm-11', chatLinkage: 1, chatLinkageSearch: '不正解1', tag: 'SE', title: '不正解1', url: require('../assets/BGM/incorrect1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 }
+        { key: 'bgm-0', chatLinkage: 0, chatLinkageSearch: '', tag: 'Free', title: 'Free停止', url: '', playLength: 0, volume: 0.5, isLoop: false, fadeIn: 1, fadeOut: 1 },
+        { key: 'bgm-1', chatLinkage: 0, chatLinkageSearch: '', tag: 'Vocaloid', title: 'Vocaloid停止', url: '', playLength: 0, volume: 0.5, isLoop: false, fadeIn: 1, fadeOut: 1 },
+        { key: 'bgm-2', chatLinkage: 0, chatLinkageSearch: '', tag: 'Other', title: 'Other停止', url: '', playLength: 0, volume: 0.5, isLoop: false, fadeIn: 1, fadeOut: 1 },
+        { key: 'bgm-3', chatLinkage: 0, chatLinkageSearch: '', tag: 'Free', title: '馬車道', url: require('../assets/BGM/o12.mp3'), playLength: 0, volume: 0.8, isLoop: true, fadeIn: 1, fadeOut: 0 },
+        { key: 'bgm-4', chatLinkage: 0, chatLinkageSearch: '', tag: 'Free', title: '羊飼いの夕餉', url: require('../assets/BGM/n122.mp3'), playLength: 0, volume: 1, isLoop: true, fadeIn: 0, fadeOut: 1 },
+        { key: 'bgm-5', chatLinkage: 0, chatLinkageSearch: '', tag: 'Free', title: '小さな行進曲', url: require('../assets/BGM/n26.mp3'), playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-6', chatLinkage: 0, chatLinkageSearch: '', tag: 'Free', title: '華志の舞 (Kashi no Mai)', url: 'https://www.youtube.com/watch?v=nq3YnT0km2o&t=15s', playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-7', chatLinkage: 0, chatLinkageSearch: '', tag: 'Vocaloid', title: 'ECHO【Gumi English】', url: 'https://www.youtube.com/watch?v=cQKGUgOfD8U', playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-8', chatLinkage: 0, chatLinkageSearch: '', tag: 'Other', title: 'DJ Sona\'s Ultimate Skin Music: Kinetic', url: 'https://www.youtube.com/watch?v=uHJyAZtRrOY', playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-9', chatLinkage: 0, chatLinkageSearch: '', tag: 'Other', title: 'Tobu - Higher', url: 'https://www.youtube.com/watch?v=blA7epJJaR4', playLength: 0, volume: 0.8, isLoop: true, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-10', chatLinkage: 0, chatLinkageSearch: 'チーン1', tag: 'SE', title: 'チーン1', url: require('../assets/BGM/tin1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-11', chatLinkage: 1, chatLinkageSearch: '出題1', tag: 'SE', title: '出題1', url: require('../assets/BGM/question1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-12', chatLinkage: 1, chatLinkageSearch: '正解1', tag: 'SE', title: '正解1', url: require('../assets/BGM/correct1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 },
+        { key: 'bgm-13', chatLinkage: 1, chatLinkageSearch: '不正解1', tag: 'SE', title: '不正解1', url: require('../assets/BGM/incorrect1.mp3'), playLength: 0, volume: 0.8, isLoop: false, fadeIn: 0, fadeOut: 0 }
       ],
-      maxKey: 11,
+      maxKey: 13,
 
       /** 再生リスト */
       playList: {

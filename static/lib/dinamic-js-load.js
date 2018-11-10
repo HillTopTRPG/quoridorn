@@ -1,4 +1,9 @@
 
+/*
+ * このファイルはまだ使ってない。
+ * いずれ使うかもと思っている……
+ */
+
 /**
  * Javascriptを動的にロードする。
  * {@link http://blog.yuhiisk.com/archive/2014/12/20/dynamic-loading-and-complete-processing-of-script.html 参考URL}

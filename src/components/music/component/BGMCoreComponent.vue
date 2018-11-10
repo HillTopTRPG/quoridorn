@@ -1,22 +1,27 @@
 <template>
-  <div class="bgmComponent">
-    <div class="attrArea">
-      <span class="tag" :title="'【タグ】\n' + tag">{{tag}}</span><!--
-   --><span class="title" :title="'【タイトル】\n' + title">{{title}}</span><!--
-   --><span class="icon loop" disabled v-if="isLoop"><i class="icon-infinite" title="ループ再生します"></i></span>
+  <div class="bgmCoreComponent">
+    <div class="thumbnail">
+      <img v-img="thumbnailData" draggable="false" alt="Not Found" :title="thumbnailTitle" @click="thumbnailClick">
     </div>
-    <div class="controlArea">
-      <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="isPlay"><i class="icon-play"></i></span>
-      <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="!isPlay"><i class="icon-pause"></i></span>
-      <VolumeComponent
-        :initVolume="initVolume"
-        @mute="setMute"
-        @volume="setVolume"
-        ref="volumeComponent"/>
-    </div>
-    <div class="playLengthArea">
-      <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(bgmLength * 100) / 100" step="0.01" v-model="playLength" @input="seekTo">
-      <span class="playLengthText">{{Math.round(playLength)}}/{{Math.round(bgmLength)}}</span>
+    <div class="bgmComponent">
+      <div class="attrArea">
+        <span class="tag" :title="'【タグ】\n' + tag">{{tag}}</span><!--
+     --><span class="title" :title="'【タイトル】\n' + title">{{title}}</span><!--
+     --><span class="icon loop" disabled v-if="isLoop"><i class="icon-infinite" title="ループ再生します"></i></span>
+      </div>
+      <div class="controlArea">
+        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="isPlay"><i class="icon-play"></i></span>
+        <span class="icon play" :class="{isPlay: isPlay}" @click="changePlay()" v-show="!isPlay"><i class="icon-pause"></i></span>
+        <VolumeComponent
+          :initVolume="initVolume"
+          @mute="setMute"
+          @volume="setVolume"
+          ref="volumeComponent"/>
+      </div>
+      <div class="playLengthArea">
+        <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(bgmLength * 100) / 100" step="0.01" v-model="playLength" @input="seekTo">
+        <span class="playLengthText">{{Math.round(playLength)}}/{{Math.round(bgmLength)}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -41,12 +46,16 @@ export default {
   data () {
     return {
       jukeboxAudio: null,
+      isYoutube: false,
       isPlay: true,
       playLength: 0,
-      duration: 0
+      duration: 0,
+      thumbnailData: ''
     }
   },
   mounted () {
+    this.isYoutube = /www\.youtube\.com/.test(this.url)
+    this.thumbnailData = `http://i.ytimg.com/vi/${window['getUrlParam']('v', this.url)}/default.jpg`
     this.$refs.volumeComponent.setVolume(this.initVolume)
     this.$refs.volumeComponent.setMute(false)
     this.$emit('mounted')
@@ -57,6 +66,9 @@ export default {
   },
   methods: {
     ...mapActions([]),
+    thumbnailClick () {
+      window.open(this.url, '_blank')
+    },
     audioMute () {
       this.$emit('mute', this.masterMute || this.$refs.volumeComponent.mute)
     },
@@ -109,14 +121,39 @@ export default {
     },
     bgmLength () { return this.maxSecond > 0 ? this.maxSecond : this.duration },
     masterMute: state => state.private.display.jukeboxWindow.masterMute,
-    masterVolume: state => state.private.display.jukeboxWindow.masterVolume
+    masterVolume: state => state.private.display.jukeboxWindow.masterVolume,
+    thumbnailTitle () {
+      let title = `【タイトル】\n${this.title}`
+      if (this.isYoutube) {
+        title += `\n\n【URL】\n${this.url}`
+      }
+      return title
+    }
   })
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.bgmCoreComponent {
+  display: flex;
+  flex-direction : row;
+  min-height: 54px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 2px solid black;
+}
+.thumbnail {
+  height: 54px;
+  width: 72px;
+  cursor: pointer;
+}
+.thumbnail > * {
+  width: 100%;
+  height: 100%;
+}
 .bgmComponent {
+  flex: 1;
   display: flex;
   flex-direction : column;
   min-height: 54px;

@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="393, 334" @open="initWindow">
+  <WindowFrame titleText="BGM設定画面" display-property="private.display.settingBGMWindow" align="center" fixSize="394, 334" @open="initWindow">
     <div class="contents">
       <div class="playOperationArea">
         <button @click="doPlay">送信</button>
@@ -12,11 +12,12 @@
             <tr>
               <th :style="colStyle(0)">連動</th><Divider :index="0"/>
               <th :style="colStyle(1)">タグ</th><Divider :index="1"/>
-              <th :style="colStyle(2)">タイトル</th><Divider :index="2"/>
-              <th :style="colStyle(3)">時間</th><Divider :index="3"/>
-              <th :style="colStyle(4)">繰</th><Divider :index="4"/>
-              <th :style="colStyle(5)">音量</th><Divider :index="5"/>
-              <th :style="colStyle(6)">fade</th>
+              <th :style="colStyle(2)">種別</th><Divider :index="2"/>
+              <th :style="colStyle(3)">タイトル</th><Divider :index="3"/>
+              <th :style="colStyle(4)">時間</th><Divider :index="4"/>
+              <th :style="colStyle(5)">繰</th><Divider :index="5"/>
+              <th :style="colStyle(6)">音量</th><Divider :index="6"/>
+              <th :style="colStyle(7)">fade</th>
             </tr>
           </thead>
           <tbody>
@@ -30,11 +31,16 @@
               :class="{isActive: selectBgmKey === bgmObj.key}">
               <td :style="colStyle(0)" :title="linkageStr(bgmObj)">{{bgmObj.chatLinkage > 0 ? 'あり' : 'なし'}}</td><Divider :index="0"/>
               <td :style="colStyle(1)">{{bgmObj.tag}}</td><Divider :index="1"/>
-              <td :style="colStyle(2)">{{bgmObj.title}}</td><Divider :index="2"/>
-              <td :style="colStyle(3)">{{convertSecond(bgmObj.playLength)}}</td><Divider :index="3"/>
-              <td :style="colStyle(4)"><i class="icon-infinite" v-if="bgmObj.isLoop"></i>{{bgmObj.isLoop ? '' : '-'}}</td><Divider :index="4"/>
-              <td :style="colStyle(5)">{{bgmObj.volume * 100}}</td><Divider :index="5"/>
-              <td :style="colStyle(6)" :title="fadeTitle(bgmObj)">{{fadeStr(bgmObj)}}</td>
+              <td :style="colStyle(2)">
+                <i class="icon-youtube2" v-if="isYoutube(bgmObj.url)"></i>
+                <i class="icon-stop2" v-if="!bgmObj.url"></i>
+                <i class="icon-file-music" v-if="bgmObj.url && !isYoutube(bgmObj.url)"></i>
+              </td><Divider :index="2"/>
+              <td :style="colStyle(3)">{{bgmObj.title}}</td><Divider :index="3"/>
+              <td :style="colStyle(4)">{{bgmObj.url ? convertSecond(bgmObj.playLength) : '-'}}</td><Divider :index="4"/>
+              <td :style="colStyle(5)"><i class="icon-infinite" v-if="bgmObj.url && bgmObj.isLoop"></i>{{bgmObj.url && bgmObj.isLoop ? '' : '-'}}</td><Divider :index="5"/>
+              <td :style="colStyle(6)">{{bgmObj.url ? bgmObj.volume * 100 : '-'}}</td><Divider :index="6"/>
+              <td :style="colStyle(7)" :title="fadeTitle(bgmObj)">{{bgmObj.url ? fadeStr(bgmObj) : '-'}}</td>
             </tr>
             <tr class="space">
               <td :style="colStyle(0)"></td><Divider :index="0"/>
@@ -79,6 +85,9 @@ export default {
       'setProperty',
       'windowOpen'
     ]),
+    isYoutube (url) {
+      return /www\.youtube\.com/.test(url)
+    },
     initWindow () {
       this.setProperty({
         property: 'private.display.settingBGMWindow.selectBgmKey',
@@ -114,7 +123,9 @@ export default {
     changeSortMode (event) {
       const val = event.target.checked
       console.log(`changeSortMode: ${val}`)
-      alert('未実装の機能です。')
+      if (val) {
+        setTimeout(() => { alert('未実装の機能です。') }, 20)
+      }
     },
     selectLine (bgmKey) {
       this.setProperty({
@@ -124,7 +135,7 @@ export default {
       })
     },
     playBGM (isPreview = false) {
-      this.setProperty({property: 'private.display.jukeboxWindow.command', isNotice: !isPreview, value: {command: 'add', payload: this.selectBgmKey}})
+      this.setProperty({property: 'private.display.jukeboxWindow.command', logOff: true, isNotice: !isPreview, value: {command: 'add', payload: this.selectBgmKey}})
     },
     moveDev (event) {
       if (this.movingIndex > -1) {
@@ -306,5 +317,13 @@ table td.dev:after {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+td i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-file-music {
+  font-size: 1.5em;
 }
 </style>

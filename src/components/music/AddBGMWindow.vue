@@ -14,7 +14,7 @@
           <!-- 表示タイトル -->
           <label class="titleStr"><span>タイトル</span><input type="text" v-model="title"></label>
         </div>
-        <div class="firstWide">
+        <div class="firstWide" v-if="!isYoutube">
           <!-- クレジットURL -->
           <label class="creditUrl"><span>CreditURL</span><input type="text" v-model="creditUrl"></label>
           <!-- クレジット取得 -->
@@ -90,6 +90,7 @@ export default {
   },
   data () {
     return {
+      isYoutube: false,
       url: '',
       title: '',
       creditUrl: '',
@@ -97,6 +98,8 @@ export default {
       isLoop: false,
       fadeIn: 0,
       fadeOut: 0,
+      start: 0,
+      end: 0,
       playLength: 0,
       isMute: false,
       volume: 0.8,
@@ -110,9 +113,7 @@ export default {
         'SE'
       ],
       chatLinkage: 0,
-      chatLinkageSearch: '',
-      masterMute: false,
-      masterVolume: 0.5
+      chatLinkageSearch: ''
     }
   },
   methods: {
@@ -155,6 +156,11 @@ export default {
     change (param) { this[param] = !this[param] },
     setIsMute (isMute) { this.isMute = isMute },
     setVolume (volume) { this.volume = Math.floor(parseFloat(volume) * 100) / 100 }
+  },
+  watch: {
+    url (url) {
+      this.isYoutube = /www\.youtube\.com/.test(url)
+    }
   },
   computed: mapState({
     bgmList: state => state.public.bgm.list

@@ -82,7 +82,7 @@ const storeModulePrivate = {
         isDisplay: false,
         doResetPosition: false,
         zIndex: 1,
-        widthList: [30, 45, 140, 40, 25, 30, 40],
+        widthList: [30, 30, 30, 125, 40, 25, 30, 40],
         selectBgmKey: null,
         hoverDevIndex: -1,
         movingIndex: -1,
