@@ -57,7 +57,7 @@ export default {
   name: 'editMapWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

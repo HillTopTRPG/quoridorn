@@ -88,86 +88,86 @@ const app = new Vue({
 })
 app.$mount('#app')
 
-const chatWindow = new Vue({ store, components: { ChatWindow: ChatWindow }, template: `<ChatWindow/>` })
+const chatWindow = new Vue({ store, components: { ChatWindow }, template: `<ChatWindow/>` })
 chatWindow.$mount('#chatWindow')
 
-const menu = new Vue({ store, components: { Menu: Menu }, template: `<Menu/>` })
+const menu = new Vue({ store, components: { Menu }, template: `<Menu/>` })
 menu.$mount('#menu')
 
-const addMapMaskWindow = new Vue({ store, components: { AddMapMaskWindow: AddMapMaskWindow }, template: `<AddMapMaskWindow/>` })
+const addMapMaskWindow = new Vue({ store, components: { AddMapMaskWindow }, template: `<AddMapMaskWindow/>` })
 addMapMaskWindow.$mount('#addMapMaskWindow')
 
-const editMapMaskWindow = new Vue({ store, components: { EditMapMaskWindow: EditMapMaskWindow }, template: `<EditMapMaskWindow/>` })
+const editMapMaskWindow = new Vue({ store, components: { EditMapMaskWindow }, template: `<EditMapMaskWindow/>` })
 editMapMaskWindow.$mount('#editMapMaskWindow')
 
-const mapMaskContext = new Vue({ store, components: { MapMaskContext: MapMaskContext }, template: `<MapMaskContext/>` })
+const mapMaskContext = new Vue({ store, components: { MapMaskContext }, template: `<MapMaskContext/>` })
 mapMaskContext.$mount('#mapMaskContext')
 
-const unSupportWindo = new Vue({ store, components: { UnSupportWindo: UnSupportWindo }, template: `<UnSupportWindo/>` })
+const unSupportWindo = new Vue({ store, components: { UnSupportWindo }, template: `<UnSupportWindo/>` })
 unSupportWindo.$mount('#unSupportWindo')
 
-const gameTableContext = new Vue({ store, components: { GameTableContext: GameTableContext }, template: `<GameTableContext/>` })
+const gameTableContext = new Vue({ store, components: { GameTableContext }, template: `<GameTableContext/>` })
 gameTableContext.$mount('#gameTableContext')
 
-const devLogWindow = new Vue({ store, components: { DevLogWindow: DevLogWindow }, template: `<DevLogWindow/>` })
+const devLogWindow = new Vue({ store, components: { DevLogWindow }, template: `<DevLogWindow/>` })
 devLogWindow.$mount('#devLogWindow')
 
-const functionListWindow = new Vue({ store, components: { FunctionListWindow: FunctionListWindow }, template: `<FunctionListWindow/>` })
+const functionListWindow = new Vue({ store, components: { FunctionListWindow }, template: `<FunctionListWindow/>` })
 functionListWindow.$mount('#functionListWindow')
 
-const publicMemoWindow = new Vue({ store, components: { PublicMemoWindow: PublicMemoWindow }, template: `<PublicMemoWindow/>` })
+const publicMemoWindow = new Vue({ store, components: { PublicMemoWindow }, template: `<PublicMemoWindow/>` })
 publicMemoWindow.$mount('#publicMemoWindow')
 
-const addCharacterSettingWindow = new Vue({ store, components: { AddCharacterSettingWindow: AddCharacterSettingWindow }, template: `<AddCharacterSettingWindow/>` })
+const addCharacterSettingWindow = new Vue({ store, components: { AddCharacterSettingWindow }, template: `<AddCharacterSettingWindow/>` })
 addCharacterSettingWindow.$mount('#addCharacterSettingWindow')
 
-const addCharacterWindow = new Vue({ store, components: { AddCharacterWindow: AddCharacterWindow }, template: `<AddCharacterWindow/>` })
+const addCharacterWindow = new Vue({ store, components: { AddCharacterWindow }, template: `<AddCharacterWindow/>` })
 addCharacterWindow.$mount('#addCharacterWindow')
 
-const characterContext = new Vue({ store, components: { CharacterContext: CharacterContext }, template: `<CharacterContext/>` })
+const characterContext = new Vue({ store, components: { CharacterContext }, template: `<CharacterContext/>` })
 characterContext.$mount('#characterContext')
 
-const dropImageWindow = new Vue({ store, components: { DropImageWindow: DropImageWindow }, template: `<DropImageWindow/>` })
+const dropImageWindow = new Vue({ store, components: { DropImageWindow }, template: `<DropImageWindow/>` })
 dropImageWindow.$mount('#dropImageWindow')
 
-const roomInfoWindow = new Vue({ store, components: { RoomInfoWindow: RoomInfoWindow }, template: `<RoomInfoWindow/>` })
+const roomInfoWindow = new Vue({ store, components: { RoomInfoWindow }, template: `<RoomInfoWindow/>` })
 roomInfoWindow.$mount('#roomInfoWindow')
 
-const dropZipWindow = new Vue({ store, components: { DropZipWindow: DropZipWindow }, template: `<DropZipWindow/>` })
+const dropZipWindow = new Vue({ store, components: { DropZipWindow }, template: `<DropZipWindow/>` })
 dropZipWindow.$mount('#dropZipWindow')
 
-const selectPeerWindow = new Vue({ store, components: { SelectPeerWindow: SelectPeerWindow }, template: `<SelectPeerWindow/>` })
+const selectPeerWindow = new Vue({ store, components: { SelectPeerWindow }, template: `<SelectPeerWindow/>` })
 selectPeerWindow.$mount('#selectPeerWindow')
 
-const inviteLinkWindow = new Vue({ store, components: { InviteLinkWindow: InviteLinkWindow }, template: `<InviteLinkWindow/>` })
+const inviteLinkWindow = new Vue({ store, components: { InviteLinkWindow }, template: `<InviteLinkWindow/>` })
 inviteLinkWindow.$mount('#inviteLinkWindow')
 
-const createRoomWindow = new Vue({ store, components: { CreateRoomWindow: CreateRoomWindow }, template: `<CreateRoomWindow/>` })
+const createRoomWindow = new Vue({ store, components: { CreateRoomWindow }, template: `<CreateRoomWindow/>` })
 createRoomWindow.$mount('#createRoomWindow')
 
-const confirmLoadRoomWindow = new Vue({ store, components: { ConfirmLoadRoomWindow: ConfirmLoadRoomWindow }, template: `<ConfirmLoadRoomWindow/>` })
+const confirmLoadRoomWindow = new Vue({ store, components: { ConfirmLoadRoomWindow }, template: `<ConfirmLoadRoomWindow/>` })
 confirmLoadRoomWindow.$mount('#confirmLoadRoomWindow')
 
-const addChitWindow = new Vue({ store, components: { AddChitWindow: AddChitWindow }, template: `<AddChitWindow/>` })
+const addChitWindow = new Vue({ store, components: { AddChitWindow }, template: `<AddChitWindow/>` })
 addChitWindow.$mount('#addChitWindow')
 
-const editChitWindow = new Vue({ store, components: { EditChitWindow: EditChitWindow }, template: `<EditChitWindow/>` })
+const editChitWindow = new Vue({ store, components: { EditChitWindow }, template: `<EditChitWindow/>` })
 editChitWindow.$mount('#editChitWindow')
 
-const chitContext = new Vue({ store, components: { ChitContext: ChitContext }, template: `<ChitContext/>` })
+const chitContext = new Vue({ store, components: { ChitContext }, template: `<ChitContext/>` })
 chitContext.$mount('#chitContext')
 
-const editMapWindow = new Vue({ store, components: { EditMapWindow: EditMapWindow }, template: `<EditMapWindow/>` })
+const editMapWindow = new Vue({ store, components: { EditMapWindow }, template: `<EditMapWindow/>` })
 editMapWindow.$mount('#editMapWindow')
 
-const editCharacterWindow = new Vue({ store, components: { EditCharacterWindow: EditCharacterWindow }, template: `<EditCharacterWindow/>` })
+const editCharacterWindow = new Vue({ store, components: { EditCharacterWindow }, template: `<EditCharacterWindow/>` })
 editCharacterWindow.$mount('#editCharacterWindow')
 
-const settingBGMWindow = new Vue({ store, components: { SettingBGMWindow: SettingBGMWindow }, template: `<SettingBGMWindow/>` })
+const settingBGMWindow = new Vue({ store, components: { SettingBGMWindow }, template: `<SettingBGMWindow/>` })
 settingBGMWindow.$mount('#settingBGMWindow')
 
-const editBGMWindow = new Vue({ store, components: { EditBGMWindow: EditBGMWindow }, template: `<EditBGMWindow/>` })
+const editBGMWindow = new Vue({ store, components: { EditBGMWindow }, template: `<EditBGMWindow/>` })
 editBGMWindow.$mount('#editBGMWindow')
 
-const addBGMWindow = new Vue({ store, components: { AddBGMWindow: AddBGMWindow }, template: `<AddBGMWindow/>` })
+const addBGMWindow = new Vue({ store, components: { AddBGMWindow }, template: `<AddBGMWindow/>` })
 addBGMWindow.$mount('#addBGMWindow')

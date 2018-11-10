@@ -40,7 +40,7 @@ export default {
   name: 'editMapMaskWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

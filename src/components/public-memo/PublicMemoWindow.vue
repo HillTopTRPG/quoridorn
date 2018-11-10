@@ -21,7 +21,7 @@ export default {
   name: 'publicMemo',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

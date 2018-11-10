@@ -13,7 +13,7 @@ import WindowFrame from './WindowFrame'
 
 export default {
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   methods: {
     ...mapActions([ 'windowClose' ]),

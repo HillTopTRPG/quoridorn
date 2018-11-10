@@ -21,7 +21,7 @@ export default {
   name: 'selectPeerWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

@@ -45,7 +45,7 @@ export default {
   name: 'editCharacterWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

@@ -75,21 +75,11 @@ const store = new Vuex.Store({
         dispatch('windowOpen', 'private.display.functionListWindow')
       }, 0)
 
-      // URLパラメータ取得処理
-      const getParam = (name, url = window.location.href) => {
-        name = name.replace(/[[\]]/g, '\\$&')
-        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-        let results = regex.exec(url)
-        if (!results) return null
-        if (!results[2]) return ''
-        return decodeURIComponent(results[2].replace(/\+/g, ' '))
-      }
-
       // URLパラメータの処理
       // const webif = getParam('webif')
-      const roomId = getParam('roomId')
-      const peerId = getParam('peerId')
-      const password = getParam('password')
+      const roomId = window['getUrlParam']('roomId')
+      const peerId = window['getUrlParam']('peerId')
+      const password = window['getUrlParam']('password')
       state.private.connect.password = !password ? '' : password
 
       // 部屋が指定されていたら接続しにいく

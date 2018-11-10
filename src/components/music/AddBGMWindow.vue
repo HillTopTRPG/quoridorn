@@ -85,8 +85,8 @@ export default {
   name: 'addBGMWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame,
-    VolumeComponent: VolumeComponent
+    WindowFrame,
+    VolumeComponent
   },
   data () {
     return {

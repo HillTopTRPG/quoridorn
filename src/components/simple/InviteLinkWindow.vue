@@ -18,7 +18,7 @@ export default {
   name: 'inviteLinkWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () { return {} },
   methods: {

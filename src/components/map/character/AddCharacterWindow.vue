@@ -20,7 +20,7 @@ export default {
   name: 'addCharacterWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

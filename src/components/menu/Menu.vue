@@ -30,15 +30,15 @@
     <div class="hoverMenu hoverMenu3" v-show="menu['表示']" @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')">
       <div class="item" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, 'ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
       <hr>
-      <BooleanItem property="private.setting.standImage">立ち絵表示</BooleanItem>
+      <MenuBooleanItem property="private.setting.standImage">立ち絵表示</MenuBooleanItem>
       <div class="item"></div>
-      <BooleanItem property="private.setting.cutIn">カットイン表示</BooleanItem>
+      <MenuBooleanItem property="private.setting.cutIn">カットイン表示</MenuBooleanItem>
       <hr>
-      <BooleanItem property="public.setting.gridId">座標表示</BooleanItem>
-      <BooleanItem property="public.setting.gridLine">マス目表示</BooleanItem>
+      <MenuBooleanItem property="public.setting.gridId">座標表示</MenuBooleanItem>
+      <MenuBooleanItem property="public.setting.gridLine">マス目表示</MenuBooleanItem>
       <hr>
-      <BooleanItem property="public.setting.isFitGrid">マス目にキャラクターを合わせる</BooleanItem>
-      <BooleanItem property="private.setting.standImageAutoResize">立ち絵のサイズを自動調整する</BooleanItem>
+      <MenuBooleanItem property="public.setting.isFitGrid">マス目にキャラクターを合わせる</MenuBooleanItem>
+      <MenuBooleanItem property="private.setting.standImageAutoResize">立ち絵のサイズを自動調整する</MenuBooleanItem>
       <hr>
       <div class="item" @click="clickSettingFontSize">フォントサイズ調整</div>
       <hr>
@@ -53,7 +53,7 @@
       <div class="item" @click="clickGraveyard">墓場</div>
       <div class="item" @click="clickWaitingRoom">キャラクター待合室</div>
       <hr>
-      <BooleanItem property="public.setting.pieceRotateMarker">回転マーカーを表示する</BooleanItem>
+      <MenuBooleanItem property="public.setting.pieceRotateMarker">回転マーカーを表示する</MenuBooleanItem>
     </div>
     <div class="hoverMenu hoverMenu5" v-show="menu['マップ']" @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')">
       <div class="item" @click="clickChangeMap">マップ変更</div>
@@ -77,13 +77,13 @@
       <div class="item" @click="clickOfficialSite">オフィシャルサイトへ</div>
     </div>
     <div class="hoverMenu hoverMenu8" v-show="menu['ウィンドウ']" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, '表示', 'ウィンドウ')">
-      <BooleanItem property="private.display.chatWindow">チャット表示</BooleanItem>
-      <BooleanItem property="private.setting.dice">ダイス表示</BooleanItem>
-      <BooleanItem property="private.display.initiativeWindow">イニシアティブ表示</BooleanItem>
-      <BooleanItem property="private.display.resourceWindow">リソース表示</BooleanItem>
+      <MenuBooleanItem property="private.display.chatWindow">チャット表示</MenuBooleanItem>
+      <MenuBooleanItem property="private.setting.dice">ダイス表示</MenuBooleanItem>
+      <MenuBooleanItem property="private.display.initiativeWindow">イニシアティブ表示</MenuBooleanItem>
+      <MenuBooleanItem property="private.display.resourceWindow">リソース表示</MenuBooleanItem>
       <hr>
-      <BooleanItem property="private.display.chatPaletteWindow">チャットパレット表示</BooleanItem>
-      <BooleanItem property="private.display.counterRemoConWindow">カウンターリモコン表示</BooleanItem>
+      <MenuBooleanItem property="private.display.chatPaletteWindow">チャットパレット表示</MenuBooleanItem>
+      <MenuBooleanItem property="private.display.counterRemoConWindow">カウンターリモコン表示</MenuBooleanItem>
     </div>
     <div class="hoverMenu hoverMenu9" v-show="menu['デモ']" @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')">
       <div class="item" @click="clickDevHistory">開発履歴</div>
@@ -101,7 +101,7 @@ import MenuBooleanItem from './MenuBooleanItem'
 export default {
   name: 'menuComponent',
   components: {
-    BooleanItem: MenuBooleanItem
+    MenuBooleanItem
   },
   data () {
     return {

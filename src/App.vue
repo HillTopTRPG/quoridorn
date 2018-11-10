@@ -14,7 +14,7 @@ import GameTable from './components/map/GameTable'
 export default {
   name: 'App',
   components: {
-    GameTable: GameTable
+    GameTable
   },
   mounted () {
     this.onMount()
@@ -98,5 +98,16 @@ hr {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-
+#YoutubePlayerContainer {
+  position: absolute;
+  top: 100px;
+  left: 10%;
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+#YoutubePlayer > * {
+  justify-content: justify;
+}
 </style>

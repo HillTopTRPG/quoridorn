@@ -29,7 +29,7 @@ export default {
   name: 'addChitWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

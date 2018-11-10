@@ -45,7 +45,7 @@ export default {
   name: 'addCharacterSettingWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {

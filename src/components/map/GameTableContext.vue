@@ -22,7 +22,7 @@ import WindowMixin from '../WindowMixin'
 export default {
   mixins: [WindowMixin],
   components: {
-    ContextFrame: ContextFrame
+    ContextFrame
   },
   methods: {
     ...mapActions([

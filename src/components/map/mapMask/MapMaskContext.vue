@@ -15,7 +15,7 @@ import WindowMixin from '../../WindowMixin'
 
 export default {
   components: {
-    ContextFrame: ContextFrame
+    ContextFrame
   },
   mixins: [WindowMixin],
   methods: {

@@ -39,10 +39,10 @@ export default {
   name: 'gameTable',
   mixins: [AddressCalcMixin],
   components: {
-    MapBoard: MapBoard,
-    MapMask: MapMask,
-    Character: Character,
-    Chit: Chit
+    MapBoard,
+    MapMask,
+    Character,
+    Chit
   },
   mounted () {
     document.addEventListener('mousemove', this.mouseMove)

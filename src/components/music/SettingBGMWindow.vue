@@ -70,9 +70,9 @@ export default {
   name: 'settingBGMWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame,
-    Divider: Divider,
-    PropNumber: PropNumber
+    WindowFrame,
+    Divider,
+    PropNumber
   },
   methods: {
     ...mapActions([

@@ -26,7 +26,7 @@ export default {
   name: 'roomInfoWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   methods: {
     createURL (peerId) {

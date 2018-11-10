@@ -35,7 +35,7 @@ export default {
   name: 'editChitWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame
+    WindowFrame
   },
   data () {
     return {
