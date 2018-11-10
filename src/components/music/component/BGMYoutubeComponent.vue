@@ -49,16 +49,21 @@ export default {
     },
     onPlaying (duration, target) {
       this.$refs.core.setDuration(duration)
+      this.$refs.core.play()
     },
     onError (event) {
       console.log(event)
+    },
+    onPaused () {
+      this.$refs.core.pause()
     },
     mounted () {
       const result = window.youtube.registration(this.tag, this.url, 0, {
         onReady: this.onReady,
         timeUpdate: this.timeUpdate,
         onPlaying: this.onPlaying,
-        onError: this.onError
+        onError: this.onError,
+        onPaused: this.onPaused
       })
       // this.jukeboxAudio.loop = this.isLoop
       if (!result) {

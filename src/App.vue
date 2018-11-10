@@ -100,14 +100,15 @@ hr {
 }
 #YoutubePlayerContainer {
   position: absolute;
-  top: 100px;
-  left: 10%;
-  width: 80%;
+  bottom: 0;
+  right: 0;
   display: flex;
-  flex-direction: row;
+  flex-direction : column-reverse;
+  justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
 }
-#YoutubePlayer > * {
-  justify-content: justify;
+#YoutubePlayerContainer .unUse {
+  display: none;
 }
 </style>

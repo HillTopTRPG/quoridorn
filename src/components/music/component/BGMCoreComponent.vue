@@ -97,6 +97,12 @@ export default {
         }
       }
     },
+    pause () {
+      this.isPlay = false
+    },
+    play () {
+      this.isPlay = true
+    },
     setDuration (duration) {
       this.duration = duration
     }

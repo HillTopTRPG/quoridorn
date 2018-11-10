@@ -47,6 +47,8 @@ const YoutubeControlManager = () => {
       playerObj.eventHandler = eventHandler
     }
 
+    playerObj.player.a.classList.remove('unUse')
+
     const videoId = window['getUrlParam']('v', url)
     youtubeMethod.loadVideoById(tag, videoId, startSeconds, 'small')
 
@@ -55,6 +57,7 @@ const YoutubeControlManager = () => {
   const destroyed = (tag) => {
     let playerObj = playerMapping[tag]
     if (!playerObj) return
+    playerObj.player.a.classList.add('unUse')
     playerObj.using = false
     playerObj.eventHandler = {}
   }
@@ -258,8 +261,8 @@ const YoutubeControlManager = () => {
       const ypContainer = document.getElementById('YoutubePlayerContainer')
       Array.from(ypContainer.children).forEach((elm, i) => {
         let player = new window['YT']['Player'](elm.id, {
-          width: '0',
-          height: '0',
+          width: '213',
+          height: '120',
           events: {
             'onReady': event => eventHandler.onReady(i, event),
             'onStateChange': event => {
@@ -289,7 +292,7 @@ const YoutubeControlManager = () => {
           },
           'playerVars': {
             'autoplay': 0, // 0:自動再生しない or 1:自動再生
-            'controls': 1, // 再生ボタンとか出さない
+            'controls': 0, // 再生ボタンとか出さない
             'disablekb': 1, // ショートカットキー無効
             'enablejsapi': 1, // JavaScript API 有効
             'list': 'search', // 検索クエリ使用
