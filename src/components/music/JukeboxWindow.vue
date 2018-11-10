@@ -1,9 +1,9 @@
-<template>
-  <WindowFrame titleText="BGM再生画面" display-property="private.display.jukeboxWindow" align="right-bottom" fixSize="150, 209" :isBanClose="true" @add="add">
+<template><!-- 150, 209 -->
+  <WindowFrame titleText="BGM再生画面" fixSize="150, 209" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
     <div class="contents">
       <MasterVolumeComponent/>
-      <BGMComponent
-        v-for="bgmObj in playList"
+      <BGMYoutubeComponent
+        v-for="bgmObj in playList.filter(pl => /www\.youtube\.com/.test(pl.url))"
         :key="bgmObj.key"
         :ref="bgmObj.key"
         :tag="bgmObj.tag"
@@ -12,7 +12,18 @@
         :initVolume="bgmObj.volume"
         :url="bgmObj.url"
         @end="remove(bgmObj.key)"
-        :maxSecond="bgmObj.playLength"></BGMComponent>
+        :maxSecond="bgmObj.playLength"></BGMYoutubeComponent>
+      <BGMFileComponent
+        v-for="bgmObj in playList.filter(pl => !/www\.youtube\.com/.test(pl.url))"
+        :key="bgmObj.key"
+        :ref="bgmObj.key"
+        :tag="bgmObj.tag"
+        :isLoop="bgmObj.isLoop"
+        :title="bgmObj.title"
+        :initVolume="bgmObj.volume"
+        :url="bgmObj.url"
+        @end="remove(bgmObj.key)"
+        :maxSecond="bgmObj.playLength"></BGMFileComponent>
     </div>
   </WindowFrame>
 </template>
@@ -21,16 +32,18 @@
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 import WindowMixin from '../WindowMixin'
-import BGMComponent from './component/BGMComponent'
+import BGMFileComponent from './component/BGMFileComponent'
+import BGMYoutubeComponent from './component/BGMYoutubeComponent'
 import MasterVolumeComponent from './component/MasterVolumeComponent'
 
 export default {
   name: 'jukeboxWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame,
-    BGMComponent: BGMComponent,
-    MasterVolumeComponent: MasterVolumeComponent
+    WindowFrame,
+    BGMFileComponent,
+    BGMYoutubeComponent,
+    MasterVolumeComponent
   },
   data () {
     return {

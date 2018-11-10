@@ -87,8 +87,8 @@ export default {
   name: 'editBGMWindow',
   mixins: [WindowMixin],
   components: {
-    WindowFrame: WindowFrame,
-    VolumeComponent: VolumeComponent
+    WindowFrame,
+    VolumeComponent
   },
   data () {
     return {
@@ -166,7 +166,19 @@ export default {
       }
       this.setProperty({property: `public.bgm.list.${index}`, value: bgmObj, logOff: false})
 
-      this.windowClose('private.display.editBGMWindow')
+      const videoId = window['getUrlParam']('v', this.url)
+      if (videoId) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('get', 'https://gdata.youtube.com/feeds/api/videos/' + videoId + '/related', true)
+        xhr.send('')
+        xhr.onload = function () {
+          console.log(xhr.responseXML)
+          let title = xhr.responseXML.getElementsByTagName('title')[0].textContent
+          title = title.replace('Videos related to', '')
+          alert(title)
+        }
+      }
+      // this.windowClose('private.display.editBGMWindow')
     },
     cancel () {
       this.windowClose('private.display.editBGMWindow')

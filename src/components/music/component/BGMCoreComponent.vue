@@ -15,7 +15,7 @@
         ref="volumeComponent"/>
     </div>
     <div class="playLengthArea">
-      <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(bgmLength * 100) / 100" step="0.01" v-model="playLength" @input="changeTime">
+      <input class="playLength" :class="{isPlay: isPlay}" :style="playLengthStyle" type="range" min="0" :max="Math.round(bgmLength * 100) / 100" step="0.01" v-model="playLength" @input="seekTo">
       <span class="playLengthText">{{Math.round(playLength)}}/{{Math.round(bgmLength)}}</span>
     </div>
   </div>
@@ -26,7 +26,7 @@ import { mapState, mapActions } from 'vuex'
 import VolumeComponent from './VolumeComponent'
 
 export default {
-  name: 'bgmComponent',
+  name: 'bgmCoreComponent',
   props: {
     'tag': { type: String, required: true },
     'isLoop': { type: Boolean, required: true },
@@ -47,52 +47,46 @@ export default {
     }
   },
   mounted () {
-    this.jukeboxAudio = new Audio()
-    this.jukeboxAudio.autoplay = true
-    this.jukeboxAudio.loop = this.isLoop
     this.$refs.volumeComponent.setVolume(this.initVolume)
     this.$refs.volumeComponent.setMute(false)
-    this.jukeboxAudio.addEventListener('timeupdate', this.timeUpdate)
-    this.jukeboxAudio.addEventListener('play', () => {
-      if (!this.jukeboxAudio) return
-      this.duration = this.jukeboxAudio.duration
-    })
-    this.jukeboxAudio.src = this.url
+    this.$emit('mounted')
   },
   destroyed () {
     this.changePlay(false)
-    this.jukeboxAudio = null
+    this.$emit('destroyed')
   },
   methods: {
     ...mapActions([]),
     audioMute () {
-      this.jukeboxAudio.muted = this.masterMute || this.$refs.volumeComponent.mute
+      this.$emit('mute', this.masterMute || this.$refs.volumeComponent.mute)
     },
     audioVolume () {
-      this.jukeboxAudio.volume = this.masterVolume * this.$refs.volumeComponent.volume
+      this.$emit('volume', this.masterVolume * this.$refs.volumeComponent.volume)
     },
-    setMute (mute) { this.audioMute(this.masterMute || mute) },
-    setVolume (volume) { this.audioVolume(this.masterVolume * volume) },
-    changePlay (flg = !this.isPlay) {
-      this.isPlay = flg
-      this.isPlay ? this.jukeboxAudio.play() : this.jukeboxAudio.pause()
+    setMute () { this.audioMute() },
+    setVolume () { this.audioVolume() },
+    changePlay (isPlay = !this.isPlay) {
+      this.isPlay = isPlay
+      this.$emit(isPlay ? 'play' : 'pause')
     },
-    changeTime () {
-      this.jukeboxAudio.currentTime = this.playLength
+    seekTo () {
+      this.$emit('seekTo', this.playLength)
       this.changePlay(true)
     },
-    timeUpdate () {
-      if (!this.jukeboxAudio) return
-      this.playLength = this.jukeboxAudio.currentTime
+    timeUpdate (time) {
+      this.playLength = time
       if (this.playLength >= this.bgmLength) {
-        if (this.jukeboxAudio.loop) {
+        if (this.isLoop) {
           this.playLength = 0
-          this.jukeboxAudio.currentTime = 0
+          this.$emit('seekTo', 0)
         } else {
-          this.jukeboxAudio.pause()
+          this.$emit('pause')
           this.$emit('end')
         }
       }
+    },
+    setDuration (duration) {
+      this.duration = duration
     }
   },
   watch: {
