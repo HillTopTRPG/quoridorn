@@ -261,8 +261,8 @@ const YoutubeControlManager = () => {
       const ypContainer = document.getElementById('YoutubePlayerContainer')
       Array.from(ypContainer.children).forEach((elm, i) => {
         let player = new window['YT']['Player'](elm.id, {
-          width: '213',
-          height: '120',
+          width: '426',
+          height: '240',
           events: {
             'onReady': event => eventHandler.onReady(i, event),
             'onStateChange': event => {

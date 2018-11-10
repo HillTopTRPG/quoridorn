@@ -98,17 +98,4 @@ hr {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-#YoutubePlayerContainer {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  flex-direction : column-reverse;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-#YoutubePlayerContainer .unUse {
-  display: none;
-}
 </style>
