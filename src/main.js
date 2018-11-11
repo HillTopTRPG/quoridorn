@@ -51,7 +51,7 @@ Vue.directive('img', (el, binding) => {
 
   img.onload = () => {
     el.src = imgData
-    el.style.opacity = 1
+    el.style.opacity = '1'
     el.classList.add('loaded')
     if (el.className.indexOf('anime') >= 0) {
       el.style.transition = 'all 0.5s ease'
@@ -66,7 +66,7 @@ Vue.directive('bg-img', (el, binding) => {
 
   img.onload = () => {
     el.style['background-image'] = `url(${imgData})`
-    el.style.opacity = 1
+    el.style.opacity = '1'
     el.classList.add('loaded')
     if (el.className.indexOf('anime') >= 0) {
       el.style.transition = 'all 0.5s ease'
