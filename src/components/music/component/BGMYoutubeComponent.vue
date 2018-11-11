@@ -25,6 +25,7 @@ import BGMCoreComponent from './BGMCoreComponent'
 export default {
   name: 'bgmYoutubeComponent',
   props: {
+    'bgmKey': { type: String, required: true },
     'tag': { type: String, required: true },
     'isLoop': { type: Boolean, required: true },
     'title': { type: String, required: true },
@@ -44,7 +45,9 @@ export default {
     this.destroyed()
   },
   methods: {
-    ...mapActions([]),
+    ...mapActions([
+      'setProperty'
+    ]),
     onReady () {
     },
     onPlaying (duration, target) {
@@ -57,13 +60,18 @@ export default {
     onPaused () {
       this.$refs.core.pause()
     },
+    onReject () {
+      console.log('youtube - onReject => reload')
+      this.setProperty({property: 'private.display.jukeboxWindow.command', logOff: true, value: {command: 'add', payload: this.bgmKey}})
+    },
     mounted () {
       const result = window.youtube.registration(this.tag, this.url, 0, {
         onReady: this.onReady,
         timeUpdate: this.timeUpdate,
         onPlaying: this.onPlaying,
         onError: this.onError,
-        onPaused: this.onPaused
+        onPaused: this.onPaused,
+        onReject: this.onReject
       })
       // this.jukeboxAudio.loop = this.isLoop
       if (!result) {

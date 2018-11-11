@@ -79,7 +79,18 @@ const YoutubeControlManager = () => {
     /** IDを指定して読み込ませる */
     loadVideoById (tag, videoId, startSeconds, suggestedQuality) {
       doPlayerMethod('loadVideoById', ...arguments)
-      youtubeMethod.play(tag)
+
+      let playerObj = playerMapping[tag]
+      if (!playerObj) return
+
+      // 既にタイマーが張られていたら停止する
+      if (playerObj.timerReload) clearTimeout(playerObj.timerReload)
+
+      // 1500ミリ秒経っても再生できてなければRejectする
+      // （通常に読み込めるときの時間は900msくらい）
+      playerObj.timerReload = setTimeout(() => {
+        callEventHandlerTag(tag, 'onReject')
+      }, 1500)
     },
     /** 再生する */
     play (tag) {
@@ -197,6 +208,18 @@ const YoutubeControlManager = () => {
       playerObj.eventHandler[eventName](...args)
     }
   }
+  const callEventHandlerTag = (tag, eventName, ...args) => {
+    if (eventName !== 'timeUpdate') {
+      // console.log(`--- ${eventName} => ${index}`, ...args)
+    }
+    let playerObj = playerMapping[tag]
+    if (!playerObj) {
+      return
+    }
+    if (playerObj.eventHandler[eventName]) {
+      playerObj.eventHandler[eventName](...args)
+    }
+  }
   const eventHandler = {
     onReady: index => {
       callEventHandler(index, 'onReady')
@@ -211,6 +234,7 @@ const YoutubeControlManager = () => {
 
         // 既にタイマーが張られていたら停止する
         if (playerObj.timeUpdateTimer) clearInterval(playerObj.timeUpdateTimer)
+        if (playerObj.timerReload) clearTimeout(playerObj.timerReload)
 
         // 100ミリ秒毎に現在の再生経過時間を通知する
         playerObj.timeUpdateTimer = setInterval(() => {

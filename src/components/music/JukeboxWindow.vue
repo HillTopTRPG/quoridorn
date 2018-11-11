@@ -5,6 +5,7 @@
       <BGMYoutubeComponent
         v-for="bgmObj in playList.filter(pl => /www\.youtube\.com/.test(pl.url))"
         :key="bgmObj.key"
+        :bgmKey="bgmObj.key"
         :ref="bgmObj.key"
         :tag="bgmObj.tag"
         :isLoop="bgmObj.isLoop"
