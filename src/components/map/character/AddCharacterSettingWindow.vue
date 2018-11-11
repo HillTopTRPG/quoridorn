@@ -151,7 +151,7 @@ export default {
         isHide: this.isHide,
         url: this.url,
         text: this.text,
-        useImageIndex: 0,
+        useImageIndex: this.switchCurrentKey,
         currentImageTag: this.currentImageTag
       }
       this.setProperty({property: `private.display.addCharacterWindow`, value: obj})
