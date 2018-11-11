@@ -47,7 +47,7 @@ const YoutubeControlManager = () => {
       playerObj.eventHandler = eventHandler
     }
 
-    playerObj.player.a.classList.remove('unUse')
+    playerObj.player.a.parentNode.classList.remove('unUse')
 
     const videoId = window['getUrlParam']('v', url)
     youtubeMethod.loadVideoById(tag, videoId, startSeconds, 'small')
@@ -57,7 +57,7 @@ const YoutubeControlManager = () => {
   const destroyed = (tag) => {
     let playerObj = playerMapping[tag]
     if (!playerObj) return
-    playerObj.player.a.classList.add('unUse')
+    playerObj.player.a.parentNode.classList.add('unUse')
     playerObj.using = false
     playerObj.eventHandler = {}
   }
@@ -260,7 +260,7 @@ const YoutubeControlManager = () => {
     init: () => {
       const ypContainer = document.getElementById('YoutubePlayerContainer')
       Array.from(ypContainer.children).forEach((elm, i) => {
-        let player = new window['YT']['Player'](elm.id, {
+        let player = new window['YT']['Player'](elm.firstElementChild.id, {
           width: '426',
           height: '240',
           events: {

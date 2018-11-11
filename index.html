@@ -18,10 +18,22 @@
         bottom: 0;
         right: 0;
         display: flex;
-        flex-direction : row-reverse;
+        flex-direction : row;
         justify-content: center;
         align-items: center;
         flex-wrap: wrap;
+      }
+      #YoutubePlayerContainer > * {
+        position: relative;
+        width: 213px;
+        height: 120px;
+      }
+      #YoutubePlayerContainer > * > * {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: scale(0.5, 0.5);
+        transform-origin: left top;
       }
       #YoutubePlayerContainer .unUse {
         display: none;
@@ -59,12 +71,11 @@
     <div id="editBGMWindow"></div>
     <div id="addBGMWindow"></div>
     <div id="YoutubePlayerContainer">
-      <div id="YoutubePlayer001" class="unUse"></div>
-      <div id="YoutubePlayer002" class="unUse"></div>
-      <div id="YoutubePlayer003" class="unUse"></div>
-      <div id="YoutubePlayer004" class="unUse"></div>
-      <div id="YoutubePlayer005" class="unUse"></div>
-      <div id="YoutubePlayer006" class="unUse"></div>
+      <div class="unUse"><div id="YoutubePlayer001"></div></div>
+      <div class="unUse"><div id="YoutubePlayer002"></div></div>
+      <div class="unUse"><div id="YoutubePlayer003"></div></div>
+      <div class="unUse"><div id="YoutubePlayer004"></div></div>
+      <div class="unUse"><div id="YoutubePlayer005"></div></div>
     </div>
     <!-- built files will be auto injected -->
   </body>
