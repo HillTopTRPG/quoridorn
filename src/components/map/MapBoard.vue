@@ -11,9 +11,11 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import CanvasMixin from '../CanvasMixin'
 
 export default {
   name: 'mapBoard',
+  mixins: [CanvasMixin],
   mounted () {
     this.paint()
   },
@@ -91,12 +93,6 @@ export default {
           }
         }
       }.bind(this)
-    },
-    drawLine (ctx, x, y, width, height) {
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + width, y + height)
-      ctx.stroke()
     }
   },
   watch: {

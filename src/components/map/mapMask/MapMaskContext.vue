@@ -59,6 +59,9 @@ export default {
       if (!this.isWindowOpen('private.display.mapMaskContext')) {
         return false
       }
+      if (!this.storeObj) {
+        return false
+      }
       const isLock = this.storeObj.isLock
       console.log(` [computed] isLock => ${isLock}`)
       return isLock

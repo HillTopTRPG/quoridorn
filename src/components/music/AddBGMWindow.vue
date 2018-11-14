@@ -123,6 +123,21 @@ export default {
       'addBGM'
     ]),
     initWindow () {
+      this.isYoutube = false
+      this.url = ''
+      this.title = ''
+      this.creditUrl = ''
+      this.tag = ''
+      this.isLoop = false
+      this.fadeIn = 0
+      this.fadeOut = 0
+      this.start = 0
+      this.end = 0
+      this.playLength = 0
+      this.isMute = false
+      this.volume = 0.8
+      this.chatLinkage = 0
+      this.chatLinkageSearch = ''
       setTimeout(() => this.$refs.urlElm.focus(), 0)
     },
     commit () {
