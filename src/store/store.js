@@ -64,7 +64,7 @@ const store = new Vuex.Store({
      * @param dispatch
      * @param state
      */
-    onMount ({ dispatch, state }) {
+    onMount ({ dispatch, state, rootState }) {
       // 特定の画面は最初に開く
       setTimeout(() => {
         dispatch('windowOpen', 'private.display.chatWindow')
@@ -74,6 +74,17 @@ const store = new Vuex.Store({
         // dispatch('windowOpen', 'private.display.counterRemoConWindow')
         dispatch('windowOpen', 'private.display.functionListWindow')
       }, 0)
+
+      for (let i = 0; i < 80; i++) {
+        const num = i + 1
+        rootState.public.deck.cards.list.push(
+          {
+            key: `card-${i}`,
+            front: { text: `CARD_00${num}` },
+            back: { text: `～00${num}～\n裏面\n裏面` }
+          })
+        rootState.public.deck.cards.maxKey = i
+      }
 
       // URLパラメータの処理
       // const webif = getParam('webif')

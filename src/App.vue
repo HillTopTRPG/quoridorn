@@ -4,17 +4,21 @@
     <img src="./assets/logo.png">
     -->
     <GameTable ref="gameTable"/>
+
+    <Deck></Deck>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
 import GameTable from './components/map/GameTable'
+import Deck from './components/map/card/Deck'
 
 export default {
   name: 'App',
   components: {
-    GameTable
+    GameTable,
+    Deck
   },
   mounted () {
     this.onMount()
