@@ -100,6 +100,14 @@ const storeModulePublic = {
     /** 部屋情報 */
     room: { id: '', members: [], system: 'DiceBot', password: '' },
 
+    /** デッキ */
+    deck: {
+      cards: {
+        list: [],
+        maxKey: -1
+      }
+    },
+
     /** マップ */
     map: {
       imageTag: 'マップ',
@@ -235,9 +243,7 @@ const storeModulePublic = {
       for (let tabObj of state.chat.tabs) {
         tabObj.isActive = tab === tabObj.name
         // 未読数をリセット
-        if (tabObj.isActive) {
-          tabObj.unRead = 0
-        }
+        if (tabObj.isActive) tabObj.unRead = 0
       }
     },
 
@@ -356,16 +362,14 @@ const storeModulePublic = {
           deleteLogTabList.push(tab)
         }
       }
-      for (let delTabName of deleteLogTabList) {
-        delete state.chat.logs[delTabName]
-      }
+      deleteLogTabList.forEach(delTabName => delete state.chat.logs[delTabName])
 
       // 追加されたタブの検知
-      for (let tabsTab of state.chat.tabs) {
+      state.chat.tabs.forEach(tabsTab => {
         if (!state.chat.logs[tabsTab.name]) {
           state.chat.logs[tabsTab.name] = []
         }
-      }
+      })
     }
   }, /* end of mutations */
 
@@ -376,6 +380,16 @@ const storeModulePublic = {
      * @returns {T}
      */
     activeChatTab: state => state.chat.tabs.filter(tabObj => tabObj.isActive)[0],
+
+    /**
+     * すべての障害物を取得
+     * @param state
+     */
+    getAllObstacle: state => {
+      const allPieceList = state.character.list.concat(state.chit.list).concat(state.mapMask.list)
+      // TODO obstacle属性の作成
+      return allPieceList
+    },
 
     /**
      * 選択済みのタブのチャットログ一覧
