@@ -10,6 +10,18 @@
     @mousedown.right.stop="rightDown" @mouseup.right.stop="rightUp"
     @touchstart="leftDown" @touchend="leftUp" @touchcancel="leftUp"
     @contextmenu.prevent>
+    <Range v-for="range in rangeList"
+           :key="range.key"
+           :type="type"
+           :objKey="objKey"
+           :distance="range.distance"
+           :distanceMode="range.distanceMode"
+           :isVision="range.isVision"
+           :color="range.color"
+           :borderColor="range.borderColor"
+           :targetColor="range.targetColor"
+           :lineWidth="range.lineWidth"
+    ></Range>
     <div class="border"></div>
     <img class="image" v-img="imageObj.data" :class="{reverse : imageObj.isReverse}" draggable="false"/>
     <div class="name">{{name}}</div>
@@ -22,12 +34,56 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import PieceMixin from '../../PieceMixin'
+import Range from '../../range/Range'
 
 export default {
   name: 'character',
   mixins: [PieceMixin],
+  components: {
+    Range
+  },
+  mounted () {
+    let color = 'rgba(200, 0, 0, 0.3)'
+    let borderColor = 'rgba(255, 0, 0, 1)'
+    if (this.objKey === 'character-0') {
+      color = 'rgba(255, 0, 255, 0.3)'
+      borderColor = 'rgba(255, 0, 255, 1)'
+    } else if (this.objKey === 'character-1') {
+      color = 'rgba(0, 255, 255, 0.3)'
+      borderColor = 'rgba(0, 255, 255, 1)'
+    }
+    const range = {
+      key: 'range-0',
+      distance: 10.5,
+      distanceMode: 0,
+      isVision: false,
+      color: color,
+      borderColor: borderColor,
+      targetColor: 'rgba(0, 255, 0, 1)',
+      lineWidth: 5
+    }
+    this.rangeList.push(range)
+  },
   data () {
     return {
+      rangeList: [
+        // {
+        //   key: 'range-1',
+        //   distance: 7,
+        //   distanceMode: 0,
+        //   isVision: false,
+        //   color: 'rgba(200, 0, 0, 0.2)',
+        //   lineWidth: 1
+        // },
+        // {
+        //   key: 'range-3',
+        //   distance: 4,
+        //   distanceMode: 0,
+        //   isVision: false,
+        //   color: 'rgba(200, 0, 0, 0.2)',
+        //   lineWidth: 1
+        // }
+      ]
     }
   },
   methods: {
@@ -88,9 +144,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .character {
-  /*
-  box-sizing: border-box;
-  */
   position: fixed;
   display: flex;
   justify-content: center;
@@ -103,6 +156,7 @@ export default {
   cursor: crosshair;
   border-radius: 3px;
   z-index: 600000000;
+  overflow: visible;
 }
 .character.hover,
 .character.rolling {

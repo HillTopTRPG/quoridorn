@@ -119,7 +119,7 @@ export default {
       const angle = Math.atan2(loc.y, loc.x) * 180 / Math.PI
       return angle
     },
-    rollStart (event) {
+    rollStart () {
       this.setProperty({property: `map.rollObj.isRolling`, value: true})
       console.log(`  [methods] rolling start on ${this.type}(${this.objKey})`)
       const angle = this.getAngle(this.mouseOnTable)
@@ -175,12 +175,6 @@ export default {
         }
       },
       deep: true
-    },
-    marginGridSize () {
-      return this.$store.state.public.map.margin.gridSize
-    },
-    gridSize () {
-      return this.$store.state.public.map.grid.size
     }
   },
   computed: mapState({
@@ -213,6 +207,12 @@ export default {
         height: `${rectObj.height}px`,
         transform: `rotateZ(${this.arrangeAngle(Math.round(this.currentAngle / 30) * 30)}deg)`
       }
+    },
+    marginGridSize () {
+      return this.$store.state.public.map.margin.gridSize
+    },
+    gridSize () {
+      return this.$store.state.public.map.grid.size
     }
   })
 }

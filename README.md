@@ -147,6 +147,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - マスの数設定 → OK
 - マップマスク設定 → OK
 - マップ状態保存機能
+- マス目間隔機能（1マスの扱いを複数マスとする）
 
 # チャットパレット
 - 画面表示
@@ -167,9 +168,12 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 # カード（インセインとかの）
 - 独自カードデータ読込
+- 選んだカードだけで山札を作る機能
+- 山札の内容を保存する機能
 
 # 範囲表示
 - 円形
+- 被ったマスをマーク（これは重くなっちゃいそう…）
 
 ## 個別TRPGシステム
 # サタスぺ
