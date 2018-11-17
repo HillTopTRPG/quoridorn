@@ -3,7 +3,7 @@
     <div class="container">
       <div class="tabs">
         <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive, unRead: tabObj.unRead > 0 }" @click.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/{{tabObj.unRead}}</span><!--
-      --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">＋</span>
+      --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">タブ変更</span>
       </div>
       <ul id="chatLog" @wheel.stop>
         <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
@@ -74,8 +74,6 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('changeChatTab', '雑談').then()
-
     this.diceBotSystems.push({
       name: 'ダイスボット(指定なし)',
       value: 'DiceBot',
@@ -134,8 +132,7 @@ export default {
       this.$emit('onFocus')
     },
     addTab () {
-      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'タブ編集'})
-      this.windowOpen('private.display.unSupportWindow')
+      this.windowOpen('private.display.settingChatTabWindow')
     },
     settingDiceBot () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理'})

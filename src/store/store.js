@@ -86,6 +86,8 @@ const store = new Vuex.Store({
         rootState.public.deck.cards.maxKey = i
       }
 
+      dispatch('changeChatTab', '雑談')
+
       // URLパラメータの処理
       // const webif = getParam('webif')
       const roomId = window['getUrlParam']('roomId')

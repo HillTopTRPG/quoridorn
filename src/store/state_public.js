@@ -329,7 +329,7 @@ const storeModulePublic = {
       state.chat.tabs.splice(0, state.chat.tabs.length)
 
       tabsText = 'メイン ' + tabsText
-      let tabs = tabsText.split(' ')
+      let tabs = tabsText.replace(/[　 ]+/g, ' ').split(' ')
       for (let tab of tabs) {
         let isActive = false
         if (lastActiveTab && lastActiveTab.name === tab) {
