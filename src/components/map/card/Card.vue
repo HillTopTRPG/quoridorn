@@ -48,6 +48,7 @@ export default {
           obj.left = '10px'
         }
       }
+      obj.transitionDuration = `0.3s`
       return obj
     }
   })
