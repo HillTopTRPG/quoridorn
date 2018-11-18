@@ -30,10 +30,6 @@ export default {
   methods: {
     ...mapActions([
       'windowClose',
-      'setProperty',
-      'createPeer',
-      'windowOpen',
-      'updateCame',
       'changeChatTab'
     ]),
     initWindow () {

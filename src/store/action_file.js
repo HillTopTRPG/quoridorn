@@ -41,7 +41,7 @@ const actionFile = {
       const historyDelKeys = []
       // 部屋情報のメンバーリストに、収集した各個人のデータを詰め込んでいく
       rootState.volatilSaveData.members.forEach(memberData => {
-        const peerId = memberData.connect.peerId
+        const peerId = memberData.self.peerId
         const saveMemObj = saveData.public.room.members.filter(saveMemObj => saveMemObj.peerId === peerId)[0]
         if (saveMemObj) {
           saveMemObj.private = memberData
@@ -255,7 +255,7 @@ const actionFile = {
       }
       if (publicData.room && publicData.room.id !== '') {
         const roomId = publicData.room.id
-        const peerId = privateData.connect.peerId
+        const peerId = privateData.self.peerId
         // 部屋の存在チェック
         dispatch('checkRoomName', {
           roomName: roomId,

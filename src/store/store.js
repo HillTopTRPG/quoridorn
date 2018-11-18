@@ -5,6 +5,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import statePrivate from './state_private'
 import statePublic from './state_public'
+import stateSetting from './state_setting'
 import actionFile from './action_file'
 import actionPeer from './action_peer'
 import actionOperation from './action_operation'
@@ -19,6 +20,7 @@ const store = new Vuex.Store({
   modules: {
     private: statePrivate,
     public: statePublic,
+    setting: stateSetting,
     file: actionFile,
     peer: actionPeer,
     operation: actionOperation
@@ -26,7 +28,7 @@ const store = new Vuex.Store({
   state: {
     // 以下は揮発性データ（操作中の一時的な記憶領域として使うだけなので、保存データには含めない）
     mouse: { x: 0, y: 0, drag: { from: {x: 0, y: 0}, move: {x: 0, y: 0} } },
-    connect: { webRtcPeer: null },
+    self: { webRtcPeer: null },
     room: {
       webRtcRoom: null
     },
@@ -52,6 +54,13 @@ const store = new Vuex.Store({
         dragStart: 0
       }
     },
+    deck: {
+      viewMode: 'normal',
+      hoverIndex: -1,
+      hoverKey: '',
+      command: null,
+      isReverse: false
+    },
     operationQueue: [],
     volatilSaveData: {
       members: []
@@ -75,16 +84,44 @@ const store = new Vuex.Store({
         dispatch('windowOpen', 'private.display.functionListWindow')
       }, 0)
 
-      for (let i = 0; i < 80; i++) {
-        const num = i + 1
+      const cardSetName = '花札'
+      // const cardSetName = 'トランプ'
+      // const cardSetName = 'タロット'
+      const cardSet = rootState.setting.cardSet.filter(cs => cs.name === cardSetName)[0]
+      const basePath = cardSet.basePath
+      rootState.public.deck.name = cardSet.name
+      rootState.public.deck.back = basePath + cardSet.back
+      rootState.public.deck.width = !cardSet.width ? 128 : parseInt(('' + cardSet.width).replace(/px/, ''))
+      rootState.public.deck.height = !cardSet.height ? 192 : parseInt(('' + cardSet.height).replace(/px/, ''))
+      if (!cardSet.source) {
+        cardSet.source = {}
+      }
+      rootState.public.deck.author = !cardSet.source.author ? '' : cardSet.source.author
+      rootState.public.deck.title = cardSet.source.title
+      if (!cardSet.source.refs) {
+        cardSet.source.refs = []
+      }
+      rootState.public.deck.refs = cardSet.source.refs
+      cardSet.cards.forEach((card, i) => {
+        const path = basePath + card.file
         rootState.public.deck.cards.list.push(
           {
             key: `card-${i}`,
-            front: { text: `CARD_00${num}` },
-            back: { text: `～00${num}～\n裏面\n裏面` }
+            front: { text: `` },
+            back: { text: ``, img: path }
           })
         rootState.public.deck.cards.maxKey = i
-      }
+      })
+      // for (let i = 0; i < 80; i++) {
+      //   const num = i + 1
+      //   rootState.public.deck.cards.list.push(
+      //     {
+      //       key: `card-${i}`,
+      //       front: { text: `CARD_00${num}` },
+      //       back: { text: `～00${num}～\n裏面\n裏面` }
+      //     })
+      //   rootState.public.deck.cards.maxKey = i
+      // }
 
       dispatch('changeChatTab', '雑談')
 
@@ -93,7 +130,7 @@ const store = new Vuex.Store({
       const roomId = window['getUrlParam']('roomId')
       const peerId = window['getUrlParam']('peerId')
       const password = window['getUrlParam']('password')
-      state.private.connect.password = !password ? '' : password
+      state.private.self.password = !password ? '' : password
 
       // 部屋が指定されていたら接続しにいく
       if (roomId) {
@@ -115,8 +152,8 @@ const store = new Vuex.Store({
     sendNoticeOperation ({ dispatch, state }, { method, value }) {
       let type = null
       if (state.public.room.members[0]) {
-        value.ownerPeerId = state.private.connect.peerId
-        if (state.public.room.members[0].peerId === state.private.connect.peerId) {
+        value.ownerPeerId = state.private.self.peerId
+        if (state.public.room.members[0].peerId === state.private.self.peerId) {
           type = 'DO_METHOD'
           dispatch(method, value)
         } else {

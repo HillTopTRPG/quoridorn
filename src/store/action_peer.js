@@ -30,12 +30,12 @@ const actionPeer = {
        */
       peer.on('open', id => {
         // セーブデータからの復元の場合は既にpeerIdが格納されており、接続
-        if (rootState.private.connect.peerId !== id) {
-          rootState.private.connect.peerId = id
-          rootState.public.room.password = rootState.private.connect.password
+        if (rootState.private.self.peerId !== id) {
+          rootState.private.self.peerId = id
+          rootState.public.room.password = rootState.private.self.password
           rootState.public.room.members.push({
             peerId: id,
-            name: rootState.private.connect.playerName,
+            name: rootState.private.self.playerName,
             color: 'black',
             isCame: true
           })
@@ -43,7 +43,7 @@ const actionPeer = {
         const roomId = payload.roomId
         if (roomId) {
           console.log(`Room: ${roomId} に接続を試みます...`)
-          const room = rootState.connect.webRtcPeer.joinRoom(roomId)
+          const room = rootState.self.webRtcPeer.joinRoom(roomId)
           room.on('open', () => {
             rootState.room.webRtcRoom = room
             dispatch('connectFunc', room)
@@ -65,15 +65,15 @@ const actionPeer = {
       })
 
       // 既にPeer接続していたら、その接続は破棄する
-      if (rootState.connect.webRtcPeer && !rootState.connect.webRtcPeer.destroyed) {
-        rootState.connect.webRtcPeer.destroy()
+      if (rootState.self.webRtcPeer && !rootState.self.webRtcPeer.destroyed) {
+        rootState.self.webRtcPeer.destroy()
       }
-      rootState.connect.webRtcPeer = peer
+      rootState.self.webRtcPeer = peer
 
       // 画面が閉じられたらPeer接続を破棄
       window.onunload = window.onbeforeunload = () => {
-        if (rootState.public.map.isEditting === rootState.private.connect.peerId) {
-          dispatch('setProperty', {property: 'public.map.isEditting', isNotice: true, value: null})
+        if (rootState.public.map.isEditting === rootState.private.self.peerId) {
+          dispatch('setProperty', {property: 'public.map.isEditting', isNotice: true, value: null, logOff: true})
         }
         if (peer && !peer.destroyed) {
           peer.destroy()
@@ -106,8 +106,8 @@ const actionPeer = {
           })
         }
         // 自分が親だったら、入ってきた人に部屋情報を教えてあげる
-        console.log(`EVENT[peerJoin] ${rootState.private.connect.peerId} -> ${peerId}`)
-        if (rootState.public.room.members[0].peerId === rootState.private.connect.peerId) {
+        console.log(`EVENT[peerJoin] ${rootState.private.self.peerId} -> ${peerId}`)
+        if (rootState.public.room.members[0].peerId === rootState.private.self.peerId) {
           rootState.room.webRtcRoom.send({ type: 'NOTICE_OTHER_PLAYER', value: rootState.public, targets: [peerId] })
         }
       })
@@ -137,7 +137,7 @@ const actionPeer = {
         const memberObj = rootState.public.room.members.filter(member => member.peerId === peerId)[0]
         const index = rootState.public.room.members.indexOf(memberObj)
         const targets = sendData.targets
-        if (!targets || targets.length === 0 || targets.filter(target => target === rootState.private.connect.peerId).length > 0) {
+        if (!targets || targets.length === 0 || targets.filter(target => target === rootState.private.self.peerId).length > 0) {
           const type = sendData.type
           const value = sendData.value
           if (type === 'DO_METHOD') {
@@ -149,7 +149,7 @@ const actionPeer = {
             // ルームメンバーの情報を受け取ったとき
             case 'NOTICE_OTHER_PLAYER':
               const roomPassword = value.room.password
-              if (roomPassword !== rootState.private.connect.password) {
+              if (roomPassword !== rootState.private.self.password) {
                 alert('入力されたパスワードが部屋のパスワードと一致しません。')
                 dispatch('logout')
                 break
@@ -166,9 +166,9 @@ const actionPeer = {
 
               let me = null
               value.room.members.forEach(memberObj => {
-                if (memberObj.peerId === rootState.private.connect.peerId) {
+                if (memberObj.peerId === rootState.private.self.peerId) {
                   memberObj.isCame = true
-                  rootState.private.connect.playerName = memberObj.name
+                  rootState.private.self.playerName = memberObj.name
                   me = memberObj
                 }
               })
@@ -229,7 +229,7 @@ const actionPeer = {
               break
             case 'NOTICE_OPERATION':
               // 自分が親だったら、この通知を処理して、ルームメンバーに土管する
-              if (rootState.public.room.members[0].peerId === rootState.private.connect.peerId) {
+              if (rootState.public.room.members[0].peerId === rootState.private.self.peerId) {
                 const method = sendData.method
                 dispatch('sendRoomData', { type: 'DO_METHOD', value: value, method: method })
                 dispatch(method, value)
@@ -262,7 +262,7 @@ const actionPeer = {
           const targets = sendData.targets
           if (!targets || targets.length === 0 || targets.filter(target => target === peerId).length > 0) {
             if (sendData.type === 'NOTICE_OTHER_PLAYER') {
-              const filtered = sendData.value.room.members.filter(memberObj => memberObj.peerId === rootState.private.connect.peerId)
+              const filtered = sendData.value.room.members.filter(memberObj => memberObj.peerId === rootState.private.self.peerId)
               if (filtered.length > 0) {
                 roomFindFunc('この部屋は現在あなたが入室している部屋です。')
               } else {
@@ -307,9 +307,9 @@ const actionPeer = {
       rootState.public.room.members.splice(0, rootState.public.room.members.length)
       rootState.public.room.system = 'DiceBot'
       rootState.room.webRtcRoom = null
-      if (rootState.connect.webRtcPeer) {
-        rootState.connect.webRtcPeer.destroy()
-        rootState.connect.webRtcPeer = null
+      if (rootState.self.webRtcPeer) {
+        rootState.self.webRtcPeer.destroy()
+        rootState.self.webRtcPeer = null
       }
     },
     /** ========================================================================

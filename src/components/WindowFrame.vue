@@ -1,6 +1,6 @@
 
 <template>
-  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown="windowActive(displayProperty)" @touchstart="windowActive(displayProperty)" @mouseup="mouseup" @touchend="mouseup" @touchcancel="mouseup">
+  <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown="windowActive(displayProperty)" @touchstart="windowActive(displayProperty)" @mouseup="mouseUp" @touchend="mouseUp" @touchcancel="mouseUp">
     <div class="_contents" @wheel.stop @contextmenu.prevent>
       <slot></slot>
     </div>
@@ -93,12 +93,12 @@ export default {
       this.windowClose(this.displayProperty)
       this.$emit('cancel')
     },
-    mouseup (event) {
+    mouseUp (event) {
       const evtObj = { clientX: event.pageX, clientY: event.pageY, button: event.button }
       if (event.button === 2) {
-        this.setProperty({property: `map.isOverEvent`, value: true})
+        this.setProperty({property: `map.isOverEvent`, value: true, logOff: true})
       }
-      document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
+      document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseUp', evtObj))
     },
     resize (event, direct, flg, isTouch) {
       if (flg) {
@@ -126,7 +126,7 @@ export default {
         }
         winFac.draggingX = 0
         winFac.draggingY = 0
-        this.mouseup(event)
+        this.mouseUp(event)
       }
       // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
       this.moveMode = (flg ? direct : '')
@@ -169,61 +169,61 @@ export default {
         this.windowFactor.b -= this.windowFactor.draggingY
         this.windowFactor.draggingX = 0
         this.windowFactor.draggingY = 0
-        this.mouseup(event)
+        this.mouseUp(event)
       }
       this.moveMode = flg ? 'move' : ''
     },
     addEventForIFrame () {
-      const elms = document.getElementsByTagName('iframe')
-      for (const iframeElm of elms) {
+      const elms = document.getElementsByTagName('iFrame')
+      for (const iFrameElm of elms) {
         // マウス移動
         const mouseMoveListener = event => {
-          const iframeRect = iframeElm.getBoundingClientRect()
-          const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top }
+          const iFrameRect = iFrameElm.getBoundingClientRect()
+          const evtObj = { clientX: event.pageX + iFrameRect.left, clientY: event.pageY + iFrameRect.top }
           document.dispatchEvent(new MouseEvent('mousemove', evtObj))
         }
         // タッチ移動
         const touchMoveListener = event => {
-          const iframeRect = iframeElm.getBoundingClientRect()
-          const evtObj = { changedTouches: [{ clientX: event.changedTouches[0].pageX + iframeRect.left, clientY: event.changedTouches[0].pageY + iframeRect.top }] }
+          const iFrameRect = iFrameElm.getBoundingClientRect()
+          const evtObj = { changedTouches: [{ clientX: event.changedTouches[0].pageX + iFrameRect.left, clientY: event.changedTouches[0].pageY + iFrameRect.top }] }
           document.dispatchEvent(new MouseEvent('touchmove', evtObj))
         }
         // クリック
         const clickListener = event => {
-          const iframeRect = iframeElm.getBoundingClientRect()
-          const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top, button: event.button }
+          const iFrameRect = iFrameElm.getBoundingClientRect()
+          const evtObj = { clientX: event.pageX + iFrameRect.left, clientY: event.pageY + iFrameRect.top, button: event.button }
           document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('click', evtObj))
         }
         // マウス離す
         const _ = this
-        const mouseupListener = event => {
-          const iframeRect = iframeElm.getBoundingClientRect()
-          const evtObj = { clientX: event.pageX + iframeRect.left, clientY: event.pageY + iframeRect.top, button: event.button }
+        const mouseUpListener = event => {
+          const iFrameRect = iFrameElm.getBoundingClientRect()
+          const evtObj = { clientX: event.pageX + iFrameRect.left, clientY: event.pageY + iFrameRect.top, button: event.button }
           if (event.button === 2) {
-            _.setProperty({property: `map.isOverEvent`, value: true})
+            _.setProperty({property: `map.isOverEvent`, value: true, logOff: true})
           }
-          document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseup', evtObj))
+          document.getElementById('mapBoardFrame').dispatchEvent(new MouseEvent('mouseUp', evtObj))
         }
         // コンテキストメニュー防止
-        const contextmenuListener = () => {
+        const contextMenuListener = () => {
           return false
         }
-        if (!iframeElm.onload) {
+        if (!iFrameElm.onload) {
           try {
-            iframeElm.onload = () => {
+            iFrameElm.onload = () => {
               try {
-                const bodyElm = iframeElm.contentWindow.document
+                const bodyElm = iFrameElm.contentWindow.document
                 if (!bodyElm.onmousemove) { bodyElm.onmousemove = mouseMoveListener }
                 if (!bodyElm.ontouchmove) { bodyElm.ontouchmove = touchMoveListener }
-                if (!bodyElm.onmouseup) { bodyElm.onmouseup = mouseupListener }
-                if (!bodyElm.oncontextmenu) { bodyElm.oncontextmenu = contextmenuListener }
+                if (!bodyElm.onmouseUp) { bodyElm.onmouseUp = mouseUpListener }
+                if (!bodyElm.oncontextmenu) { bodyElm.oncontextmenu = contextMenuListener }
                 if (!bodyElm.onclick) { bodyElm.onclick = clickListener }
                 /*
                 const aElms = bodyElm.getElementsByTagName('a')
                 for (const aElm of aElms) {
                   if (!aElm.onmousemove) { aElm.onmousemove = mouseMoveListener }
                   if (!aElm.ontouchmove) { aElm.ontouchmove = touchMoveListener }
-                  if (!aElm.oncontextmenu) { aElm.oncontextmenu = contextmenuListener }
+                  if (!aElm.oncontextmenu) { aElm.oncontextmenu = contextMenuListener }
                   if (!aElm.onclick) { aElm.onclick = clickListener }
                 }
                 */
@@ -233,10 +233,10 @@ export default {
         }
         /*
         */
-        if (!iframeElm.onmousemove) { iframeElm.onmousemove = mouseMoveListener }
-        if (!iframeElm.ontouchmove) { iframeElm.ontouchmove = touchMoveListener }
-        if (!iframeElm.onmouseup) { iframeElm.onmouseup = mouseupListener }
-        if (!iframeElm.onclick) { iframeElm.onclick = clickListener }
+        if (!iFrameElm.onmousemove) { iFrameElm.onmousemove = mouseMoveListener }
+        if (!iFrameElm.ontouchmove) { iFrameElm.ontouchmove = touchMoveListener }
+        if (!iFrameElm.onmouseUp) { iFrameElm.onmouseUp = mouseUpListener }
+        if (!iFrameElm.onclick) { iFrameElm.onclick = clickListener }
       }
     }
   },

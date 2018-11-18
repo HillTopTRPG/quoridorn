@@ -28,7 +28,7 @@ export default {
     ]),
     viewEditMapMask () {
       console.log(`  [methods] select context item => MapMask(${this.objKey}).viewEditMapMask`)
-      this.setProperty({property: 'private.display.editMapMaskWindow.key', value: this.objKey})
+      this.setProperty({property: 'private.display.editMapMaskWindow.key', value: this.objKey, logOff: true})
       this.windowOpen('private.display.editMapMaskWindow')
       this.windowClose('private.display.mapMaskContext')
     },

@@ -24,7 +24,7 @@ const actionOperation = {
         const color = payload.color
         const tab = payload.tab ? payload.tab : activeChatTab.name
         const logObj = {
-          peerId: payload.peerId ? payload.peerId : rootState.private.connect.peerId,
+          peerId: payload.peerId ? payload.peerId : rootState.private.self.peerId,
           viewHtml: '<span style="color: ' + color + ';"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
         }
         // 未読カウントアップ
@@ -74,7 +74,7 @@ const actionOperation = {
         data: data,
         key: key
       })
-      if (rootState.private.connect.peerId === ownerPeerId) {
+      if (rootState.private.self.peerId === ownerPeerId) {
         rootState.private.history.push({ type: 'add', key: key })
       }
     },
@@ -123,7 +123,7 @@ const actionOperation = {
       console.log(`[mutations] add ${payload.propName} => {key:${obj.key}, name:"${obj.name}", locate(${obj.top}, ${obj.left}), CsRs(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
 
       rootState.public[payload.propName].list.push(obj)
-      if (rootState.private.connect.peerId === payload.ownerPeerId) {
+      if (rootState.private.self.peerId === payload.ownerPeerId) {
         rootState.private.history.push({ type: 'add', key: key })
       }
     },
@@ -157,11 +157,56 @@ const actionOperation = {
       const index = rootState.public[payload.propName].list.indexOf(obj)
       rootState.public[payload.propName].list.splice(index, 1)
 
-      if (rootState.private.connect.peerId === payload.ownerPeerId) {
+      if (rootState.private.self.peerId === payload.ownerPeerId) {
         const delHistoryObj = rootState.private.history.filter(hisObj => hisObj.key === payload.key)[0]
         const delHistoryIndex = rootState.private.history.indexOf(delHistoryObj)
         rootState.private.history.splice(delHistoryIndex, 1)
       }
+    },
+    /** ========================================================================
+     * デッキのシャッフル
+     */
+    shuffleDeck: ({ dispatch }) => { dispatch('sendNoticeOperation', { value: {}, method: 'doShuffleDeck' }) },
+    doShuffleDeck: ({ rootState }) => {
+      const cardList = rootState.public.deck.cards.list.concat()
+      for (let i = cardList.length - 1; i >= 0; i--) {
+        // 0~iのランダムな数値を取得
+        const rand = Math.floor(Math.random() * (i + 1))
+
+        // [cardList[i], cardList[rand]] = [cardList[rand], cardList[i]]
+        const tmp = cardList[i]
+        cardList[i] = cardList[rand]
+        cardList[rand] = tmp
+        // cardList.splice(i, 1, cardList[rand])
+        // cardList.splice(rand, 1, tmp)
+      }
+      rootState.public.deck.cards.list = cardList
+      // cardList.splice(0, 1, cardList[0])
+    },
+    /** ========================================================================
+     * カードのドロー
+     */
+    drawCard: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doDrawCard' }) },
+    doDrawCard: ({ rootState, rootGetters }, payload) => {
+      const index = payload.index
+      // const cardKey = payload.key
+
+      const cardList = rootState.public.deck.cards.list
+      const card = cardList[index]
+      cardList.splice(index, 1)
+
+      // TODO 手札に加える処理
+      rootState.private.self.cards.push(card)
+
+      // const obj = rootGetters.getPieceObj(payload.propName, payload.key)
+      // const index = rootState.public[payload.propName].list.indexOf(obj)
+      // rootState.public[payload.propName].list.splice(index, 1)
+      //
+      // if (rootState.private.self.peerId === payload.ownerPeerId) {
+      //   const delHistoryObj = rootState.private.history.filter(hisObj => hisObj.key === payload.key)[0]
+      //   const delHistoryIndex = rootState.private.history.indexOf(delHistoryObj)
+      //   rootState.private.history.splice(delHistoryIndex, 1)
+      // }
     }
   }
 }

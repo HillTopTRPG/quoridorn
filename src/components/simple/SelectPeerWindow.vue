@@ -51,7 +51,7 @@ export default {
       }
       this.setProperty({property: `private`, value: privateData})
 
-      const peerId = privateData.connect.peerId
+      const peerId = privateData.self.peerId
       this.updateCame(peerId)
       this.createPeer({
         peerId: peerId,
@@ -68,7 +68,7 @@ export default {
   },
   computed: mapState({
     yourPeerId () {
-      const privatePeerId = this.$store.state.private.connect.peerId
+      const privatePeerId = this.$store.state.private.self.peerId
       if (privatePeerId) {
         const filtered = this.members.filter(memberObj => memberObj.peerId === privatePeerId)
         if (filtered.length > 0) { return privatePeerId }

@@ -13,7 +13,13 @@ const storeModulePrivate = {
   // privateデータは、データ保存時に public.room.members に含める
   state: {
     /** 接続情報 */
-    connect: { peerId: null, playerName: '', password: '' },
+    self: {
+      peerId: null,
+      playerName: '',
+      password: '',
+      color: 'black',
+      cards: []
+    },
 
     /** 設定(private) */
     setting: {
@@ -94,10 +100,12 @@ const storeModulePrivate = {
       editBGMWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
       addBGMWindow: { command: null, isDisplay: false, zIndex: 1 },
       settingChatTabWindow: { command: null, isDisplay: false, zIndex: 1 },
+      settingChatFontWindow: { command: null, isDisplay: false, zIndex: 1 },
       mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       characterContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       gameTableContext: { command: null, isDisplay: false, x: 0, y: 0 },
-      chitContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 }
+      chitContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 },
+      cardContext: { command: null, isDisplay: false, x: 0, y: 0, key: -1 }
     }
   }, /* end of state */
   actions: {

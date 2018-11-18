@@ -77,7 +77,7 @@ export default {
   },
   watch: {
     is_Continuous (value) {
-      this.setProperty({property: `private.display.addCharacterWindow.isContinuous`, value: value})
+      this.setProperty({property: `private.display.addCharacterWindow.isContinuous`, value: value, logOff: true})
     },
     continuousNum (continuousNum) {
       this.continuous_Num = continuousNum

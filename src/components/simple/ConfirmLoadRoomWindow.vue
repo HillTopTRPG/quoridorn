@@ -45,7 +45,7 @@ export default {
       }
       this.logout()
       const roomId = this.importData.public.room.id
-      const peerId = this.importData.private.connect.peerId
+      const peerId = this.importData.private.self.peerId
       this.createPeer({
         roomId: roomId,
         peerId: peerId

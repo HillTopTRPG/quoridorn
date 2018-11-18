@@ -10,10 +10,7 @@ import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   props: {
-    'displayProperty': {
-      type: String,
-      required: true
-    }
+    'displayProperty': { type: String, required: true }
   },
   methods: {
     ...mapActions([

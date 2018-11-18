@@ -138,32 +138,32 @@ export default {
       this.windowOpen('private.display.createRoomWindow')
     },
     clickRoomInfo () { this.windowOpen('private.display.roomInfoWindow') },
-    clickPublicMemo () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '共有メモ'}); this.windowOpen('private.display.unSupportWindow') },
+    clickPublicMemo () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '共有メモ', logOff: true}); this.windowOpen('private.display.unSupportWindow') },
     clickExport () { this.exportStart(); this.menuHover(false, 'ファイル') },
-    clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
+    clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
     clickLogOut () {
       this.menuHover(false, 'ファイル')
       location.href = location.href.replace(/\?.+$/, '')
     },
-    clickSettingFontSize () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
+    clickSettingFontSize () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
     clickResetWindowLocate () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
     clickAddCharacter () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
-    clickAddRange () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickAddRange () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
     clickAddChit () { this.windowOpen('private.display.addChitWindow'); this.menuHover(false, 'コマ') },
-    clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
-    clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
     clickChangeMap () { this.windowOpen('private.display.editMapWindow'); this.menuHover(false, 'マップ') },
-    clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
     clickAddMapMask () { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
-    clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickSaveMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickSwitchMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
-    clickFileUploader () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ファイルアップローダー'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
-    clickTagEdit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像タグ編集'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
-    clickDeleteImage () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像削除'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
-    clickVersion () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
-    clickManual () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
-    clickOfficialSite () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '公式サイト'}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSaveMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSwitchMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickFileUploader () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ファイルアップローダー', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickTagEdit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像タグ編集', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickDeleteImage () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像削除', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickVersion () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickManual () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickOfficialSite () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '公式サイト', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
     clickDevHistory () { this.windowOpen('private.display.devLogWindow'); this.menuHover(false, 'デモ') },
     clickViewFunction () { this.windowOpen('private.display.functionListWindow'); this.menuHover(false, 'デモ') },
     clickBufForm () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuHover(false, 'デモ') }
@@ -177,7 +177,7 @@ export default {
   },
   computed: mapState({
     isConnected () {
-      const peerId = this.$store.state.private.connect.peerId
+      const peerId = this.$store.state.private.self.peerId
       if (!peerId) return false
       const filtered = this.$store.state.public.room.members.filter(memberObj => memberObj.peerId === peerId)
       if (filtered.length === 0) return false

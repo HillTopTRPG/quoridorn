@@ -29,7 +29,7 @@ export default {
     }
   },
   computed: mapState({
-    members () { return this.$store.state.public.room.members.filter(memberObj => memberObj.peerId !== this.$store.state.private.connect.peerId) },
+    members () { return this.$store.state.public.room.members.filter(memberObj => memberObj.peerId !== this.$store.state.private.self.peerId) },
     roomId: state => state.public.room.id,
     password: state => state.public.room.password
   })

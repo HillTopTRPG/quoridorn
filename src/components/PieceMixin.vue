@@ -89,7 +89,7 @@ export default {
         x: pageX,
         y: pageY
       }
-      this.setProperty({property: contextProperty, value: obj})
+      this.setProperty({property: contextProperty, value: obj, logOff: true})
       this.windowOpen(contextProperty)
       console.log(`  [methods] open context => ${contextProperty}(${this.objKey})`)
     },
@@ -120,17 +120,17 @@ export default {
       return angle
     },
     rollStart () {
-      this.setProperty({property: `map.rollObj.isRolling`, value: true})
+      this.setProperty({property: `map.rollObj.isRolling`, value: true, logOff: true})
       console.log(`  [methods] rolling start on ${this.type}(${this.objKey})`)
       const angle = this.getAngle(this.mouseOnTable)
       const planeAngle = this.arrangeAngle(angle - this.angle.total)
       // console.log(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
-      this.setProperty({property: `public.${this.type}.list.${this.storeIndex}.angle.dragStart`, value: planeAngle})
+      this.setProperty({property: `public.${this.type}.list.${this.storeIndex}.angle.dragStart`, value: planeAngle, logOff: true})
       const obj = {
         propName: this.type,
         key: this.objKey
       }
-      this.setProperty({property: `map.rollObj`, value: obj})
+      this.setProperty({property: `map.rollObj`, value: obj, logOff: true})
     },
     rollEnd (event) {
       // console.log(`rollEnd`, event.pageX, event.pageY)
@@ -142,7 +142,7 @@ export default {
       if (event.button === 2) {
         mapObj.isOverEvent = true
       }
-      this.setProperty({property: `map`, value: mapObj})
+      this.setProperty({property: `map`, value: mapObj, logOff: true})
       const planeAngle = this.arrangeAngle(this.angle.dragging + this.angle.total)
       const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30)
       // console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
@@ -150,7 +150,7 @@ export default {
         total: total,
         dragging: 0
       }
-      this.setProperty({property: `public.${this.type}.list.${this.storeIndex}.angle`, value: obj, isNotice: true})
+      this.setProperty({property: `public.${this.type}.list.${this.storeIndex}.angle`, value: obj, isNotice: true, logOff: true})
     }
   },
   watch: {

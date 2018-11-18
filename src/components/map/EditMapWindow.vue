@@ -137,7 +137,7 @@ export default {
       this.original.totalRow = this.storeMapObj.grid.totalRow
       this.original.gridColor = this.storeMapObj.grid.color
       this.original.backgroundColor = this.storeMapObj.background
-      this.setProperty({property: 'public.map.isEditting', isNotice: true, value: this.peerId})
+      this.setProperty({property: 'public.map.isEditting', isNotice: true, value: this.peerId, logOff: true})
     },
     commit () {
       if (this.storeMapObj.isEditting === this.peerId) {
@@ -164,12 +164,13 @@ export default {
             },
             background: this.edit.backgroundColor,
             isEditting: false
-          }
+          },
+          logOff: true
         })
       } else {
         alert('ルームメイトとマップ変更操作が競合しますので、この操作はキャンセルします。')
       }
-      this.setProperty({property: 'public.map.isEditting', isNotice: true, value: null})
+      this.setProperty({property: 'public.map.isEditting', isNotice: true, value: null, logOff: true})
       this.windowClose('private.display.editMapWindow')
     },
     cancel () {
@@ -197,13 +198,14 @@ export default {
             },
             background: this.original.backgroundColor,
             isEditting: false
-          }
+          },
+          logOff: true
         })
       }
       this.windowClose('private.display.editMapWindow')
     },
     close () {
-      this.setProperty({property: 'public.map.isEditting', isNotice: true, value: null})
+      this.setProperty({property: 'public.map.isEditting', isNotice: true, value: null, logOff: true})
     },
     doReverse () { this.edit.isReverse = !this.edit.isReverse },
     selectImage (key) { this.edit.imageKey = key },
@@ -222,46 +224,46 @@ export default {
   },
   watch: {
     'edit.imageTag': function (imageTag) {
-      this.setProperty({property: 'public.map.imageTag', value: imageTag})
+      this.setProperty({property: 'public.map.imageTag', value: imageTag, logOff: true})
     },
     'edit.imageKey': function (imageKey) {
-      this.setProperty({property: 'public.map.imageKey', value: imageKey})
+      this.setProperty({property: 'public.map.imageKey', value: imageKey, logOff: true})
     },
     'edit.isReverse': function (isReverse) {
-      this.setProperty({property: 'public.map.isReverse', value: isReverse})
+      this.setProperty({property: 'public.map.isReverse', value: isReverse, logOff: true})
     },
     'edit.marginGridSize': function (marginGridSize) {
-      this.setProperty({property: 'public.map.margin.gridSize', value: parseInt(marginGridSize, 10)})
+      this.setProperty({property: 'public.map.margin.gridSize', value: parseInt(marginGridSize, 10), logOff: true})
     },
     'edit.isUseGridColor': function (isUseGridColor) {
-      this.setProperty({property: 'public.map.margin.isUseGridColor', value: isUseGridColor})
+      this.setProperty({property: 'public.map.margin.isUseGridColor', value: isUseGridColor, logOff: true})
     },
     'edit.isUseImage': function (isUseImage) {
-      this.setProperty({property: 'public.map.margin.isUseImage', value: isUseImage})
+      this.setProperty({property: 'public.map.margin.isUseImage', value: isUseImage, logOff: true})
     },
     'edit.marginGridColor': function (marginGridColor) {
-      this.setProperty({property: 'public.map.margin.gridColor', value: marginGridColor})
+      this.setProperty({property: 'public.map.margin.gridColor', value: marginGridColor, logOff: true})
     },
     'edit.maskColor': function (maskColor) {
-      this.setProperty({property: 'public.map.margin.maskColor', value: maskColor})
+      this.setProperty({property: 'public.map.margin.maskColor', value: maskColor, logOff: true})
     },
     'edit.maskAlpha': function (maskAlpha) {
-      this.setProperty({property: 'public.map.margin.maskAlpha', value: parseFloat(maskAlpha)})
+      this.setProperty({property: 'public.map.margin.maskAlpha', value: parseFloat(maskAlpha), logOff: true})
     },
     'edit.borderWidth': function (borderWidth) {
-      this.setProperty({property: 'public.map.margin.borderWidth', value: parseInt(borderWidth, 10)})
+      this.setProperty({property: 'public.map.margin.borderWidth', value: parseInt(borderWidth, 10), logOff: true})
     },
     'edit.totalColumn': function (totalColumn) {
-      this.setProperty({property: 'public.map.grid.totalColumn', value: parseInt(totalColumn, 10)})
+      this.setProperty({property: 'public.map.grid.totalColumn', value: parseInt(totalColumn, 10), logOff: true})
     },
     'edit.totalRow': function (totalRow) {
-      this.setProperty({property: 'public.map.grid.totalRow', value: parseInt(totalRow, 10)})
+      this.setProperty({property: 'public.map.grid.totalRow', value: parseInt(totalRow, 10), logOff: true})
     },
     'edit.gridColor': function (gridColor) {
-      this.setProperty({property: 'public.map.grid.color', value: gridColor})
+      this.setProperty({property: 'public.map.grid.color', value: gridColor, logOff: true})
     },
     'edit.backgroundColor': function (backgroundColor) {
-      this.setProperty({property: 'public.map.background', value: backgroundColor})
+      this.setProperty({property: 'public.map.background', value: backgroundColor, logOff: true})
     }
   },
   computed: mapState({
@@ -282,7 +284,7 @@ export default {
       })
     },
     storeMapObj: state => state.public.map,
-    peerId: state => state.private.connect.peerId
+    peerId: state => state.private.self.peerId
   })
 }
 </script>

@@ -117,14 +117,14 @@ export default {
     },
     changeName (event) {
       const name = event.target.value
-      this.setProperty({property: 'private.connect.playerName', value: name})
-      const myPeerId = this.$store.state.private.connect.peerId
+      this.setProperty({property: 'private.self.playerName', value: name, logOff: true})
+      const myPeerId = this.$store.state.private.self.peerId
       const members = this.$store.state.public.room.members
       const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
       if (myMemberObjList.length > 0) {
         const memberObj = myMemberObjList[0]
         const index = members.indexOf(memberObj)
-        this.setProperty({property: `public.room.members.${index}.name`, value: name})
+        this.setProperty({property: `public.room.members.${index}.name`, value: name, logOff: true})
         this.sendRoomData({ type: 'CHANGE_PLAYER_NAME', value: name })
       }
     },
@@ -135,12 +135,11 @@ export default {
       this.windowOpen('private.display.settingChatTabWindow')
     },
     settingDiceBot () {
-      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理'})
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理', logOff: true})
       this.windowOpen('private.display.unSupportWindow')
     },
     settingFont () {
-      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'チャット文字設定'})
-      this.windowOpen('private.display.unSupportWindow')
+      this.windowOpen('private.display.settingChatFontWindow')
     },
     settingBGM () {
       this.windowOpen('private.display.settingBGMWindow')
@@ -154,7 +153,7 @@ export default {
       this.addChatLog({
         name: this.name,
         text: this.currentMessage,
-        color: 'black'
+        color: this.fontColor
       })
 
       this.bcDice.setMessage(this.currentMessage)
@@ -223,7 +222,7 @@ export default {
     },
     chatTabList: state => state.public.chat.tabs,
     currentCount: 'count',
-    name: state => state.private.connect.playerName,
+    name: state => state.private.self.playerName,
     helpMessage () {
       const currentDiceBotSystem = this.currentDiceBotSystem
       const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
@@ -234,7 +233,8 @@ export default {
       const memberObj = state.public.room.members.filter(memberObj => memberObj.peerId === peerId)[0]
       if (!memberObj) return ''
       return `${memberObj.name ? memberObj.name : '名無し'}が入力中...`
-    }
+    },
+    fontColor: state => state.private.self.color
   })
 }
 </script>

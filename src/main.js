@@ -35,6 +35,8 @@ import JukeboxWindow from './components/music/JukeboxWindow'
 import EditBGMWindow from './components/music/EditBGMWindow'
 import AddBGMWindow from './components/music/AddBGMWindow'
 import SettingChatTabWindow from './components/chat/SettingChatTabWindow'
+import SettingChatFontWindow from './components/chat/SettingChatFontWindow'
+import CardContext from './components/map/card/CardContext'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -175,3 +177,9 @@ addBGMWindow.$mount('#addBGMWindow')
 
 const settingChatTabWindow = new Vue({ store, components: { SettingChatTabWindow }, template: `<SettingChatTabWindow/>` })
 settingChatTabWindow.$mount('#settingChatTabWindow')
+
+const settingChatFontWindow = new Vue({ store, components: { SettingChatFontWindow }, template: `<SettingChatFontWindow/>` })
+settingChatFontWindow.$mount('#settingChatFontWindow')
+
+const cardContext = new Vue({ store, components: { CardContext }, template: `<CardContext/>` })
+cardContext.$mount('#cardContext')

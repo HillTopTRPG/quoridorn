@@ -105,7 +105,10 @@ const storeModulePublic = {
       cards: {
         list: [],
         maxKey: -1
-      }
+      },
+      back: null,
+      width: 0,
+      height: 0
     },
 
     /** マップ */
@@ -329,7 +332,8 @@ const storeModulePublic = {
       state.chat.tabs.splice(0, state.chat.tabs.length)
 
       tabsText = 'メイン ' + tabsText
-      let tabs = tabsText.replace(/[　 ]+/g, ' ').split(' ')
+      const regExp = new RegExp('[ 　]+', 'g')
+      let tabs = tabsText.replace(regExp, ' ').split(' ')
       for (let tab of tabs) {
         let isActive = false
         if (lastActiveTab && lastActiveTab.name === tab) {

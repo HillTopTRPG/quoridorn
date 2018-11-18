@@ -286,10 +286,10 @@ export default {
         if (this.$store.state.private.display.addCharacterWindow.isContinuous) {
           const splits = name.split('_')
           const continuousNum = parseInt(splits[splits.length - 1], 10)
-          this.setProperty({property: 'private.display.addCharacterWindow.continuousNum', value: continuousNum + 1})
+          this.setProperty({property: 'private.display.addCharacterWindow.continuousNum', value: continuousNum + 1, logOff: true})
         } else {
           this.windowClose('private.display.addCharacterWindow')
-          this.setProperty({property: 'private.display.addCharacterWindow.continuousNum', value: 1})
+          this.setProperty({property: 'private.display.addCharacterWindow.continuousNum', value: 1, logOff: true})
         }
 
         this.addPieceInfo(pieceObj)

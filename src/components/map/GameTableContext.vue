@@ -43,13 +43,13 @@ export default {
     },
     addMapMarker () {
       console.log(`  [methods] select context item => GameTable.addMapMarker`)
-      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップマーカー追加'})
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップマーカー追加', logOff: true})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
     addDiceSymbol () {
       console.log(`  [methods] select context item => GameTable.addDiceSymbol`)
-      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスシンボル追加'})
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスシンボル追加', logOff: true})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
@@ -60,7 +60,7 @@ export default {
     },
     createMessageCard () {
       console.log(`  [methods] select context item => GameTable.createMessageCard`)
-      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'メッセージカード追加'})
+      this.setProperty({property: 'private.display.unSupportWindow.title', value: 'メッセージカード追加', logOff: true})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },

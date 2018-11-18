@@ -59,7 +59,7 @@ export default {
     roomName: state => state.public.room.id,
     password: state => state.public.room.password,
     memberList: state => state.public.room.members.filter(memberObj => memberObj.isCame),
-    yourPeerId: state => state.private.connect.peerId,
+    yourPeerId: state => state.private.self.peerId,
     inviteUrl (state) {
       const baseUrl = location.href.replace(/\?.+$/, '')
       const roomName = state.public.room.id
