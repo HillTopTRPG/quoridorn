@@ -27,8 +27,8 @@ export default {
   },
   mounted () {
     const cardElm = this.$refs.card
-    const transitionEnd = event => {
-      console.log('transitionEnd')
+    const transitionEnd = () => {
+      // console.log('transitionEnd')
     }
     const animationEnd = event => {
       const animationName = event.animationName

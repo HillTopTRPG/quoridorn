@@ -27,31 +27,31 @@ export default {
     ]),
     draw () {
       if (this.viewMode !== 'normal') {
-        this.setProperty({property: 'deck.command', value: {type: 'changeViewMode', value: 'normal'}, logOff: false})
+        this.setProperty({property: 'deck.command', value: {type: 'changeViewMode', value: 'normal'}, logOff: true})
         setTimeout(() => {
-          this.setProperty({property: 'deck.command', value: {type: 'draw'}, logOff: false})
+          this.setProperty({property: 'deck.command', value: {type: 'draw'}, logOff: true})
         }, 200)
       } else {
-        this.setProperty({property: 'deck.command', value: {type: 'draw'}, logOff: false})
+        this.setProperty({property: 'deck.command', value: {type: 'draw'}, logOff: true})
       }
       this.windowClose('private.display.cardContext')
     },
     choice () {
-      this.setProperty({property: 'deck.command', value: { type: 'changeViewMode', value: 'choice' }, logOff: false})
+      this.setProperty({property: 'deck.command', value: { type: 'changeViewMode', value: 'choice' }, logOff: true})
       this.windowClose('private.display.cardContext')
     },
     reverse () {
-      this.setProperty({property: 'deck.isReverse', value: !this.isReverse, logOff: false})
+      this.setProperty({property: 'deck.isReverse', value: !this.isReverse, logOff: true})
       this.windowClose('private.display.cardContext')
     },
     shuffle () {
       if (this.viewMode !== 'normal') {
-        this.setProperty({property: 'deck.command', value: { type: 'changeViewMode', value: 'normal' }, logOff: false})
+        this.setProperty({property: 'deck.command', value: { type: 'changeViewMode', value: 'normal' }, logOff: true})
         setTimeout(() => {
-          this.setProperty({property: 'deck.command', value: { type: 'shuffle' }, logOff: false})
+          this.setProperty({property: 'deck.command', value: { type: 'shuffle' }, logOff: true})
         }, 1000)
       } else {
-        this.setProperty({property: 'deck.command', value: { type: 'shuffle' }, logOff: false})
+        this.setProperty({property: 'deck.command', value: { type: 'shuffle' }, logOff: true})
       }
       this.windowClose('private.display.cardContext')
     }

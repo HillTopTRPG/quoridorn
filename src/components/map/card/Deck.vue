@@ -83,7 +83,7 @@ export default {
             })
           }
         }
-        this.setProperty({property: 'deck.command', value: null, logOff: false})
+        this.setProperty({property: 'deck.command', value: null, logOff: true})
       },
       deep: true
     }
