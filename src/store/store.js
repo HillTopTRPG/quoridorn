@@ -62,7 +62,7 @@ const store = new Vuex.Store({
       isReverse: false
     },
     operationQueue: [],
-    volatilSaveData: {
+    volatileSaveData: {
       members: []
     }
   },

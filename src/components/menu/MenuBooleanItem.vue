@@ -1,5 +1,5 @@
 <template>
-  <div class="item" @click="changeDisplay({property:property})">
+  <div class="item" @click="changeDisplay({property:property})" @mouseenter="mouseEnter">
     <span class="check"><i v-show="propValue" class="icon-checkmark"></i></span>
     <!-- <img v-img="propValue ? checkImg : ''" class="check" alt=""> -->
   <span><slot></slot></span></div>
@@ -17,7 +17,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions([ 'changeDisplay' ])
+    ...mapActions([ 'changeDisplay' ]),
+    mouseEnter (event) {
+      this.$emit('mouseenter', event)
+    }
   },
   computed: mapState({
     ...mapGetters([ 'isWindowOpen' ]),

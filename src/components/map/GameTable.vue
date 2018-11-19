@@ -150,7 +150,7 @@ export default {
 
       let isRoll = false
       if (isDraggingRight) {
-        const nextAngle = this.arrangeAngle(this.angle.total + Math.round(this.angleVolatil.dragging / 15) * 15)
+        const nextAngle = this.arrangeAngle(this.angle.total + Math.round(this.anglevolatile.dragging / 15) * 15)
         if (this.angle.total !== nextAngle) {
           isRoll = true
         }
@@ -434,7 +434,7 @@ export default {
         }
         if (this.isDraggingRight) {
           const angle = this.calcCoordinate(mouseLocate.x, mouseLocate.y, this.currentAngle).angle
-          let angleDiff = this.arrangeAngle(angle - this.angleVolatil.dragStart)
+          let angleDiff = this.arrangeAngle(angle - this.anglevolatile.dragStart)
           this.setProperty({property: 'map.angle.dragging', value: angleDiff, logOff: true})
         }
       },
@@ -455,8 +455,8 @@ export default {
     isDraggingRight: state => state.map.isDraggingRight,
     move: state => state.map.move,
     angle: state => state.private.map.angle,
-    angleVolatil: state => state.map.angle,
-    currentAngle () { return this.arrangeAngle(this.angle.total + this.angleVolatil.dragging) },
+    anglevolatile: state => state.map.angle,
+    currentAngle () { return this.arrangeAngle(this.angle.total + this.anglevolatile.dragging) },
     sizeW () { return (this.columns + this.marginGridSize * 2) * this.gridSize },
     sizeH () { return (this.rows + this.marginGridSize * 2) * this.gridSize },
     marginGridColor: state => state.public.map.margin.gridColor,

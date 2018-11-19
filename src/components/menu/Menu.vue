@@ -1,50 +1,66 @@
 <template>
   <div id="menu">
-    <div class="holder" v-show="!isConnected || isConnectHover">
+    <!-- 接続ボタン -->
+    <div class="holder connectBtn" v-if="!isConnected || isConnectHover">
       <div class="first"></div>
       <div class="second"></div>
       <div class="third"></div>
       <div class="menu-button" @click="clickConnect" :title="isConnectHover ? '新しいお部屋に移りますか？\n古い部屋への接続は自動で切断されます。' : 'さぁ！お部屋を立てましょう！！'" @mouseleave="hoverConnect(false)">接続</div>
     </div>
-    <div class="menu-button" v-show="isConnected && !isConnectHover" @click="clickConnect" @mouseenter="hoverConnect(true)">接続</div>
-    <div class="span-group">
-      <span @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')" :class="{isHover : menu['ファイル']}">ファイル</span><!--
-    --><span @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')" :class="{isHover : menu['表示']}">表示</span><!--
-    --><span @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')" :class="{isHover : menu['コマ']}">コマ</span><!--
-    --><span @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')" :class="{isHover : menu['マップ']}">マップ</span><!--
-    --><span @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')" :class="{isHover : menu['画像']}">画像</span><!--
-    --><span @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')" :class="{isHover : menu['ヘルプ']}">ヘルプ</span><!--
-  --><span @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')" :class="{isHover : menu['デモ']}">デモ</span>
+    <div class="connectBtn" v-if="isConnected && !isConnectHover">
+      <div class="menu-button" @click="clickConnect" @mouseenter="hoverConnect(true)">接続</div>
     </div>
+    <!-- 操作ボタングループ -->
+    <div class="span-group">
+      <span @click="menuClick()" @mouseenter="menuHover('ファイル')" :class="{isHover : isShow('ファイル')}">ファイル</span>
+      <span @click="menuClick()" @mouseenter="menuHover('表示')" :class="{isHover : isShow('表示', 'ウィンドウ')}">表示</span>
+      <span @click="menuClick()" @mouseenter="menuHover('コマ')" :class="{isHover : isShow('コマ')}">コマ</span>
+      <span @click="menuClick()" @mouseenter="menuHover('マップ')" :class="{isHover : isShow('マップ')}">マップ</span>
+      <span @click="menuClick()" @mouseenter="menuHover('画像')" :class="{isHover : isShow('画像')}">画像</span>
+      <span @click="menuClick()" @mouseenter="menuHover('ヘルプ')" :class="{isHover : isShow('ヘルプ')}">ヘルプ</span>
+      <span @click="menuClick()" @mouseenter="menuHover('デモ')" :class="{isHover : isShow('デモ')}">デモ</span>
+    </div>
+    <!-- 部屋情報 -->
     <div class="menu-button" @click="clickRoomInfo" :title="roomInfoTitle" :class="{isDisconnect : !isConnected}">
       ルームID.<span :class="{isDisconnect : !isConnected}">{{ roomId }}</span>
       :
       <span>{{ memberNum }}</span>名
     </div>
+    <!-- 共有メモ -->
     <div class="menu-button" @click="clickPublicMemo" :title="publicMemoTitle">共有メモ</div>
+    <!-- ログアウト -->
     <div class="menu-button" @click="clickLogOut" :class="{isDisconnect : !isConnected}" :title="logoutTitle">ログアウト</div>
-    <div class="hoverMenu hoverMenu2" v-show="menu['ファイル']" @mouseenter="menuHover(true, 'ファイル')" @mouseleave="menuHover(false, 'ファイル')">
+
+    <!--------------------------------------------------
+     ! ファイル
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu2" v-show="isShow('ファイル')">
       <div class="item" @click="clickExport">セーブ</div>
       <div class="item" @click="clickImport">ロード</div>
     </div>
-    <div class="hoverMenu hoverMenu3" v-show="menu['表示']" @mouseenter="menuHover(true, '表示')" @mouseleave="menuHover(false, '表示')">
-      <div class="item" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, 'ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
-      <hr>
-      <MenuBooleanItem property="private.setting.standImage">立ち絵表示</MenuBooleanItem>
-      <div class="item"></div>
-      <MenuBooleanItem property="private.setting.cutIn">カットイン表示</MenuBooleanItem>
-      <hr>
-      <MenuBooleanItem property="public.setting.gridId">座標表示</MenuBooleanItem>
-      <MenuBooleanItem property="public.setting.gridLine">マス目表示</MenuBooleanItem>
-      <hr>
-      <MenuBooleanItem property="public.setting.isFitGrid">マス目にキャラクターを合わせる</MenuBooleanItem>
-      <MenuBooleanItem property="private.setting.standImageAutoResize">立ち絵のサイズを自動調整する</MenuBooleanItem>
-      <hr>
-      <div class="item" @click="clickSettingFontSize">フォントサイズ調整</div>
-      <hr>
-      <div class="item" @click="clickResetWindowLocate">ウィンドウ配置初期化</div>
+    <!--------------------------------------------------
+     ! 表示
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu3" v-show="isShow('表示', 'ウィンドウ')">
+      <div class="item" @mouseenter="menuHover('ウィンドウ')">ウィンドウ<span class="triangle"></span></div>
+      <hr @mouseenter="menuHover('表示')">
+      <MenuBooleanItem property="private.setting.standImage" @mouseenter="menuHover('表示')">立ち絵表示</MenuBooleanItem>
+      <MenuBooleanItem property="private.setting.cutIn" @mouseenter="menuHover('表示')">カットイン表示</MenuBooleanItem>
+      <hr @mouseenter="menuHover('表示')">
+      <MenuBooleanItem property="public.setting.gridId" @mouseenter="menuHover('表示')">座標表示</MenuBooleanItem>
+      <MenuBooleanItem property="public.setting.gridLine" @mouseenter="menuHover('表示')">マス目表示</MenuBooleanItem>
+      <hr @mouseenter="menuHover('表示')">
+      <MenuBooleanItem property="public.setting.isFitGrid" @mouseenter="menuHover('表示')">マス目にキャラクターを合わせる</MenuBooleanItem>
+      <MenuBooleanItem property="private.setting.standImageAutoResize" @mouseenter="menuHover('表示')">立ち絵のサイズを自動調整する</MenuBooleanItem>
+      <hr @mouseenter="menuHover('表示')">
+      <div class="item" @click="clickSettingFontSize" @mouseenter="menuHover('表示')">フォントサイズ調整</div>
+      <hr @mouseenter="menuHover('表示')">
+      <div class="item" @click="clickResetWindowLocate" @mouseenter="menuHover('表示')">ウィンドウ配置初期化</div>
     </div>
-    <div class="hoverMenu hoverMenu4" v-show="menu['コマ']" @mouseenter="menuHover(true, 'コマ')" @mouseleave="menuHover(false, 'コマ')">
+    <!--------------------------------------------------
+     ! コマ
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu4" v-show="isShow('コマ')">
       <div class="item" @click="clickAddCharacter">キャラクター追加</div>
       <div class="item" @click="clickAddRange">範囲追加</div>
       <hr>
@@ -55,7 +71,10 @@
       <hr>
       <MenuBooleanItem property="public.setting.pieceRotateMarker">回転マーカーを表示する</MenuBooleanItem>
     </div>
-    <div class="hoverMenu hoverMenu5" v-show="menu['マップ']" @mouseenter="menuHover(true, 'マップ')" @mouseleave="menuHover(false, 'マップ')">
+    <!--------------------------------------------------
+     ! マップ
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu5" v-show="isShow('マップ')">
       <div class="item" @click="clickChangeMap">マップ変更</div>
       <div class="item" @click="clickFloorTileMode">フロアタイル変更モード</div>
       <div class="item" @click="clickAddMapMask">マップマスク追加</div>
@@ -64,19 +83,28 @@
       <div class="item" @click="clickSaveMap">マップ状態保存</div>
       <div class="item" @click="clickSwitchMap">マップ切り替え</div>
     </div>
-    <div class="hoverMenu hoverMenu6" v-show="menu['画像']" @mouseenter="menuHover(true, '画像')" @mouseleave="menuHover(false, '画像')">
+    <!--------------------------------------------------
+     ! 画像
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu6" v-show="isShow('画像')">
       <div class="item" @click="clickFileUploader">ファイルアップローダー</div>
       <hr>
       <div class="item" @click="clickTagEdit">タグ編集</div>
       <div class="item" @click="clickDeleteImage">画像削除</div>
     </div>
-    <div class="hoverMenu hoverMenu7" v-show="menu['ヘルプ']" @mouseenter="menuHover(true, 'ヘルプ')" @mouseleave="menuHover(false, 'ヘルプ')">
+    <!--------------------------------------------------
+     ! ヘルプ
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu7" v-show="isShow('ヘルプ')">
       <div class="item" @click="clickVersion">バージョン</div>
       <div class="item" @click="clickManual">マニュアル</div>
       <hr>
       <div class="item" @click="clickOfficialSite">オフィシャルサイトへ</div>
     </div>
-    <div class="hoverMenu hoverMenu8" v-show="menu['ウィンドウ']" @mouseenter="menuHover(true, '表示', 'ウィンドウ')" @mouseleave="menuHover(false, '表示', 'ウィンドウ')">
+    <!--------------------------------------------------
+     ! ウィンドウ
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu8" v-show="isShow('ウィンドウ')">
       <MenuBooleanItem property="private.display.chatWindow">チャット表示</MenuBooleanItem>
       <MenuBooleanItem property="private.setting.dice">ダイス表示</MenuBooleanItem>
       <MenuBooleanItem property="private.display.initiativeWindow">イニシアティブ表示</MenuBooleanItem>
@@ -85,7 +113,10 @@
       <MenuBooleanItem property="private.display.chatPaletteWindow">チャットパレット表示</MenuBooleanItem>
       <MenuBooleanItem property="private.display.counterRemoConWindow">カウンターリモコン表示</MenuBooleanItem>
     </div>
-    <div class="hoverMenu hoverMenu9" v-show="menu['デモ']" @mouseenter="menuHover(true, 'デモ')" @mouseleave="menuHover(false, 'デモ')">
+    <!--------------------------------------------------
+     ! デモ
+     !-------------------------------------------------->
+    <div class="hoverMenu hoverMenu9" v-show="isShow('デモ')">
       <div class="item" @click="clickDevHistory">開発履歴</div>
       <div class="item" @click="clickViewFunction">現時点の仕様</div>
       <hr>
@@ -106,16 +137,8 @@ export default {
   data () {
     return {
       isConnectHover: false,
-      menu: {
-        'ファイル': false,
-        '表示': false,
-        'コマ': false,
-        'マップ': false,
-        '画像': false,
-        'ヘルプ': false,
-        'ウィンドウ': false,
-        'デモ': false
-      }
+      isSelecting: false,
+      currentMenu: null
     }
   },
   methods: {
@@ -126,50 +149,101 @@ export default {
       'exportStart',
       'doExport'
     ]),
-    menuHover (flg, ...targets) {
-      for (let target of targets) {
-        this.menu[target] = flg
-      }
-    },
-    hoverConnect (flg) {
-      this.isConnectHover = flg
-    },
-    clickConnect () {
-      this.windowOpen('private.display.createRoomWindow')
-    },
+    menuClick () { this.isSelecting = !this.isSelecting },
+    isShow (...props) { return this.isSelecting && props.filter(prop => prop === this.currentMenu)[0] },
+    menuHover (prop) { this.currentMenu = prop },
+    hoverConnect (flg) { this.isConnectHover = flg },
+
+    /** 接続ボタン押下 */
+    clickConnect () { this.windowOpen('private.display.createRoomWindow') },
+    /** 部屋情報ボタン押下 */
     clickRoomInfo () { this.windowOpen('private.display.roomInfoWindow') },
+    /** 共有メモボタン押下 */
     clickPublicMemo () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '共有メモ', logOff: true}); this.windowOpen('private.display.unSupportWindow') },
-    clickExport () { this.exportStart(); this.menuHover(false, 'ファイル') },
-    clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
+    /** ログアウトボタン押下 */
     clickLogOut () {
       this.menuHover(false, 'ファイル')
       location.href = location.href.replace(/\?.+$/, '')
     },
+
+    /* --------------------
+     * ファイル
+     * ----------------- */
+    /** セーブ */
+    clickExport () { this.exportStart(); this.menuHover(false, 'ファイル') },
+    /** ロード */
+    clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
+
+    /* --------------------
+     * 表示
+     * ----------------- */
+    /** フォントサイズ調整 */
     clickSettingFontSize () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
+    /** ウィンドウ配置初期化 */
     clickResetWindowLocate () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
+
+    /* --------------------
+     * コマ
+     * ----------------- */
+    /** キャラクター追加 */
     clickAddCharacter () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
+    /** 範囲追加 */
     clickAddRange () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    /** チット作成 */
     clickAddChit () { this.windowOpen('private.display.addChitWindow'); this.menuHover(false, 'コマ') },
+    /** 墓場 */
     clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    /** キャラクター待合室 */
     clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+
+    /* --------------------
+     * マップ
+     * ----------------- */
+    /** マップ変更 */
     clickChangeMap () { this.windowOpen('private.display.editMapWindow'); this.menuHover(false, 'マップ') },
+    /** フロアタイル変更モード */
     clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    /** マップマスク追加 */
     clickAddMapMask () { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
+    /** 簡易マップ作成 */
     clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    /** マップ状態保存 */
     clickSaveMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    /** マップ切り替え */
     clickSwitchMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+
+    /* --------------------
+     * 画像
+     * ----------------- */
+    /** ファイルアップローダー */
     clickFileUploader () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ファイルアップローダー', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    /** タグ編集 */
     clickTagEdit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像タグ編集', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    /** 画像削除 */
     clickDeleteImage () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像削除', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+
+    /* --------------------
+     * ヘルプ
+     * ----------------- */
+    /** バージョン */
     clickVersion () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    /** マニュアル */
     clickManual () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    /** オフィシャルサイトへ */
     clickOfficialSite () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '公式サイト', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+
+    /* --------------------
+     * デモ
+     * ----------------- */
+    /** 開発履歴 */
     clickDevHistory () { this.windowOpen('private.display.devLogWindow'); this.menuHover(false, 'デモ') },
+    /** 現時点の仕様 */
     clickViewFunction () { this.windowOpen('private.display.functionListWindow'); this.menuHover(false, 'デモ') },
+    /** 不具合の報告 */
     clickBufForm () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuHover(false, 'デモ') }
   },
   watch: {
-    volatilSaveData (newValue) {
+    volatileSaveData (newValue) {
       if (newValue.length === this.memberNum) {
         this.doExport()
       }
@@ -185,7 +259,7 @@ export default {
     },
     roomId: state => state.public.room.id !== '' ? state.public.room.id : '未接続',
     memberNum: state => state.public.room.members.filter(memberObj => memberObj.isCame).length,
-    volatilSaveData: 'volatilSaveData',
+    volatileSaveData: state => state.volatileSaveData,
     roomInfoTitle () { return this.isConnected === true ? 'メンバーの一覧を見たり、部屋の設定を変えることができますよ。' : 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！' },
     publicMemoTitle () { return this.isConnected === true ? 'メンバーに共有したいテキストはこちらにどうぞ' : '部屋に入る前から準備しておくのですね！？\nなんと準備の良いお方でしょう！' },
     logoutTitle () { return this.isConnected === true ? 'この部屋から退室するのですか？' : 'お部屋に入っていません。\n「接続」ボタンを押してお部屋を作りましょう！！' }
@@ -196,19 +270,24 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #menu {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   background: linear-gradient(rgba(247, 248, 249, 1), rgba(0, 0, 0, 0));
   border-bottom: solid gray 1px;
-  padding: 0 10px;
-  font-size: 16px;
+  padding: 0.5em 1em;
+  font-size: 10px;
   z-index: 900000000;
 }
-#menu > * {
-  margin: 5px;
-  font-size: 80%;
+#menu > *:not(:first-child) {
+  margin-left: 1em;
 }
 div.isDisconnect {
   background-color: rgba(200, 200, 200, 0.5);
@@ -221,28 +300,46 @@ span.isDisconnect {
   font-weight: bold;
 }
 .span-group {
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
   background-color: rgba(250, 250, 250, 0.2);
   border: solid gray 1px;
-  padding: 0 15px;
+  box-sizing: border-box;
+  padding: 0 1em;
+  height: 2em;
 }
 .span-group span {
-  display: inline-block;
-  padding: 2px 10px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1em;
   white-space: nowrap;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-.span-group span:hover, .span-group span.isHover {
+.span-group span:hover,
+.span-group span.isHover {
   background: linear-gradient(rgba(186, 195, 199, 0.6), rgba(247, 248, 249, 1));
 }
+
+.connectBtn {
+  width: 4em;
+  height: 2em;
+}
+.connectBtn .menu-button {
+  width: 100%;
+  height: 100%;
+}
 .menu-button {
-  display: inline-block;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   background: rgba(250, 250, 250, 0.4);
   border: solid gray 1px;
-  padding: 2px 10px;
+  padding: 0 1em;
+  box-sizing: border-box;
   border-radius: 5px;
   cursor: pointer;
   white-space: nowrap;
@@ -250,9 +347,7 @@ span.isDisconnect {
   -webkit-user-select: none;
   -ms-user-select: none;
   z-index: 100;
-}
-.meun-button.isDisconnect {
-  background: rgba(250, 250, 250, 0);
+  height: 2em;
 }
 .menu-button:hover {
   border: solid #0092ED 1px;
@@ -260,9 +355,10 @@ span.isDisconnect {
 }
 .hoverMenu {
   position: fixed;
-  top: 25px;
+  top: calc(2.5em - 1px);
   background: white;
   border: solid gray 1px;
+  box-sizing: border-box;
   z-index: 200;
 }
 .hoverMenu > * {
@@ -271,14 +367,14 @@ span.isDisconnect {
 .hoverMenu > .item:hover {
   background: lightblue;
 }
-.hoverMenu2 { left: 87px; }
-.hoverMenu3 { left: 158px; }
-.hoverMenu4 { left: 204px; }
-.hoverMenu5 { left: 249px; }
-.hoverMenu6 { left: 308px; }
-.hoverMenu7 { left: 353px; }
-.hoverMenu8 { left: 384px; }
-.hoverMenu9 { left: 412px; }
+.hoverMenu2 { left: 6em; }
+.hoverMenu3 { left: 12em; }
+.hoverMenu4 { left: 16em; }
+.hoverMenu5 { left: 20em; }
+.hoverMenu6 { left: 25em; }
+.hoverMenu7 { left: 29em; }
+.hoverMenu8 { left: calc(30em - 1px); }
+.hoverMenu9 { left: 34em; }
 
 .item {
   position: relative;
@@ -323,10 +419,10 @@ span.isDisconnect {
   position: absolute;
   left: 0;
   right: 0;
-  top: -3px;
-  bottom: -3px;
-  border: solid gray 1px;
-  padding: 2px 10px;
+  top: 0;
+  bottom: 0;
+  /*border: solid gray 1px;*/
+  padding: 0;
   border-radius: 5px;
 }
 .second,

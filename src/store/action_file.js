@@ -15,8 +15,8 @@ const actionFile = {
   actions: {
     exportStart ({ dispatch, rootState }) {
       // 配列の中身を空にする
-      rootState.volatilSaveData.members.splice(0, rootState.volatilSaveData.members.length)
-      rootState.volatilSaveData.members.push(rootState.private)
+      rootState.volatileSaveData.members.splice(0, rootState.volatileSaveData.members.length)
+      rootState.volatileSaveData.members.push(rootState.private)
       if (rootState.public.room.members.length <= 1) {
         dispatch('doExport')
       } else {
@@ -40,7 +40,7 @@ const actionFile = {
       const historyAddKeys = []
       const historyDelKeys = []
       // 部屋情報のメンバーリストに、収集した各個人のデータを詰め込んでいく
-      rootState.volatilSaveData.members.forEach(memberData => {
+      rootState.volatileSaveData.members.forEach(memberData => {
         const peerId = memberData.self.peerId
         const saveMemObj = saveData.public.room.members.filter(saveMemObj => saveMemObj.peerId === peerId)[0]
         if (saveMemObj) {

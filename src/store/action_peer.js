@@ -222,8 +222,8 @@ const actionPeer = {
               break
             // privateデータの要求を受けたとき
             case 'SEND_PRIVATE_DATA':
-              rootState.volatilSaveData.members.push(value)
-              if (rootState.volatilSaveData.members.length === rootState.public.room.members.length) {
+              rootState.volatileSaveData.members.push(value)
+              if (rootState.volatileSaveData.members.length === rootState.public.room.members.length) {
                 dispatch('doExport')
               }
               break
