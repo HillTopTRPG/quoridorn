@@ -170,77 +170,77 @@ export default {
      * ファイル
      * ----------------- */
     /** セーブ */
-    clickExport () { this.exportStart(); this.menuHover(false, 'ファイル') },
+    clickExport () { this.exportStart(); this.menuClick() },
     /** ロード */
-    clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ファイル') },
+    clickImport () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ロード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
 
     /* --------------------
      * 表示
      * ----------------- */
     /** フォントサイズ調整 */
-    clickSettingFontSize () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '表示') },
+    clickSettingFontSize () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フォントサイズ変更', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** ウィンドウ配置初期化 */
-    clickResetWindowLocate () { this.doResetWindowLocate(); this.menuHover(false, '表示') },
+    clickResetWindowLocate () { this.doResetWindowLocate(); this.menuClick() },
 
     /* --------------------
      * コマ
      * ----------------- */
     /** キャラクター追加 */
-    clickAddCharacter () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuHover(false, 'コマ') },
+    clickAddCharacter () { this.windowOpen('private.display.addCharacterSettingWindow'); this.menuClick() },
     /** 範囲追加 */
-    clickAddRange () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickAddRange () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '範囲追加', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** チット作成 */
-    clickAddChit () { this.windowOpen('private.display.addChitWindow'); this.menuHover(false, 'コマ') },
+    clickAddChit () { this.windowOpen('private.display.addChitWindow'); this.menuClick() },
     /** 墓場 */
-    clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickGraveyard () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '墓地', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** キャラクター待合室 */
-    clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'コマ') },
+    clickWaitingRoom () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '待合室', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
 
     /* --------------------
      * マップ
      * ----------------- */
     /** マップ変更 */
-    clickChangeMap () { this.windowOpen('private.display.editMapWindow'); this.menuHover(false, 'マップ') },
+    clickChangeMap () { this.windowOpen('private.display.editMapWindow'); this.menuClick() },
     /** フロアタイル変更モード */
-    clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickFloorTileMode () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'フロアタイルモード', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** マップマスク追加 */
-    clickAddMapMask () { this.windowOpen('private.display.addMapMaskWindow'); this.menuHover(false, 'マップ') },
+    clickAddMapMask () { this.windowOpen('private.display.addMapMaskWindow'); this.menuClick() },
     /** 簡易マップ作成 */
-    clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickCreateEasyMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '簡易マップ', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** マップ状態保存 */
-    clickSaveMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSaveMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ保存', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** マップ切り替え */
-    clickSwitchMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'マップ') },
+    clickSwitchMap () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップ切り替え', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
 
     /* --------------------
      * 画像
      * ----------------- */
     /** ファイルアップローダー */
-    clickFileUploader () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ファイルアップローダー', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickFileUploader () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ファイルアップローダー', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** タグ編集 */
-    clickTagEdit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像タグ編集', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickTagEdit () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像タグ編集', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** 画像削除 */
-    clickDeleteImage () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像削除', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, '画像') },
+    clickDeleteImage () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '画像削除', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
 
     /* --------------------
      * ヘルプ
      * ----------------- */
     /** バージョン */
-    clickVersion () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickVersion () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** マニュアル */
-    clickManual () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickManual () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** オフィシャルサイトへ */
-    clickOfficialSite () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '公式サイト', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuHover(false, 'ヘルプ') },
+    clickOfficialSite () { this.setProperty({property: 'private.display.unSupportWindow.title', value: '公式サイト', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
 
     /* --------------------
      * デモ
      * ----------------- */
     /** 開発履歴 */
-    clickDevHistory () { this.windowOpen('private.display.devLogWindow'); this.menuHover(false, 'デモ') },
+    clickDevHistory () { this.windowOpen('private.display.devLogWindow'); this.menuClick() },
     /** 現時点の仕様 */
-    clickViewFunction () { this.windowOpen('private.display.functionListWindow'); this.menuHover(false, 'デモ') },
+    clickViewFunction () { this.windowOpen('private.display.functionListWindow'); this.menuClick() },
     /** 不具合の報告 */
-    clickBufForm () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuHover(false, 'デモ') }
+    clickBufForm () { window.open('https://9224.teacup.com/quoridorn_bug/bbs', '_blank'); this.menuClick() }
   },
   watch: {
     volatileSaveData (newValue) {
