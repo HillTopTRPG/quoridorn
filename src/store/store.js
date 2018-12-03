@@ -77,6 +77,7 @@ const store = new Vuex.Store({
       // 特定の画面は最初に開く
       setTimeout(() => {
         dispatch('windowOpen', 'private.display.chatWindow')
+        dispatch('windowOpen', 'private.display.welcomeWindow')
         // dispatch('windowOpen', 'private.display.initiativeWindow')
         // dispatch('windowOpen', 'private.display.resourceWindow')
         // dispatch('windowOpen', 'private.display.chatPaletteWindow')
@@ -129,14 +130,19 @@ const store = new Vuex.Store({
       // const webif = getParam('webif')
       const roomId = window['getUrlParam']('roomId')
       const peerId = window['getUrlParam']('peerId')
+      const name = window['getUrlParam']('name')
       const password = window['getUrlParam']('password')
       state.private.self.password = !password ? '' : password
+      state.private.self.playerName = !name ? '' : name
 
       // 部屋が指定されていたら接続しにいく
       if (roomId) {
         dispatch('createPeer', {
           roomId: roomId,
-          peerId: peerId
+          peerId: peerId,
+          openedCallBack: () => {
+            dispatch('changeName', {name: name})
+          }
         })
       }
     },

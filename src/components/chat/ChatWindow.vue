@@ -1,22 +1,37 @@
 <template>
-  <WindowFrame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 240">
+  <WindowFrame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 240" :fontSizeBar="true">
     <div class="container">
+      <!----------------
+       ! タブ
+       !--------------->
       <div class="tabs">
         <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive, unRead: tabObj.unRead > 0 }" @click.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/{{tabObj.unRead}}</span><!--
       --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">タブ変更</span>
       </div>
+      <!----------------
+       ! チャットログ
+       !--------------->
       <ul id="chatLog" @wheel.stop>
         <li v-for="(chatLog, index) in chatLogList" v-html="chatLog.viewHtml" :key="index"></li>
       </ul>
+      <!----------------
+       ! 操作盤
+       !--------------->
       <div class="oneLine">
         <span class="label">名前</span>
-        <input type="text" :value="name" :tabindex="chatTabList.length + 2" @change="changeName" title="">
-        <select :tabindex="chatTabList.length + 5"></select>
-        <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select><!--
-     --><span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabList.length + 7"></i></span><!--
-     --><span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabList.length + 8"></i></span><!--
-     --><span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabList.length + 9"></i></span>
+        <input type="text" :value="name" :tabindex="chatTabList.length + 2" @change="inputName" title="">
+        <select :tabindex="chatTabList.length + 5" v-model="secretTarget">
+          <option></option>
+          <option v-for="member in members" :key="member.peerId" :value="member.peerId">{{member.name}}</option>
+        </select>
+        <select :tabindex="chatTabList.length + 6" :title="helpMessage" class="diceBotSystem" v-model="currentDiceBotSystem"><option v-for="(systemObj, index) in diceBotSystems" :key="index" :value="systemObj.value">{{systemObj.name}}</option></select>
+        <span class="icon"><i class="icon-dice" title="ダイスボットの設定" @click="settingDiceBot" :tabindex="chatTabList.length + 7"></i></span>
+        <span class="icon"><i class="icon-font" title="フォントの設定" @click="settingFont" :tabindex="chatTabList.length + 8"></i></span>
+        <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabList.length + 9"></i></span>
       </div>
+      <!----------------
+       ! 発言
+       !--------------->
       <div class="sendLine">
         <span class="label">発言</span>
         <textarea id="chatTextArea" v-model="currentMessage" @input="onInput" @keypress.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
@@ -52,6 +67,8 @@ export default {
       currentDiceBotSystem: 'DiceBot',
       /** bc-dice本体 */
       bcDice: new BCDice(),
+      /** 秘匿チャットの相手 */
+      secretTarget: '',
       /** 入力中のルームメンバーのpeerIdの配列 */
       inputtingPeerIdList: [],
       /** ダイスボットの説明文の定型部分 */
@@ -110,23 +127,14 @@ export default {
       'chatTabSelect',
       'windowOpen',
       'setProperty',
-      'sendRoomData'
+      'sendRoomData',
+      'changeName'
     ]),
     onInput () {
       this.sendRoomData({ type: 'NOTICE_INPUT', value: name })
     },
-    changeName (event) {
-      const name = event.target.value
-      this.setProperty({property: 'private.self.playerName', value: name, logOff: true})
-      const myPeerId = this.$store.state.private.self.peerId
-      const members = this.$store.state.public.room.members
-      const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
-      if (myMemberObjList.length > 0) {
-        const memberObj = myMemberObjList[0]
-        const index = members.indexOf(memberObj)
-        this.setProperty({property: `public.room.members.${index}.name`, value: name, logOff: true})
-        this.sendRoomData({ type: 'CHANGE_PLAYER_NAME', value: name })
-      }
+    inputName (event) {
+      this.changeName({name: event.target.value})
     },
     onFocus () {
       this.$emit('onFocus')
@@ -187,7 +195,8 @@ export default {
       for (let chatTabObj of this.chatTabList) {
         chatTabObj.isActive = chatTabObj.text === tabObj.text
       }
-    }
+    },
+    memberToName: member => member.name ? member.name : '名無し'
   },
   watch: {
     currentDiceBotSystem () {
@@ -214,6 +223,11 @@ export default {
         }
       },
       deep: true
+    },
+    secretTarget (secretTarget) {
+      if (!secretTarget) return
+      console.log('selectSecretTalk', secretTarget)
+      this.secretTarget = ''
     }
   },
   computed: mapState({
@@ -221,7 +235,8 @@ export default {
       return this.$store.getters.chatLogs
     },
     chatTabList: state => state.public.chat.tabs,
-    currentCount: 'count',
+    members: state => state.public.room.members.filter(member => member.peerId !== state.private.self.peerId),
+    currentCount: state => state.count,
     name: state => state.private.self.playerName,
     helpMessage () {
       const currentDiceBotSystem = this.currentDiceBotSystem
@@ -232,7 +247,7 @@ export default {
     createInputtingMsg: state => peerId => {
       const memberObj = state.public.room.members.filter(memberObj => memberObj.peerId === peerId)[0]
       if (!memberObj) return ''
-      return `${memberObj.name ? memberObj.name : '名無し'}が入力中...`
+      return `${this.memberToName(memberObj)}が入力中...`
     },
     fontColor: state => state.private.self.color
   })
@@ -250,18 +265,20 @@ export default {
   flex-direction: column;
 }
 .tabs {
-  display: inline-block;
+  display: flex;
 }
 .tab {
   position: relative;
   display: inline;
-  font-size: 10px;
+  /*font-size: 10px;*/
   background: linear-gradient(rgba(240, 240, 240, 1), rgba(0, 0, 0, 0.2));
-  padding: 4px 10px;
+  padding: 0 10px;
+  box-sizing: border-box;
   border: 1px solid gray;
   border-bottom-width: 0;
   border-radius: 5px 5px 0 0;
   margin-right: -1px;
+  margin-bottom: -1px;
   z-index: 10;
   white-space: nowrap;
   -moz-user-select: none;
@@ -269,7 +286,7 @@ export default {
   -ms-user-select: none;
 }
 .tab.addButton {
-  margin-left: 100px;
+  margin-left: 5rem;
   cursor: pointer;
 }
 .tab.active,
@@ -295,7 +312,7 @@ export default {
   margin: 0;
   padding-left: 2px;
   list-style: none;
-  font-size: 13px;
+  /*font-size: 13px;*/
   min-height: 70px;
   position: relative;
   z-index: 0;
@@ -306,13 +323,18 @@ export default {
   -ms-user-select: text;
 }
 .label {
-  font-size: 10px;
+  /*font-size: 10px;*/
   white-space: nowrap;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
 }
 .oneLine {
+  display: flex;
+  flex-direction : row;
+  flex-wrap: nowrap;
+  justify-content: left;
+  align-items: center;
   height: 26px;
   min-height: 26px;
   padding: 3px 0;
@@ -320,21 +342,27 @@ export default {
 }
 .oneLine * {
   vertical-align: middle;
-  padding: 2px
+  padding: 2px;
 }
 .sendLine {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
 }
 .sendLine * {
-  display: inline;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 42px;
   min-height: 42px;
-  vertical-align: middle;
 }
 .diceBotSystem {
   margin-right: 10px;
 }
 textarea {
   resize: none;
+  flex: 1;
   padding: 0;
   box-sizing: border-box;
   width: calc(100% - 85px);

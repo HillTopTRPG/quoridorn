@@ -1,12 +1,15 @@
 
 <template>
   <div class="window" :style="windowStyle" v-if="isDisplay" @mousedown="windowActive(displayProperty)" @touchstart="windowActive(displayProperty)" @mouseup="mouseUp" @touchend="mouseUp" @touchcancel="mouseUp">
-    <div class="_contents" @wheel.stop @contextmenu.prevent>
+    <div class="_contents" :style="{ fontSize: fontSize + 'px' }" @wheel.stop @contextmenu.prevent>
       <slot></slot>
     </div>
     <div class="title" :class="{fix : isFix}"
       @mousedown.left.prevent="(e) => move(e, true)" @mouseup.left.prevent="(e) => move(e, false)"
-      @touchstart.prevent="(e) => move(e, true, true)" @touchend.prevent="(e) => move(e, false, true)" @touchcancel.prevent="(e) => move(e, false, true)"><span>{{titleText}}</span></div>
+      @touchstart.prevent="(e) => move(e, true, true)" @touchend.prevent="(e) => move(e, false, true)" @touchcancel.prevent="(e) => move(e, false, true)">
+      <span>{{titleText}}</span>
+      <div v-if="fontSizeBar" class="fontSizeSlider">文字サイズ{{fontSize}}px<input type="range" min="10" max="18" v-model="fontSize" @mousedown.stop></div>
+    </div>
     <div class="corner-left-top" v-if="!isFix"
       @mousedown.left.prevent="(e) => resize(e, 'corner-left-top', true)" @mouseup.left.prevent="(e) => resize(e, 'corner-left-top', false)"
       @touchstart.prevent="(e) => resize(e, 'corner-left-top', true, true)" @touchend.prevent="(e) => resize(e, 'corner-left-top', false, true)" @touchcancel.prevent="(e) => resize(e, 'corner-left-top', false, true)"></div>
@@ -31,7 +34,7 @@
     <div class="side-bottom" v-if="!isFix"
       @mousedown.left.prevent="(e) => resize(e, 'side-bottom', true)" @mouseup.left.prevent="(e) => resize(e, 'side-bottom', false)"
       @touchstart.prevent="(e) => resize(e, 'side-bottom', true, true)" @touchend.prevent="(e) => resize(e, 'side-bottom', false, true)" @touchcancel.prevent="(e) => resize(e, 'side-bottom', false, true)"></div>
-    <span v-if="!isBanClose"><i class="icon-cross close" @click.left.prevent="closeWindow"></i></span>
+    <span v-if="!isBanClose"><i class="icon-cross window-close" @click.left.prevent="closeWindow"></i></span>
   </div>
 </template>
 
@@ -45,7 +48,8 @@ export default {
     'align': { type: String, required: true },
     'baseSize': String,
     'fixSize': String,
-    'isBanClose': Boolean
+    'isBanClose': Boolean,
+    'fontSizeBar': { type: Boolean, default: false }
   },
   data () {
     return {
@@ -65,7 +69,8 @@ export default {
         h: 0, // height
         draggingX: 0,
         draggingY: 0
-      }
+      },
+      fontSize: 12
     }
   },
   mounted () {
@@ -397,11 +402,11 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 25px;
+  height: 1.5rem;
   border-radius: 8px 8px 0 0;
   border-bottom: solid rgba(0, 0, 0, 0.2) 1px;
   cursor: move;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
   white-space: nowrap;
   -moz-user-select: none;
@@ -417,7 +422,7 @@ export default {
   left: 5px;
 }
 
-.close {
+.window-close {
   position: absolute;
   top: 3px;
   right: 8px;
@@ -433,7 +438,7 @@ export default {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
-.close:hover {
+.window-close:hover {
   border-color: black;
   color: black;
 }
@@ -485,9 +490,41 @@ export default {
 .corner-left-bottom { cursor: sw-resize; }
 .corner-right-top { cursor: ne-resize; border-radius: 0 8px 0 0; }
 .corner-right-bottom { cursor: se-resize; }
-/*
-input, button, textarea, select {
-  background-color: rgba(50, 50, 50, .2)
+
+.fontSizeSlider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
 }
-*/
+.fontSizeSlider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: linear-gradient(to bottom, rgb(160, 166, 162) 0%, rgb(201, 199, 200) 100%);
+  height: 0.4em;
+  width: 100%;
+  border-radius: 0.3em;
+  border: 1px solid rgb(167, 167, 167);
+  border-top: 1px solid rgb(105, 110, 106);
+  box-sizing: border-box;
+}
+
+.fontSizeSlider input[type="range"]:focus,
+.fontSizeSlider input[type="range"]:active {
+   outline: none;
+ }
+
+.fontSizeSlider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  position: relative;
+  width: 1em;
+  height: 1em;
+  display: block;
+  background-image: linear-gradient(to bottom, rgb(242, 248, 246) 0%, rgb(242, 248, 246) 50%, rgb(230, 240, 239) 51%, rgb(230, 240, 239) 100%);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border: 1px solid rgb(167, 167, 167);
+}
 </style>

@@ -235,6 +235,13 @@ button {
   margin-top: 5px;
   text-align: center;
 }
+.operateArea label,
+.operateArea span {
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
 .tableContainer {
   overflow-y: scroll;
   flex: 1;

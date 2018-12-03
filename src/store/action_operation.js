@@ -79,6 +79,21 @@ const actionOperation = {
       }
     },
     /** ========================================================================
+     * 名前を変更する
+     */
+    changeName: ({ dispatch, rootState }, { name }) => {
+      dispatch('setProperty', {property: 'private.self.playerName', value: name, logOff: false})
+      const myPeerId = rootState.private.self.peerId
+      const members = rootState.public.room.members
+      const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
+      if (myMemberObjList.length > 0) {
+        const memberObj = myMemberObjList[0]
+        const index = members.indexOf(memberObj)
+        dispatch('setProperty', {property: `public.room.members.${index}.name`, value: name, logOff: true})
+        dispatch('sendRoomData', { type: 'CHANGE_PLAYER_NAME', value: name })
+      }
+    },
+    /** ========================================================================
      * BGMを追加する
      */
     addBGM: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doAddBGM' }) },

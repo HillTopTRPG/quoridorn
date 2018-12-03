@@ -1,5 +1,5 @@
 <template><!-- 150, 209 -->
-  <WindowFrame titleText="BGM再生画面" fixSize="222, 274" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
+  <WindowFrame titleText="再生中BGM一覧" fixSize="222, 274" display-property="private.display.jukeboxWindow" align="right-bottom" :isBanClose="true" @add="add">
     <div class="contents">
       <MasterVolumeComponent/>
       <BGMYoutubeComponent

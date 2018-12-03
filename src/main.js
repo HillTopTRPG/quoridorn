@@ -10,7 +10,7 @@ import Menu from './components/menu/Menu'
 import AddMapMaskWindow from './components/map/mapMask/AddMapMaskWindow'
 import EditMapMaskWindow from './components/map/mapMask/EditMapMaskWindow'
 import MapMaskContext from './components/map/mapMask/MapMaskContext'
-import UnSupportWindo from './components/UnSupportWindow'
+import UnSupportWindow from './components/UnSupportWindow'
 import GameTableContext from './components/map/GameTableContext'
 import DevLogWindow from './components/simple/DevLogWindow'
 import FunctionListWindow from './components/simple/FunctionListWindow'
@@ -37,6 +37,8 @@ import AddBGMWindow from './components/music/AddBGMWindow'
 import SettingChatTabWindow from './components/chat/SettingChatTabWindow'
 import SettingChatFontWindow from './components/chat/SettingChatFontWindow'
 import CardContext from './components/map/card/CardContext'
+import WelcomeWindow from './components/welcome/WelcomeWindow'
+import VersionWindow from './components/simple/VersionWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -106,8 +108,8 @@ editMapMaskWindow.$mount('#editMapMaskWindow')
 const mapMaskContext = new Vue({ store, components: { MapMaskContext }, template: `<MapMaskContext/>` })
 mapMaskContext.$mount('#mapMaskContext')
 
-const unSupportWindo = new Vue({ store, components: { UnSupportWindo }, template: `<UnSupportWindo/>` })
-unSupportWindo.$mount('#unSupportWindo')
+const unSupportWindow = new Vue({ store, components: { UnSupportWindow }, template: `<UnSupportWindow/>` })
+unSupportWindow.$mount('#unSupportWindow')
 
 const gameTableContext = new Vue({ store, components: { GameTableContext }, template: `<GameTableContext/>` })
 gameTableContext.$mount('#gameTableContext')
@@ -183,3 +185,9 @@ settingChatFontWindow.$mount('#settingChatFontWindow')
 
 const cardContext = new Vue({ store, components: { CardContext }, template: `<CardContext/>` })
 cardContext.$mount('#cardContext')
+
+const welcomeWindow = new Vue({ store, components: { WelcomeWindow }, template: `<WelcomeWindow/>` })
+welcomeWindow.$mount('#welcomeWindow')
+
+const versionWindow = new Vue({ store, components: { VersionWindow }, template: `<VersionWindow/>` })
+versionWindow.$mount('#versionWindow')

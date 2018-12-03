@@ -142,11 +142,10 @@ const storeModulePublic = {
     /** チャット */
     chat: {
       /** チャットのタブ */
-      tabs: [ { name: 'メイン', isActive: true, isHover: false, unRead: 0 } ],
+      tabs: [ { name: 'メイン', isActive: true, isHover: false, unRead: 0, secretInfo: null } ],
 
       /** チャットのリスト */
       logs: {
-        // TODO データの持ち方を変えたい(タブ名が被ってもいいように)
         'メイン': [
           { peerId: 12345, viewHtml: '<b>HillTop</b>：Hello World!!' },
           { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>' },
@@ -328,8 +327,14 @@ const storeModulePublic = {
      * @param lastActiveTab
      */
     changeChatTab (state, {tabsText, lastActiveTab}) {
-      // 配列を空にする
-      state.chat.tabs.splice(0, state.chat.tabs.length)
+      // 秘匿チャット以外を削除
+      state.chat.tabs
+        .map((tab, index) => {
+          if (!tab.secretInfo) return
+          return index
+        })
+        .reverse()
+        .forEach(index => state.chat.tabs.splice(index, 1))
 
       tabsText = 'メイン ' + tabsText
       const regExp = new RegExp('[ 　]+', 'g')
@@ -343,7 +348,8 @@ const storeModulePublic = {
           name: tab,
           isActive: isActive,
           isHover: false,
-          unRead: 0
+          unRead: 0,
+          secretInfo: null
         }
         state.chat.tabs.push(tabObj)
       }

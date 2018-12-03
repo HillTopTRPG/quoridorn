@@ -1,0 +1,32 @@
+ol, ul {
+  padding-inline-start: 2em;
+  -webkit-padding-start: 2em;
+  margin: 0;
+}
+
+.sourceContainer {
+  border: 1px solid #777;
+  background-color: white;
+  padding: 0.5em;
+}
+
+ul.type {
+  padding-inline-start: 0;
+  -webkit-padding-start: 0;
+}
+ul.type > li {
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+}
+ul.type > li > *:first-child {
+  font-weight: bold;
+}
+ul.type > li:not(:last-child) {
+  border-bottom: 1px dashed black;
+}
+ul.detail > li:not(:first-child) {
+  margin-top: 0.5em;
+}
+ul.detail > li > *:first-child {
+  font-weight: bold;
+}

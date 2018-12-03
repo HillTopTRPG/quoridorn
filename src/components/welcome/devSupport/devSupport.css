@@ -1,0 +1,11 @@
+ol, ul {
+  padding-inline-start: 2em;
+  -webkit-padding-start: 2em;
+  margin: 0;
+}
+
+.devSupport {
+  padding: 0.5em;
+  background-color: white;
+  border: 1px solid #777;
+}

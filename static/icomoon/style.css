@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?v0h1rt');
-  src:  url('fonts/icomoon.eot?v0h1rt#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?v0h1rt') format('truetype'),
-    url('fonts/icomoon.woff?v0h1rt') format('woff'),
-    url('fonts/icomoon.svg?v0h1rt#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?z0xcxn');
+  src:  url('fonts/icomoon.eot?z0xcxn#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?z0xcxn') format('truetype'),
+    url('fonts/icomoon.woff?z0xcxn') format('woff'),
+    url('fonts/icomoon.svg?z0xcxn#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -69,6 +69,24 @@
 .icon-font:before {
   content: "\ea5c";
 }
+.icon-twitter:before {
+  content: "\ea96";
+}
 .icon-youtube2:before {
   content: "\ea9e";
+}
+.icon-appleinc:before {
+  content: "\eabe";
+}
+.icon-windows:before {
+  content: "\eac1";
+}
+.icon-chrome:before {
+  content: "\ead9";
+}
+.icon-firefox:before {
+  content: "\eada";
+}
+.icon-safari:before {
+  content: "\eadd";
 }

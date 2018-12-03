@@ -96,6 +96,7 @@
      ! ヘルプ
      !-------------------------------------------------->
     <div class="hoverMenu hoverMenu7" v-show="isShow('ヘルプ')">
+      <div class="item" @click="clickWelcome">ようこそ画面</div>
       <div class="item" @click="clickVersion">バージョン</div>
       <div class="item" @click="clickManual">マニュアル</div>
       <hr>
@@ -225,8 +226,10 @@ export default {
     /* --------------------
      * ヘルプ
      * ----------------- */
+    /** ようこそ */
+    clickWelcome () { this.windowOpen('private.display.welcomeWindow'); this.menuClick() },
     /** バージョン */
-    clickVersion () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'バージョン', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
+    clickVersion () { this.windowOpen('private.display.versionWindow'); this.menuClick() },
     /** マニュアル */
     clickManual () { this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マニュアル', logOff: true}); this.windowOpen('private.display.unSupportWindow'); this.menuClick() },
     /** オフィシャルサイトへ */
@@ -275,7 +278,7 @@ export default {
   align-items: center;
   flex-direction: row;
   flex-wrap: nowrap;
-  overflow-x: auto;
+  /*overflow-x: auto;*/
   position: fixed;
   top: 0;
   left: 0;

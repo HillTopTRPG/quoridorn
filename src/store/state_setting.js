@@ -11,9 +11,11 @@ Vue.use(Vuex)
  * Store
  */
 const storeModuleSetting = {
-  // privateデータは、データ保存時に public.room.members に含める
+  // TODO settingのデータは別経路で保存する？
   state: {
-    /** カードの */
+    /** カードセット */
+    version: '1.0.0b1',
+    /** カードセット */
     cardSet: []
   }, /* end of state */
   actions: {

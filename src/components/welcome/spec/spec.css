@@ -1,0 +1,79 @@
+ul {
+  padding-inline-start: 1.5em;
+  -webkit-padding-start: 1.5em;
+  text-indent: 0;
+  padding-left: 0;
+  margin: 0;
+}
+ol {
+  counter-reset: section;
+  padding-inline-start: 1.5em;
+  -webkit-padding-start: 1.5em;
+  /*text-indent: -1em;*/
+  /*padding-left: 1em;*/
+  margin: 0;
+}
+fieldset > ol {
+  /*padding-inline-start: 1em;*/
+  /*-webkit-padding-start: 1em;*/
+}
+ol > li {
+  /*list-style: none;*/
+}
+ol > li:before {
+  /*content : counters(section, '-') '. ';*/
+  /*counter-increment : section;*/
+}
+
+fieldset {
+  /*border: 2px solid #777;*/
+  border: none;
+  padding: 0.5em;
+}
+legend {
+  /*border: double #777;*/
+  /*border-radius: 3px;*/
+  /*border-right: 1px solid #777;*/
+  /*border-left: 1px solid #777;*/
+  padding: 0.5em 1em 0;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+.operation,
+.operation legend {
+  background-color: #cee;
+}
+.spec,
+.spec legend {
+  background-color: #cec;
+}
+.request,
+.request legend {
+  background-color: #eec;
+}
+.unImplemented,
+.unImplemented legend {
+  background-color: #ecc;
+}
+.unImplemented li:not(:first-child) {
+  margin-top: 0.5em;
+}
+.unSupport,
+.unSupport legend {
+  background-color: #ccc;
+}
+.ref,
+.ref legend {
+  background-color: #ece;
+}
+.unFixed {
+  color: rgb(231, 50, 45);
+  font-size: 80%;
+  font-weight: bold;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}

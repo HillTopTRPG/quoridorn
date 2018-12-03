@@ -7,23 +7,127 @@
     <meta name="description" content="TRPGオンラインセッションツールの一種「Quoridorn（コリドーン）」の機能一覧です。">
     <meta name="author" content="@HillTop_TRPG at Twitter">
     <script type="text/javascript" src="./jquery.js"></script>
+    <link rel="stylesheet" href="./metal.css">
     <style>
-      html, body { margin: 0; padding: 0; }
+      html, body { margin: 0; padding: 0; font-size: 16px; }
       .contents { height: calc(100% - 5px); white-space: normal; word-break: break-all; -moz-user-select: text; -webkit-user-select: text; -ms-user-select: text; }
-      h4 { margin: 0; color: blue; display: inline; }
-      ul { margin: 0; padding-left: 0px; font-size: 12px; display: block; }
-      ol { padding-left: 0px; counter-reset: item; list-style-type: none; display: block; margin-top: 5px; margin-bottom: 0; margin-left: 15px; }
-      label { font-size: 12px; margin-left: 20px; }
-      span { font-size: 12px; font-weight: bold; display: block; margin-left: 20px; }
-      ol > li { text-indent: -1.3em; padding-left: 1.3em; }
-      ol > li:not(:last-child) { margin-bottom: 20px; }
-      ol > li:before { counter-increment: item; content: counter(item)'. '; color: blue; }
-      ul > li { color: rgb(60, 60, 60); text-indent: 0; }
-      b { font-weight: normal; color: red; }
-      p { display: block; margin: 0; color: gray; }
+      .contents h4 { margin: 0; color: blue; display: inline; }
+      .contents ul { margin: 0; padding-left: 0px; font-size: 12px; display: block; }
+      .contents ol { padding-left: 0px; counter-reset: item; list-style-type: none; display: block; margin-top: 5px; margin-bottom: 0; margin-left: 15px; }
+      .contents label { font-size: 12px; margin-left: 20px; }
+      .contents span { font-size: 12px; font-weight: bold; display: block; margin-left: 20px; }
+      .contents ol > li { text-indent: -1.3em; padding-left: 1.3em; }
+      .contents ol > li:not(:last-child) { margin-bottom: 20px; }
+      .contents ol > li:before { counter-increment: item; content: counter(item)'. '; color: blue; }
+      .contents ul > li { color: rgb(60, 60, 60); text-indent: 0; }
+      .contents b { font-weight: normal; color: red; }
+      .contents p { display: block; margin: 0; color: gray; }
+
+      /*
+      .logoContainer {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2em;
+      }
+      .logo {
+        display: inline-block;
+        padding: 1em 2.5em;
+        position: relative;
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+      }
+      .logo > * {
+        color: black;
+      }
+      #mainTitle {
+        font-size: 2.2em;
+        line-height: 1em;
+        letter-spacing: 1px;
+      }
+      #phonetic {
+        font-size: 1em;
+        line-height: 1em;
+      }
+      #subTitle {
+        color: #333;
+        font-size: 1em;
+        line-height: 1em;
+        margin-top: 0.5em;
+      }
+      abbr {
+        text-decoration: none;
+      }
+      abbr:hover {
+        text-decoration: underline dotted;
+      }
+      .deco {
+        position: absolute;
+      }
+      .deco.lt,
+      .deco.rt {
+        top: 0.8em;
+      }
+      .deco.lb,
+      .deco.rb {
+        bottom: 0.8em;
+      }
+      .deco.lt,
+      .deco.lb {
+        left: 0.8em;
+      }
+      .deco.rt,
+      .deco.rb {
+        right: 0.8em;
+      }
+      .bolt {
+        border-radius: 50%;
+        width: 0.7em;
+        height: 0.7em;
+        background-color: #d0d0d0;
+        box-shadow: hsla(0, 0%, 15%, .3) 0 1px 0 0;
+        border: 1px solid #c0c0c0;
+      }
+      .bolt:before,
+      .bolt:after {
+        content: '';
+        background-color: #999;
+        position: absolute;
+        box-sizing: border-box;
+        border-left: 1px solid #aaa;
+        left: 41%;
+        top: 20%;
+        width: 18%;
+        height: 60%;
+        border-radius: 100%;
+        transform-origin: center;
+      }
+      .bolt:before {
+        transform: rotate(45deg);
+      }
+      .bolt:after {
+        transform: rotate(-45deg);
+      }
+      */
     </style>
   </head>
   <body>
+    <!--
+    <div class="logoContainer">
+      <div class="logo metal linear oval">
+        <div id="mainTitle">Quoridorn</div>
+        <div id="phonetic">~ コリドーン ~</div>
+        <div id="subTitle">The <abbr title="Table-talk Role-Playing Game">TRPG</abbr> session tool.</div>
+        <div class="deco bolt lt"></div>
+        <div class="deco bolt rt"></div>
+        <div class="deco bolt lb"></div>
+        <div class="deco bolt rb"></div>
+      </div>
+    </div>
+    -->
     <ol class="contents">
       <li>
         <h4>既知の不具合</h4><label><input type="checkbox"/>改善済を表示</label>

@@ -45,7 +45,7 @@ export default {
   },
   computed: mapState({
     storeTabs: state => state.public.chat.tabs
-      .filter(tab => tab.name !== 'メイン')
+      .filter(tab => tab.name !== 'メイン' && !tab.secretInfo)
       .map(tab => tab.name).join(' ')
   })
 }

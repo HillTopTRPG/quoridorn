@@ -15,13 +15,13 @@ const actionPeer = {
     /** ========================================================================
      * WebRTCでPeer接続し、Roomにも接続する
      */
-    createPeer ({ rootState, dispatch }, payload) {
+    createPeer ({ rootState, dispatch }, {peerId, roomId, openedCallBack}) {
       const options = {
         key: window.__SKYWAY_KEY__,
         debug: 1
       }
-      console.log(`PeerId: ${payload.peerId}, RoomId: ${payload.roomId}`)
-      const peer = new Peer(payload.peerId, options)
+      console.log(`PeerId: ${peerId}, RoomId: ${roomId}`)
+      const peer = new Peer(peerId, options)
       // Await connections from others
       peer.on('connection', () => dispatch('connectFunc'))
 
@@ -40,13 +40,12 @@ const actionPeer = {
             isCame: true
           })
         }
-        const roomId = payload.roomId
         if (roomId) {
           console.log(`Room: ${roomId} に接続を試みます...`)
           const room = rootState.self.webRtcPeer.joinRoom(roomId)
           room.on('open', () => {
             rootState.room.webRtcRoom = room
-            dispatch('connectFunc', room)
+            dispatch('connectFunc', {room: room, callBackFunc: openedCallBack})
           })
         } else {
           console.error(`RoomIdは必須項目です。`)
@@ -58,7 +57,7 @@ const actionPeer = {
       peer.on('error', err => {
         console.error(err)
         if (err.message.indexOf('is already in use') > 0) {
-          alert(`接続に失敗しました。\npeerId:${payload.peerId}は既に使われています。\n異なるpeerIdを指定してください。`)
+          alert(`接続に失敗しました。\npeerId:${peerId}は既に使われています。\n異なるpeerIdを指定してください。`)
         } else {
           // alert(`接続に失敗しました。\n原因は不明です。\nF12を押して、表示されるコンソールに書かれている赤い文字をコピーして、開発者にご展開ください。`)
         }
@@ -83,7 +82,7 @@ const actionPeer = {
     /** ========================================================================
      * 接続後の処理
      */
-    connectFunc: ({ rootState, dispatch }, room) => {
+    connectFunc: ({ rootState, dispatch }, {room, callBackFunc}) => {
       // Handle a chat connection.
       const roomName = room.name.replace('sfu_text_', '')
 
@@ -180,6 +179,9 @@ const actionPeer = {
               rootState.public = value
               // ルームメンバーに自己紹介する
               rootState.room.webRtcRoom.send({ type: 'NOTICE_MY_INFO', value: { name: me.name, color: me.color } })
+              setTimeout(() => {
+                if (callBackFunc) callBackFunc()
+              }, 0)
               break
             // ルームメンバーの名前が変わったとき
             case 'CHANGE_PLAYER_NAME':
