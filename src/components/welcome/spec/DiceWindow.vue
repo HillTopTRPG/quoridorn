@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import SpecMixIn from './SpecMixIn'
-export default { mixins: [SpecMixIn] }
+import SpecMixin from './SpecMixin'
+export default { mixins: [SpecMixin] }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
