@@ -32,40 +32,40 @@ export default {
       'doResetWindowLocate'
     ]),
     addCharacter () {
-      console.log(`  [methods] select context item => GameTable.addCharacter`)
+      console.qLog(`  [methods] select context => item: GameTable.addCharacter`)
       this.windowOpen('private.display.addCharacterSettingWindow')
       this.windowClose('private.display.gameTableContext')
     },
     addMapMask () {
-      console.log(`  [methods] select context item => GameTable.addMapMask`)
+      console.qLog(`  [methods] select context => item: GameTable.addMapMask`)
       this.windowOpen('private.display.addMapMaskWindow')
       this.windowClose('private.display.gameTableContext')
     },
     addMapMarker () {
-      console.log(`  [methods] select context item => GameTable.addMapMarker`)
+      console.qLog(`  [methods] select context => item: GameTable.addMapMarker`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'マップマーカー追加', logOff: true})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
     addDiceSymbol () {
-      console.log(`  [methods] select context item => GameTable.addDiceSymbol`)
+      console.qLog(`  [methods] select context => item: GameTable.addDiceSymbol`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスシンボル追加', logOff: true})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
     createHandCardArea () {
-      console.log(`  [methods] select context item => GameTable.createHandCardArea`)
+      console.qLog(`  [methods] select context => item: GameTable.createHandCardArea`)
       alert('未実装の機能です。')
       this.windowClose('private.display.gameTableContext')
     },
     createMessageCard () {
-      console.log(`  [methods] select context item => GameTable.createMessageCard`)
+      console.qLog(`  [methods] select context => item: GameTable.createMessageCard`)
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'メッセージカード追加', logOff: true})
       this.windowOpen('private.display.unSupportWindow')
       this.windowClose('private.display.gameTableContext')
     },
     resetWindowLocate () {
-      console.log(`  [methods] select context item => GameTable.resetWindowLocate`)
+      console.qLog(`  [methods] select context => item: GameTable.resetWindowLocate`)
       this.doResetWindowLocate()
       this.windowClose('private.display.gameTableContext')
     }

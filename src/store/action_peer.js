@@ -20,7 +20,7 @@ const actionPeer = {
         key: window.__SKYWAY_KEY__,
         debug: 1
       }
-      console.log(`PeerId: ${peerId}, RoomId: ${roomId}`)
+      console.qLog(`Peer接続開始 => PeerId: ${peerId}`)
       const peer = new Peer(peerId, options)
       // Await connections from others
       peer.on('connection', () => dispatch('connectFunc'))
@@ -29,6 +29,7 @@ const actionPeer = {
        * Peer接続成功時
        */
       peer.on('open', id => {
+        console.qLog(`Peer接続成功 => PeerId: ${id}`)
         // セーブデータからの復元の場合は既にpeerIdが格納されており、接続
         if (rootState.private.self.peerId !== id) {
           rootState.private.self.peerId = id
@@ -41,9 +42,10 @@ const actionPeer = {
           })
         }
         if (roomId) {
-          console.log(`Room: ${roomId} に接続を試みます...`)
+          console.qLog(`Room接続開始 => Room: ${roomId}`)
           const room = rootState.self.webRtcPeer.joinRoom(roomId)
           room.on('open', () => {
+            console.qLog(`Room接続成功 => Room: ${roomId}`)
             rootState.room.webRtcRoom = room
             dispatch('connectFunc', {room: room, callBackFunc: openedCallBack})
           })
@@ -94,26 +96,22 @@ const actionPeer = {
 
       // 誰かが入室してきた場合
       room.on('peerJoin', peerId => {
+        console.qLog(`入室を感知 => peerId: ${peerId}`)
         const filtered = rootState.public.room.members.filter(memberObj => memberObj.peerId === peerId)
         if (filtered.length > 0) {
         } else {
-          rootState.public.room.members.push({
-            peerId: peerId,
-            name: '',
-            color: 'black',
-            isCame: false
-          })
+          dispatch('addMember', peerId)
         }
         // 自分が親だったら、入ってきた人に部屋情報を教えてあげる
-        console.log(`EVENT[peerJoin] ${rootState.private.self.peerId} -> ${peerId}`)
         if (rootState.public.room.members[0].peerId === rootState.private.self.peerId) {
-          rootState.room.webRtcRoom.send({ type: 'NOTICE_OTHER_PLAYER', value: rootState.public, targets: [peerId] })
+          dispatch('sendRoomData', { type: 'NOTICE_OTHER_PLAYER', value: rootState.public, targets: [peerId] })
         }
       })
 
       // 誰かが退室した場合
       room.on('peerLeave', peerId => {
-        // console.log(peerId, rootState.public.room.members)
+        console.qLog(`退室を感知 => peerId: ${peerId}`)
+        // console.qLog(peerId, rootState.public.room.members)
         const memberObj = rootState.public.room.members.filter(member => member.peerId === peerId)[0]
         if (!memberObj) { return }
         const index = rootState.public.room.members.indexOf(memberObj)
@@ -134,15 +132,16 @@ const actionPeer = {
         const peerId = message.src
         const sendData = message.data
         const memberObj = rootState.public.room.members.filter(member => member.peerId === peerId)[0]
+        console.qLog('####', message, memberObj, rootState.public.room.members)
         const index = rootState.public.room.members.indexOf(memberObj)
         const targets = sendData.targets
         if (!targets || targets.length === 0 || targets.filter(target => target === rootState.private.self.peerId).length > 0) {
           const type = sendData.type
           const value = sendData.value
           if (type === 'DO_METHOD') {
-            console.log(`$$ Data has been sent -> TYPE:${type} METHOD:${sendData.method} VALUE:`, value)
+            console.qLog(`$$ RoomData受信 -> TYPE: ${type}, METHOD: ${sendData.method}, VALUE:`, value)
           } else {
-            console.log(`$$ Data has been sent -> TYPE:${type} VALUE:`, value)
+            console.qLog(`$$ RoomData受信 -> TYPE: ${type}, VALUE:`, value)
           }
           switch (type) {
             // ルームメンバーの情報を受け取ったとき
@@ -154,7 +153,7 @@ const actionPeer = {
                 break
               }
 
-              console.log(`Room: ${roomName} に接続しました。`)
+              console.qLog(`Room: ${roomName} のルームメンバーとして認識されました。`)
               // チャット追加
               dispatch('addChatLog', {
                 name: logName,
@@ -178,7 +177,7 @@ const actionPeer = {
               }
               rootState.public = value
               // ルームメンバーに自己紹介する
-              rootState.room.webRtcRoom.send({ type: 'NOTICE_MY_INFO', value: { name: me.name, color: me.color } })
+              dispatch('sendRoomData', { type: 'NOTICE_MY_INFO', value: { name: me.name, color: me.color } })
               setTimeout(() => {
                 if (callBackFunc) callBackFunc()
               }, 0)
@@ -220,7 +219,7 @@ const actionPeer = {
               break
             // privateデータの要求を受けたとき
             case 'REQUEST_PRIVATE_DATA':
-              rootState.room.webRtcRoom.send({ type: 'SEND_PRIVATE_DATA', value: rootState.private, targets: [peerId] })
+              dispatch('sendRoomData', { type: 'SEND_PRIVATE_DATA', value: rootState.private, targets: [peerId] })
               break
             // privateデータの要求を受けたとき
             case 'SEND_PRIVATE_DATA':
@@ -303,7 +302,7 @@ const actionPeer = {
      * ログアウト処理（画面遷移なし）
      */
     logout ({ rootState }) {
-      console.log('ログアウト')
+      console.qLog('ログアウト')
       rootState.private.peerId = null
       rootState.public.room.id = ''
       rootState.public.room.members.splice(0, rootState.public.room.members.length)
@@ -320,6 +319,7 @@ const actionPeer = {
     sendRoomData ({ rootState }, payload) {
       if (rootState.room.webRtcRoom) {
         rootState.room.webRtcRoom.send(payload)
+        console.qLog('RoomData送信 =>', payload)
       }
     }
   }

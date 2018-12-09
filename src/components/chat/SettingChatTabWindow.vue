@@ -17,7 +17,7 @@ import WindowFrame from '../WindowFrame'
 import WindowMixin from '../WindowMixin'
 
 export default {
-  name: 'selectPeerWindow',
+  name: 'settingChatTabWindow',
   mixins: [WindowMixin],
   components: {
     WindowFrame

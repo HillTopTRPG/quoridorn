@@ -58,7 +58,7 @@ export default {
       const planeLocateFromCenter = { x: planeLocate.x - center.x, y: planeLocate.y - center.y }
       const planeCanvas = { x: center.x - this.columns / 2 * this.gridSize, y: center.y - this.rows / 2 * this.gridSize }
       const canvas = { x: center.x - this.columns / 2 * this.gridSize / zoom, y: center.y - this.rows / 2 * this.gridSize / zoom }
-      console.log(
+      console.qLog(
         `zm:${zoom} ` +
         `canvas(${f(canvas.x)}, ${f(canvas.y)}) ` +
         `pCanvas(${f(planeCanvas.x)}, ${f(planeCanvas.y)}) ` +
@@ -71,7 +71,7 @@ export default {
         `planeLocate(${f(planeLocate.x)}, ${f(planeLocate.y)}) ` +
         `planeLocateC(${f(planeLocateFromCenter.x)}, ${f(planeLocateFromCenter.y)}) `)
       */
-      // console.log(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
+      // console.qLog(`screen(${this.f(screenX)}, ${this.f(screenY)}), angle:${this.f(angle)}, distance:${this.f(distance)} plane(${this.f(planeLocate.x)}, ${this.f(planeLocate.y)})`)
       return {
         angle: angle, // 角度
         planeLocateScreen: planeLocateScreen, // マップ回転前のスクリーンベースの座標
@@ -132,7 +132,7 @@ export default {
 
       /*
       const f = Math.floor
-      console.log(
+      console.qLog(
         `oldAngle:${oldAngle} ` +
         `los(${f(locateOnScreen.x)}, ${f(locateOnScreen.y)}) ` +
         `lot(${f(locateOnTable.x)}, ${f(locateOnTable.y)}) ` +

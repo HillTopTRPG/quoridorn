@@ -49,7 +49,8 @@
               <td :style="colStyle(3)"></td><Divider :index="3"/>
               <td :style="colStyle(4)"></td><Divider :index="4"/>
               <td :style="colStyle(5)"></td><Divider :index="5"/>
-              <td :style="colStyle(6)"></td>
+              <td :style="colStyle(6)"></td><Divider :index="6"/>
+              <td :style="colStyle(7)"></td>
             </tr>
           </tbody>
         </table>
@@ -69,7 +70,7 @@
 import { mapState, mapActions } from 'vuex'
 import WindowFrame from '../WindowFrame'
 import WindowMixin from '../WindowMixin'
-import Divider from './component/Divider'
+import Divider from '../parts/Divider'
 import PropNumber from './component/PropNumber'
 
 export default {
@@ -117,12 +118,12 @@ export default {
       this.windowOpen('private.display.editBGMWindow')
     },
     doDelete () {
-      console.log(`doDelete: ${this.selectBgmKey}`)
+      console.qLog(`doDelete: ${this.selectBgmKey}`)
       alert('未実装の機能です。')
     },
     changeSortMode (event) {
       const val = event.target.checked
-      console.log(`changeSortMode: ${val}`)
+      console.qLog(`changeSortMode: ${val}`)
       if (val) {
         setTimeout(() => { alert('未実装の機能です。') }, 20)
       }
@@ -177,14 +178,15 @@ export default {
       return 'All'
     },
     bgmList: state => state.public.bgm.list,
+    /* Start 列幅可変テーブルのプロパティ */
     selectBgmKey: state => state.private.display.settingBGMWindow.selectBgmKey,
     widthList: state => state.private.display.settingBGMWindow.widthList,
-    hoverDevIndex: state => state.private.display.settingBGMWindow.hoverDevIndex,
     movingIndex: state => state.private.display.settingBGMWindow.movingIndex,
     startX: state => state.private.display.settingBGMWindow.startX,
     startLeftWidth: state => state.private.display.settingBGMWindow.startLeftWidth,
     startRightWidth: state => state.private.display.settingBGMWindow.startRightWidth,
     colStyle: () => function (index) { return { width: `${this.widthList[index]}px` } },
+    /* End 列幅可変テーブルのプロパティ */
     fadeStr: () => bgmObj => {
       if (bgmObj.fadeIn > 0 && bgmObj.fadeOut > 0) return 'in/out'
       if (bgmObj.fadeIn > 0 && bgmObj.fadeOut === 0) return 'in'
@@ -242,6 +244,7 @@ button {
   -moz-user-select: none;
   -webkit-user-select: none;
 }
+/* Start 列幅可変テーブルのCSS */
 .tableContainer {
   overflow-y: scroll;
   flex: 1;
@@ -317,15 +320,16 @@ table td.dev:after {
   content: '';
   width: 5px;
 }
-.comment {
-  font-size: 10px;
-  font-weight: bold;
-  color: red;
+td i {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-td i {
+/* End 列幅可変テーブルのCSS */
+.comment {
+  font-size: 10px;
+  font-weight: bold;
+  color: red;
   display: flex;
   align-items: center;
   justify-content: center;

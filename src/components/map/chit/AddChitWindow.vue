@@ -54,7 +54,7 @@ export default {
       event.dataTransfer.setData('rows', this.rows)
       event.dataTransfer.setData('columns', this.columns)
       event.dataTransfer.setData('description', this.description)
-      console.log(`  [methods] drag start chit => {` +
+      console.qLog(`  [methods] drag start chit => {` +
         `currentImageTag:${this.currentImageTag}, ` +
         `imageKey:${this.imageKey}, ` +
         `isReverse:${this.isReverse}, ` +
@@ -69,11 +69,11 @@ export default {
     getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.log(`key:"${key}" is not find.`)
+        console.qLog(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
-        console.log(`key:"(${key})" is duplicate.`)
+        console.qLog(`key:"(${key})" is duplicate.`)
         return null
       }
       return filteredList[0]

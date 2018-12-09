@@ -5,8 +5,17 @@
        ! タブ
        !--------------->
       <div class="tabs">
-        <span class="tab" v-for="(tabObj, index) in chatTabList" :key="tabObj.text" :class="{ active: tabObj.isActive, unRead: tabObj.unRead > 0 }" @click.prevent="chatTabSelect(tabObj.name)" :tabindex="index + 1">{{tabObj.name}}/{{tabObj.unRead}}</span><!--
-      --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">タブ変更</span>
+        <span
+          class="tab"
+          v-for="(tabObj, index) in chatTabList"
+          :key="tabObj.text"
+          :class="{ active: tabObj.isActive, unRead: tabObj.unRead > 0 }"
+          @click.prevent="chatTabSelect(tabObj.name)"
+          :tabindex="index + 1"
+        >
+          {{tabObj.name}}/{{tabObj.unRead}}
+        </span><!--
+      --><span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1">表示タブ設定</span>
       </div>
       <!----------------
        ! チャットログ
@@ -30,15 +39,65 @@
         <span class="icon"><i class="icon-music" title="BGMの設定" @click="settingBGM" :tabindex="chatTabList.length + 9"></i></span>
       </div>
       <!----------------
+       ! 操作盤２
+       !--------------->
+      <div class="secondLine">
+        <label>出力先：
+          <select :tabindex="chatTabList.length + 10">
+            <option value="">選択中のタブ</option>
+            <option
+              v-for="tabObj in chatTabList"
+              :key="tabObj.name"
+              :value="tabObj.name"
+            >{{tabObj.name}}</option>
+          </select>
+        </label>
+        <!----------------
+         ! 秘匿タブ
+         !--------------->
+        <span class="description">グルチャ</span>
+        <span
+          class="tab"
+          v-for="(tabObj, index) in groupTargetTabList"
+          :key="tabObj.text"
+          :class="{ active: tabObj.isActive, unRead: tabObj.unRead > 0 }"
+          @click.prevent="groupTargetTabSelect(tabObj.name)"
+          :tabindex="chatTabList.length + 12 + index"
+        >
+          {{tabObj.name}}
+        </span>
+        <span class="tab addButton"
+              @click="addTargetTab"
+              :tabindex="chatTabList.length + chatTabList.length + 12"
+        >
+          秘匿タブ設定
+        </span>
+      </div>
+      <!----------------
        ! 発言
        !--------------->
       <div class="sendLine">
         <span class="label">発言</span>
-        <textarea id="chatTextArea" v-model="currentMessage" @input="onInput" @keypress.enter.prevent="sendMessage" @keyup.enter.prevent :tabindex="chatTabList.length + 3"></textarea>
-        <button :tabindex="chatTabList.length + 4">送信</button>
+        <textarea id="chatTextArea"
+                  v-model="currentMessage"
+                  @input="onInput"
+                  @keypress.enter.prevent="sendMessage"
+                  @keyup.enter.prevent
+                  :tabindex="chatTabList.length + chatTabList.length + 13"
+        ></textarea>
+        <button :tabindex="chatTabList.length + chatTabList.length + 14">送信</button>
       </div>
       <div class="inputtingArea">
-        <div v-for="peerId in inputtingPeerIdList" :key="peerId"><img v-show="inputtingPeerIdList.length>0" :src="require('../../assets/inputting.gif')" >{{createInputtingMsg(peerId)}}</div>
+        <div
+          v-for="peerId in inputtingPeerIdList"
+          :key="peerId"
+        >
+          <img
+            v-show="inputtingPeerIdList.length>0"
+            :src="require('../../assets/inputting.gif')"
+          >
+          {{createInputtingMsg(peerId)}}
+        </div>
       </div>
     </div>
   </WindowFrame>
@@ -100,10 +159,10 @@ export default {
         'ゲーム固有の判定がある場合はこの場所に記載されます。'
     })
     setTimeout(function () {
-      // console.log(`bcdice-js ダイスボット一覧`)
+      // console.qLog(`bcdice-js ダイスボット一覧`)
       DiceBotLoader.collectDiceBots().forEach(function (diceBot) {
-        // console.log(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
-        // console.log(`${diceBot.gameName()}, ${diceBot.gameType()}`)
+        // console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
+        // console.qLog(`${diceBot.gameName()}, ${diceBot.gameType()}`)
         this.diceBotSystems.push({
           name: diceBot.gameName(),
           value: diceBot.gameType(),
@@ -134,13 +193,16 @@ export default {
       this.sendRoomData({ type: 'NOTICE_INPUT', value: name })
     },
     inputName (event) {
-      this.changeName({name: event.target.value})
+      this.changeName(event.target.value)
     },
     onFocus () {
       this.$emit('onFocus')
     },
     addTab () {
       this.windowOpen('private.display.settingChatTabWindow')
+    },
+    addTargetTab () {
+      this.windowOpen('private.display.settingChatTargetTabWindow')
     },
     settingDiceBot () {
       this.setProperty({property: 'private.display.unSupportWindow.title', value: 'ダイスボット用表管理', logOff: true})
@@ -200,7 +262,7 @@ export default {
   },
   watch: {
     currentDiceBotSystem () {
-      console.log(`ダイスボットシステムを${this.currentDiceBotSystem}に変更`)
+      console.qLog(`ダイスボットシステムを${this.currentDiceBotSystem}に変更`)
       const currentDiceBotSystem = this.currentDiceBotSystem
       const diceObj = this.diceBotSystems.filter(obj => obj.value === currentDiceBotSystem)[0]
       this.bcDice.setDiceBot(diceObj.diceBot)
@@ -226,7 +288,7 @@ export default {
     },
     secretTarget (secretTarget) {
       if (!secretTarget) return
-      console.log('selectSecretTalk', secretTarget)
+      console.qLog('selectSecretTalk', secretTarget)
       this.secretTarget = ''
     }
   },
@@ -235,6 +297,7 @@ export default {
       return this.$store.getters.chatLogs
     },
     chatTabList: state => state.public.chat.tabs,
+    groupTargetTabList: state => state.public.chat.groupTargetTab,
     members: state => state.public.room.members.filter(member => member.peerId !== state.private.self.peerId),
     currentCount: state => state.count,
     name: state => state.private.self.playerName,
@@ -244,10 +307,12 @@ export default {
       return diceObj.helpMessage
     },
     inputting: state => state.public.chat.inputting,
-    createInputtingMsg: state => peerId => {
-      const memberObj = state.public.room.members.filter(memberObj => memberObj.peerId === peerId)[0]
-      if (!memberObj) return ''
-      return `${this.memberToName(memberObj)}が入力中...`
+    createInputtingMsg (state) {
+      return function (peerId) {
+        const memberObj = state.public.room.members.filter(memberObj => memberObj.peerId === peerId)[0]
+        if (!memberObj) return ''
+        return `${this.memberToName(memberObj)}が入力中...`
+      }
     },
     fontColor: state => state.private.self.color
   })
@@ -343,6 +408,46 @@ export default {
 .oneLine * {
   vertical-align: middle;
   padding: 2px;
+}
+.secondLine {
+  background-color: yellow;
+  margin-bottom: -1px;
+  display: flex;
+  flex-direction : row;
+}
+.secondLine label {
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 20px;
+}
+.secondLine label * {
+  padding: 2px;
+}
+.secondLine .description {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.secondLine .tab {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 1.2em;
+}
+.secondLine .tab:not(.addButton):before {
+  content: '';
+  width: 0;
+  height: 0;
+  border: 0.5em solid transparent;
+  border-left: 0.5em solid black;
+  position: absolute;
+  left: 0.5em;
+  top: 0;
+  transform: translateY(50%);
 }
 .sendLine {
   display: flex;

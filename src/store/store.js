@@ -141,7 +141,7 @@ const store = new Vuex.Store({
           roomId: roomId,
           peerId: peerId,
           openedCallBack: () => {
-            dispatch('changeName', {name: name})
+            dispatch('changeName', name)
           }
         })
       }
@@ -242,7 +242,7 @@ const store = new Vuex.Store({
      */
     doEmptyProperty: ({ getters }, { property, logOff }) => {
       if (!logOff) {
-        console.log(`#empty ${property}:`)
+        console.qLog(`#empty ${property}:`)
       }
       const target = getters.getStateValue(property)
       target.splice(0, target.length)
@@ -258,7 +258,7 @@ const store = new Vuex.Store({
      */
     doSetProperty: (state, {property, value, logOff = false}) => {
       if (!logOff) {
-        console.log(`#set ${property}:`, value)
+        console.qLog(`doSetProperty => ${property}:`, value)
       }
 
       const propProc = (target, props, value) => {

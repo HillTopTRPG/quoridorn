@@ -59,7 +59,7 @@ export default {
               if (!target[prop]) {
                 target[prop] = {}
               }
-              // console.log(target[prop], val)
+              // console.qLog(target[prop], val)
               propProc(target[prop], val)
             }
           }
@@ -84,7 +84,7 @@ export default {
             toObj = toObj[prop]
             fromObj = fromObj[prop]
           })
-          // console.log('$$ ', toObj, fromObj, importData)
+          // console.qLog('$$ ', toObj, fromObj, importData)
           if (toObj) {
             propProc(toObj, fromObj)
           }

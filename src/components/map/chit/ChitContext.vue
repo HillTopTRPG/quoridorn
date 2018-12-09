@@ -25,18 +25,18 @@ export default {
       'windowClose'
     ]),
     viewEditChit () {
-      console.log(`  [methods] select context item => Chit(${this.objKey}).viewEditChit`)
+      console.qLog(`  [methods] select context => item: Chit(${this.objKey}).viewEditChit`)
       this.setProperty({property: 'private.display.editChitWindow.key', value: this.objKey})
       this.windowOpen('private.display.editChitWindow')
       this.windowClose('private.display.chitContext')
     },
     copyChit () {
-      console.log(`  [methods] select context item => Chit(${this.objKey}).copyChit`)
+      console.qLog(`  [methods] select context => item: Chit(${this.objKey}).copyChit`)
       alert('未実装の機能です')
       this.windowClose('private.display.chitContext')
     },
     deleteChit () {
-      console.log(`  [methods] select context item => Chit(${this.objKey}).deleteChit`)
+      console.qLog(`  [methods] select context => item: Chit(${this.objKey}).deleteChit`)
       this.deletePieceInfo({ propName: 'chit', key: this.objKey, isNotice: true })
       this.windowClose('private.display.chitContext')
     }
@@ -49,7 +49,7 @@ export default {
     storeObj () {
       const type = 'chit'
       const key = this.objKey
-      // console.log(`key:${key}`)
+      // console.qLog(`key:${key}`)
       return this.getPieceObj(type, key)
     }
   })

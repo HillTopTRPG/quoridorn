@@ -47,9 +47,9 @@ export default {
       value: 'DiceBot'
     })
     setTimeout(function () {
-      // console.log(`bcdice-js ダイスボット一覧`)
+      // console.qLog(`bcdice-js ダイスボット一覧`)
       DiceBotLoader.collectDiceBots().forEach(function (diceBot) {
-        // console.log(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
+        // console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
         this.diceBotSystems.push({
           name: diceBot.gameName(),
           value: diceBot.gameType()

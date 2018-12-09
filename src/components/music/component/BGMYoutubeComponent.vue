@@ -55,13 +55,13 @@ export default {
       this.$refs.core.play()
     },
     onError (event) {
-      console.log(event)
+      console.qLog(event)
     },
     onPaused () {
       this.$refs.core.pause()
     },
     onReject () {
-      console.log('youtube - onReject => reload')
+      console.qLog('youtube - onReject => reload')
       this.setProperty({property: 'private.display.jukeboxWindow.command', logOff: true, value: {command: 'add', payload: this.bgmKey}})
     },
     mounted () {

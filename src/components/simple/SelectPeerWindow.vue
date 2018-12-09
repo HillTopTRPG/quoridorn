@@ -37,13 +37,13 @@ export default {
       'updateCame'
     ]),
     commit () {
-      console.log(this.currentPeerId)
+      console.qLog(this.currentPeerId)
       const currentMemberObj = this.currentMemberObj
       if (!currentMemberObj) {
         alert('ルームメンバーからあなたを選んでください。')
         return
       }
-      console.log(currentMemberObj)
+      console.qLog(currentMemberObj)
       const privateData = currentMemberObj.private
       if (!privateData) {
         this.windowClose('private.display.selectPeerWindow')

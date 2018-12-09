@@ -90,11 +90,11 @@ export default {
     getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.log(`key:"${key}" is not find.`)
+        console.qLog(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
-        console.log(`key:"(${key})" is duplicate.`)
+        console.qLog(`key:"(${key})" is duplicate.`)
         return null
       }
       return filteredList[0]
@@ -119,7 +119,7 @@ export default {
         obj.width = this.rect.width + plus * 2 + 'px'
         obj.height = this.rect.height + plus * 2 + 'px'
       }
-      // console.log(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+      // console.qLog(` [computed] character(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj
     },
     name () { return this.storeObj.name },
@@ -129,7 +129,7 @@ export default {
     imageObj () {
       if (this.useImageList === '') { return '' }
       const imageStr = this.useImageList.split('|')[this.useImageIndex]
-      // console.log(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
+      // console.qLog(`list:${this.useImageList}(${this.useImageIndex}), image:${imageStr}`)
       const isReverse = imageStr.indexOf(':R') >= 0
       const imageKey = imageStr.replace(':R', '')
       return {

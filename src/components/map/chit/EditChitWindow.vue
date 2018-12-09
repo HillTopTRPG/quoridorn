@@ -54,7 +54,7 @@ export default {
       'changePieceInfo'
     ]),
     commit () {
-      console.log(this.key)
+      console.qLog(this.key)
       this.changePieceInfo({ propName: 'chit', key: this.key, currentImageTag: this.currentImageTag, imageKey: this.imageKey, isReverse: this.isReverse, rows: this.rows, columns: this.columns, description: this.description, isNotice: true })
       this.windowClose('private.display.editChitWindow')
     },
@@ -67,11 +67,11 @@ export default {
     getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.log(`key:"${key}" is not find.`)
+        console.qLog(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
-        console.log(`key:"(${key})" is duplicate.`)
+        console.qLog(`key:"(${key})" is duplicate.`)
         return null
       }
       return filteredList[0]

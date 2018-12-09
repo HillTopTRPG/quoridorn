@@ -29,11 +29,11 @@ export default {
     getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.log(`key:"${key}" is not find.`)
+        console.qLog(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
-        console.log(`key:"(${key})" is duplicate.`)
+        console.qLog(`key:"(${key})" is duplicate.`)
         return null
       }
       return filteredList[0]
@@ -51,7 +51,7 @@ export default {
         obj.height = this.rect.height + plus * 2 + 'px'
         obj.opacity = 0.6
       }
-      // console.log(` [computed] chit(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
+      // console.qLog(` [computed] chit(${this.objKey}) style => lt(${obj.left}, ${obj.top}), wh(${obj.width}, ${obj.height}), bg:"${obj['background-color']}", font:"${obj.color}"`)
       return obj
     },
     imageKey () { return this.storeObj.imageKey },

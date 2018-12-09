@@ -60,23 +60,23 @@ export default {
     getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.log(`key:"${key}" is not find.`)
+        console.qLog(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
-        console.log(`key:"(${key})" is duplicate.`)
+        console.qLog(`key:"(${key})" is duplicate.`)
         return null
       }
       return filteredList[0]
     },
     changeTag (key) {
       // 入力によってタグの追加・削除が発生する可能性があるので、タグリストを整理してもらう
-      console.log('changeTag')
+      console.qLog('changeTag')
       this.imageTagChange({key: key, imageList: this.imageList})
     },
     selectTag (key) {
       const imgObj = this.getKeyObj(this.imageList, key)
-      console.log(imgObj.currentTag, imgObj.selectTag)
+      console.qLog(imgObj.currentTag, imgObj.selectTag)
       imgObj.currentTag = imgObj.selectTag
       // const index = this.imageList.indexOf(imgObj)
       // this.imageList.splice(index, 1, imgObj)

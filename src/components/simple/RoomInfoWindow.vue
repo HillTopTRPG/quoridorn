@@ -38,7 +38,7 @@ export default {
     //     elms.forEach((elm) => {
     //       elm.focus()
     //       elm.value += ''
-    //       console.log(elm.value)
+    //       console.qLog(elm.value)
     //     })
     //   }, 100)
     // }
@@ -50,7 +50,7 @@ export default {
     //     elms.forEach((elm) => {
     //       elm.focus()
     //       elm.value += ''
-    //       console.log(elm.value)
+    //       console.qLog(elm.value)
     //     })
     //   }, 0)
     // }

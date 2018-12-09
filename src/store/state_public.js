@@ -143,6 +143,8 @@ const storeModulePublic = {
     chat: {
       /** チャットのタブ */
       tabs: [ { name: 'メイン', isActive: true, isHover: false, unRead: 0, secretInfo: null } ],
+      /** グループチャットのタブ */
+      groupTargetTab: [ { key: 'groupTargetTab-1', name: '全体', group: [], targetTab: null } ],
 
       /** チャットのリスト */
       logs: {
@@ -176,6 +178,14 @@ const storeModulePublic = {
 
   actions: {
     /**
+     * ルームメンバを追加する
+     * @param commit
+     * @returns {*}
+     */
+    addMember: ({ commit }) =>
+      commit('addMember'),
+
+    /**
      * ルームメンバを空にする
      * @param commit
      * @returns {*}
@@ -191,6 +201,15 @@ const storeModulePublic = {
      */
     chatTabSelect: ({ commit }, tab) =>
       commit('chatTabSelect', tab),
+
+    /**
+     * チャット対象のタブを選択したことをデータに反映する
+     * @param commit
+     * @param tab
+     * @returns {*}
+     */
+    groupTargetTabSelect: ({ commit }, tab) =>
+      commit('groupTargetTabSelect', tab),
 
     /**
      * 画像のタブの構成を変更する
@@ -229,6 +248,20 @@ const storeModulePublic = {
 
   mutations: {
     /**
+     * ルームメンバを追加する
+     * @param state
+     * @returns {*[]}
+     */
+    addMember: (state, peerId) => {
+      state.room.members.push({
+        peerId: peerId,
+        name: '',
+        color: 'black',
+        isCame: false
+      })
+    },
+
+    /**
      * ルームメンバを空にする
      * @param state
      * @returns {*[]}
@@ -242,6 +275,19 @@ const storeModulePublic = {
      * @param tab
      */
     chatTabSelect (state, tab) {
+      for (let tabObj of state.chat.tabs) {
+        tabObj.isActive = tab === tabObj.name
+        // 未読数をリセット
+        if (tabObj.isActive) tabObj.unRead = 0
+      }
+    },
+
+    /**
+     * チャット対象のタブを選択したことをデータに反映する
+     * @param state
+     * @param tab
+     */
+    groupTargetTabSelect (state, tab) {
       for (let tabObj of state.chat.tabs) {
         tabObj.isActive = tab === tabObj.name
         // 未読数をリセット
@@ -274,7 +320,7 @@ const storeModulePublic = {
       const useTexts = []
       /* eslint no-control-regex: 0 */
       const regExp = new RegExp('[　\t \r\n,]+', 'g')
-      // console.log(imageList)
+      // console.qLog(imageList)
       imageList.forEach(imageObj => {
         Array.prototype.push.apply(useTexts, imageObj.currentTag.replace(regExp, ',').split(','))
       })
@@ -427,7 +473,7 @@ const storeModulePublic = {
       (type, key, logOff = true) => {
         const result = getters.getKeyObj(state[type].list, key)
         if (!logOff) {
-          console.log(`  [getters] pieceObj[${type}]#${key} => ${getters.objToString(result)}`)
+          console.qLog(`  [getters] pieceObj[${type}]#${key} => ${getters.objToString(result)}`)
         }
         return result
       },

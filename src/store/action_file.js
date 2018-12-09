@@ -20,7 +20,7 @@ const actionFile = {
       if (rootState.public.room.members.length <= 1) {
         dispatch('doExport')
       } else {
-        rootState.room.webRtcRoom.send({ type: 'REQUEST_PRIVATE_DATA', value: null })
+        dispatch('sendRoomData', { type: 'REQUEST_PRIVATE_DATA', value: null })
       }
     },
     doExport ({ dispatch, rootState }) {
@@ -197,10 +197,10 @@ const actionFile = {
           })
           const func = hisObj => {
             let key = hisObj.key
-            console.log(key)
+            console.qLog(key)
             if (key.split('-')[0] === 'image') {
               const matchObj = key.match(/\$([0-9]+)/)
-              console.log(matchObj[1])
+              console.qLog(matchObj[1])
               const index = parseInt(matchObj[1], 10)
               hisObj.key = addImageKeyList[index]
             }

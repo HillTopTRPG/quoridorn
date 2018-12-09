@@ -48,12 +48,12 @@ export default {
         if (!command) return
         if (command.type === 'draw') {
           let cards = Array.prototype.slice.call(this.$refs.deck.getElementsByClassName(this.hoverKey))
-          console.log(this.hoverKey, cards)
+          console.qLog(this.hoverKey, cards)
           let cardElm = cards[0]
           if (!cardElm) {
             const key = this.cardList[this.cardList.length - 1].key
             cards = Array.prototype.slice.call(this.$refs.deck.getElementsByClassName(key))
-            console.log(key, cards)
+            console.qLog(key, cards)
             cardElm = cards[0]
           }
           if (cardElm.classList.contains('turn-animation')) {

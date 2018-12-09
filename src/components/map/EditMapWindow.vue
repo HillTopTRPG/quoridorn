@@ -102,7 +102,7 @@ export default {
       'windowClose'
     ]),
     initWindow () {
-      console.log(this.storeMapObj.isEditting, this.peerId)
+      console.qLog(this.storeMapObj.isEditting, this.peerId)
       if (this.storeMapObj.isEditting && this.storeMapObj.isEditting !== this.peerId) {
         alert('ルームメイトとマップ変更操作が競合しますので、この操作はキャンセルします。')
         this.windowClose('private.display.editMapWindow')
@@ -212,11 +212,11 @@ export default {
     getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.log(`key:"${key}" is not find.`)
+        console.qLog(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
-        console.log(`key:"(${key})" is duplicate.`)
+        console.qLog(`key:"(${key})" is duplicate.`)
         return null
       }
       return filteredList[0]

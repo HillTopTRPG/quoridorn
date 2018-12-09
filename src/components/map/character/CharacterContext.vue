@@ -29,23 +29,23 @@ export default {
       'windowClose'
     ]),
     viewEditCharacter () {
-      console.log(`  [methods] select context item => Character(${this.objKey}).viewEditCharacter`)
+      console.qLog(`  [methods] select context => item: Character(${this.objKey}).viewEditCharacter`)
       this.setProperty({property: 'private.display.editCharacterWindow.key', value: this.objKey})
       this.windowOpen('private.display.editCharacterWindow')
       this.windowClose('private.display.characterContext')
     },
     deleteCharacter () {
-      console.log(`  [methods] select context item => Character(${this.objKey}).deleteCharacter`)
+      console.qLog(`  [methods] select context => item: Character(${this.objKey}).deleteCharacter`)
       this.deletePieceInfo({ propName: 'character', key: this.objKey, isNotice: true })
       this.windowClose('private.display.characterContext')
     },
     copyCharacter () {
-      console.log(`  [methods] select context item => Character(${this.objKey}).copyCharacter`)
+      console.qLog(`  [methods] select context => item: Character(${this.objKey}).copyCharacter`)
       this.windowClose('private.display.characterContext')
       alert('未実装の機能です。')
     },
     openRefURL () {
-      // console.log(this.storeObj.url)
+      // console.qLog(this.storeObj.url)
       window.open(this.storeObj.url, '_blank')
       this.windowClose('private.display.characterContext')
     }
@@ -59,7 +59,7 @@ export default {
     storeObj () {
       const type = 'character'
       const key = this.objKey
-      // console.log(`key:${key}`)
+      // console.qLog(`key:${key}`)
       return this.getPieceObj(type, key, true)
     }
   })

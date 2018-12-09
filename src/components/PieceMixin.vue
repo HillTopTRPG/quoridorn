@@ -24,7 +24,7 @@ export default {
         this.$emit('leftDown')
         return
       }
-      // console.log(`  [methods] mousedown left on ${this.type}`)
+      // console.qLog(`  [methods] mousedown left on ${this.type}`)
       const offset = {
         w: this.mouseOnTable.x - this.rect.left,
         h: this.mouseOnTable.y - this.rect.top
@@ -49,7 +49,7 @@ export default {
         this.$emit('leftUp')
         return
       }
-      // console.log(`  [methods] mouseup left on ${this.type}`)
+      // console.qLog(`  [methods] mouseup left on ${this.type}`)
       const locate = {
         x: this.mouseOnTable.x - this.storeObj.move.gridOffset.x * this.gridSize,
         y: this.mouseOnTable.y - this.storeObj.move.gridOffset.y * this.gridSize
@@ -91,7 +91,7 @@ export default {
       }
       this.setProperty({property: contextProperty, value: obj, logOff: true})
       this.windowOpen(contextProperty)
-      console.log(`  [methods] open context => ${contextProperty}(${this.objKey})`)
+      console.qLog(`  [methods] open context => ${contextProperty}(${this.objKey})`)
     },
     mouseover () {
       this.isHover = true
@@ -121,10 +121,10 @@ export default {
     },
     rollStart () {
       this.setProperty({property: `map.rollObj.isRolling`, value: true, logOff: true})
-      console.log(`  [methods] rolling start on ${this.type}(${this.objKey})`)
+      console.qLog(`  [methods] rolling start on ${this.type}(${this.objKey})`)
       const angle = this.getAngle(this.mouseOnTable)
       const planeAngle = this.arrangeAngle(angle - this.angle.total)
-      // console.log(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
+      // console.qLog(`angle:${angle}, total:${this.angle.total}, dragStartB:${this.angle.dragStart}, dragStartA:${planeAngle}`)
       this.setProperty({property: `public.${this.type}.list.${this.storeIndex}.angle.dragStart`, value: planeAngle, logOff: true})
       const obj = {
         propName: this.type,
@@ -133,7 +133,7 @@ export default {
       this.setProperty({property: `map.rollObj`, value: obj, logOff: true})
     },
     rollEnd (event) {
-      // console.log(`rollEnd`, event.pageX, event.pageY)
+      // console.qLog(`rollEnd`, event.pageX, event.pageY)
       const mapObj = {
         rollObj: {
           isRolling: false
@@ -145,7 +145,7 @@ export default {
       this.setProperty({property: `map`, value: mapObj, logOff: true})
       const planeAngle = this.arrangeAngle(this.angle.dragging + this.angle.total)
       const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30)
-      // console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+      // console.qLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
       const obj = {
         total: total,
         dragging: 0
@@ -156,7 +156,7 @@ export default {
   watch: {
     mouseOnTable: {
       handler (mouseOnTable) {
-        // console.log(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
+        // console.qLog(`piece:${this.storeObj.name}, isDraggingLeft:${this.storeObj.isDraggingLeft}, isRolling:${this.isRolling}`)
         if (this.isRolling) {
           if (!this.isThisRolling) {
             return

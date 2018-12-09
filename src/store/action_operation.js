@@ -81,7 +81,7 @@ const actionOperation = {
     /** ========================================================================
      * 名前を変更する
      */
-    changeName: ({ dispatch, rootState }, { name }) => {
+    changeName: ({ dispatch, rootState }, name) => {
       dispatch('setProperty', {property: 'private.self.playerName', value: name, logOff: false})
       const myPeerId = rootState.private.self.peerId
       const members = rootState.public.room.members
@@ -135,7 +135,7 @@ const actionOperation = {
       obj.key = key
       rootState.public[payload.propName].maxKey = maxKey
 
-      console.log(`[mutations] add ${payload.propName} => {key:${obj.key}, name:"${obj.name}", locate(${obj.top}, ${obj.left}), CsRs(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
+      console.qLog(`[mutations] doAddPieceInfo => {type: ${payload.propName}, key:${obj.key}, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
 
       rootState.public[payload.propName].list.push(obj)
       if (rootState.private.self.peerId === payload.ownerPeerId) {
@@ -155,7 +155,7 @@ const actionOperation = {
         if (!payload.hasOwnProperty(prop)) continue
         if (prop === 'key' || prop === 'propName') { continue }
         if (pieceObj[prop] !== payload[prop]) {
-          console.log(`[mutations] update ${propName}(${key}) => ${prop}: ${pieceObj[prop]} -> ${payload[prop]}`)
+          console.qLog(`[mutations] update ${propName}(${key}) => ${prop}: ${pieceObj[prop]} -> ${payload[prop]}`)
           pieceObj[prop] = payload[prop]
         }
       }
@@ -167,7 +167,7 @@ const actionOperation = {
      */
     deletePieceInfo: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doDeletePieceInfo' }) },
     doDeletePieceInfo: ({ rootState, rootGetters }, payload) => {
-      // console.log(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
+      // console.qLog(`delete pieceInfo -> ${payload.propName}(${payload.key})`)
       const obj = rootGetters.getPieceObj(payload.propName, payload.key)
       const index = rootState.public[payload.propName].list.indexOf(obj)
       rootState.public[payload.propName].list.splice(index, 1)

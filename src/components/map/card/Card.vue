@@ -28,13 +28,13 @@ export default {
   mounted () {
     const cardElm = this.$refs.card
     const transitionEnd = () => {
-      // console.log('transitionEnd')
+      // console.qLog('transitionEnd')
     }
     const animationEnd = event => {
       const animationName = event.animationName
-      // console.log(animationName)
+      // console.qLog(animationName)
       const className = animationName.replace(/^(.+animation).+$/, '$1')
-      // console.log(className)
+      // console.qLog(className)
       if (animationName.startsWith('shuffle-animation-even') ||
         animationName.startsWith('shuffle-animation-odd')) {
         this.shuffleCount++
@@ -174,10 +174,10 @@ export default {
       if (this.viewMode === 'choice' && !this.isViewer) {
         if (this.hoverIndex === this.index) {
           let flg = false
-          // console.log(this.$refs.card.classList)
+          // console.qLog(this.$refs.card.classList)
           if (this.$refs.card) {
             Array.prototype.slice.call(this.$refs.card.classList).forEach(cls => {
-              // console.log(cls)
+              // console.qLog(cls)
               if (flg) return
               flg = cls.startsWith('shuffle-animation')
             })
@@ -197,7 +197,7 @@ export default {
     isReverse: state => state.deck.isReverse,
     useIndex () { return this.cardList.length - this.index - 1 },
     isShuffleMove () {
-      console.log(this.useIndex, (this.useIndex < 6) && (this.useIndex % 2 === 1))
+      console.qLog(this.useIndex, (this.useIndex < 6) && (this.useIndex % 2 === 1))
       return (this.useIndex < 6) && (this.useIndex % 2 === 0)
     }
   })

@@ -47,7 +47,7 @@ export default {
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2
       }
-      // console.log(`center:(${center.x}, ${center.y})`)
+      // console.qLog(`center:(${center.x}, ${center.y})`)
 
       const obstacleList = this.getAllObstacle
 
@@ -120,7 +120,7 @@ export default {
         const right = obstacle.left + width
         const top = obstacle.top
         const bottom = obstacle.top + height
-        // console.log(`rect:${left},${right},${top},${bottom}`)
+        // console.qLog(`rect:${left},${right},${top},${bottom}`)
 
         const obsCenter = createCornerFunc(left + width / 2, top + height / 2)
         const centerAngle = this.calcAngle(obsCenter)
@@ -187,7 +187,7 @@ export default {
         const sinMax = Math.sin(maxPI)
         /* ========== */
 
-        // console.log(`range:(${info.angle.min.index})${info.angle.min.angle}~(${info.angle.max.index})${info.angle.max.angle}`)
+        // console.qLog(`range:(${info.angle.min.index})${info.angle.min.angle}~(${info.angle.max.index})${info.angle.max.angle}`)
         info.angle.min.arc.x = this.centerX + arcDistance * cosMin
         info.angle.min.arc.y = this.centerY + arcDistance * sinMin
         info.angle.max.arc.x = this.centerX + arcDistance * cosMax
@@ -203,16 +203,16 @@ export default {
         const RB = { x: this.width, y: this.height }
         const LB = { x: 0, y: this.height }
 
-        // console.log('LT:', LT.x, LT.y)
-        // console.log('RT:', RT.x, RT.y)
-        // console.log('RB:', RB.x, RB.y)
-        // console.log('LB:', LB.x, LB.y)
+        // console.qLog('LT:', LT.x, LT.y)
+        // console.qLog('RT:', RT.x, RT.y)
+        // console.qLog('RB:', RB.x, RB.y)
+        // console.qLog('LB:', LB.x, LB.y)
 
         /* ==========
          * ブロックの算出
          */
         aList.forEach((a, i) => {
-          // console.log('a:', a)
+          // console.qLog('a:', a)
           const c = (8 - i) * 2
           if (info.angle.min.angle === a) { info.angle.min.block = c } else
           if (info.angle.min.angle < a) { info.angle.min.block = c - 1 }

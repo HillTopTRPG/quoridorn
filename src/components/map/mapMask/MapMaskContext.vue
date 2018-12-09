@@ -27,18 +27,18 @@ export default {
       'windowClose'
     ]),
     viewEditMapMask () {
-      console.log(`  [methods] select context item => MapMask(${this.objKey}).viewEditMapMask`)
+      console.qLog(`  [methods] select context => item: MapMask(${this.objKey}).viewEditMapMask`)
       this.setProperty({property: 'private.display.editMapMaskWindow.key', value: this.objKey, logOff: true})
       this.windowOpen('private.display.editMapMaskWindow')
       this.windowClose('private.display.mapMaskContext')
     },
     changeMapMaskLock () {
-      console.log(`  [methods] select context item => MapMask(${this.objKey}).changeMapMaskLock`)
+      console.qLog(`  [methods] select context => item: MapMask(${this.objKey}).changeMapMaskLock`)
       this.changePieceInfo({ propName: 'mapMask', key: this.objKey, isLock: !this.isLock, isNotice: true })
       this.windowClose('private.display.mapMaskContext')
     },
     deleteMapMask () {
-      console.log(`  [methods] select context item => MapMask(${this.objKey}).deleteMapMask`)
+      console.qLog(`  [methods] select context => item: MapMask(${this.objKey}).deleteMapMask`)
       this.deletePieceInfo({ propName: 'mapMask', key: this.objKey, isNotice: true })
       this.windowClose('private.display.mapMaskContext')
     }
@@ -52,7 +52,7 @@ export default {
     storeObj () {
       const type = 'mapMask'
       const key = this.objKey
-      // console.log(`key:${key}`)
+      // console.qLog(`key:${key}`)
       return this.getPieceObj(type, key)
     },
     isLock () {
@@ -63,7 +63,7 @@ export default {
         return false
       }
       const isLock = this.storeObj.isLock
-      console.log(` [computed] isLock => ${isLock}`)
+      console.qLog(` [computed] isLock => ${isLock}`)
       return isLock
     }
   })

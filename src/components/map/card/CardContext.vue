@@ -64,7 +64,7 @@ export default {
     storeObj () {
       const type = 'chit'
       const key = this.objKey
-      // console.log(`key:${key}`)
+      // console.qLog(`key:${key}`)
       return this.getPieceObj(type, key)
     },
     isReverse: state => state.deck.isReverse,

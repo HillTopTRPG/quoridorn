@@ -61,7 +61,7 @@ export default {
       event.dataTransfer.setData('fontColor', this.fontColor)
       event.dataTransfer.setData('columns', this.width)
       event.dataTransfer.setData('rows', this.height)
-      console.log(`  [methods] drag start mapMask => {name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}`)
+      console.qLog(`  [methods] drag start mapMask => {name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}`)
     }
   },
   computed: mapState({

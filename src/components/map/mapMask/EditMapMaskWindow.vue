@@ -64,7 +64,7 @@ export default {
       this.windowClose('private.display.editMapMaskWindow')
     },
     initWindow () {
-      // console.log(`initWindow`)
+      // console.qLog(`initWindow`)
       let mapMaskObj = this.getPieceObj('mapMask', this.key)
       this.name = mapMaskObj.name
       this.width = mapMaskObj.columns
@@ -72,7 +72,7 @@ export default {
       const colorObj = this.parseColor(mapMaskObj.color)
       this.color = colorObj.getColorCode()
       this.transparency = 100 - Math.floor(colorObj.a * 100)
-      console.log(`  [methods] init window => EditMapMask:{name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}}`)
+      console.qLog(`  [methods] init window => EditMapMask:{name:"${this.name}", color:${this.color}, size:(${this.width}, ${this.height}), transparency:${this.transparency}}`)
     }
   },
   computed: mapState({

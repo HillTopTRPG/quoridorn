@@ -14,7 +14,7 @@ const storeModuleSetting = {
   // TODO settingのデータは別経路で保存する？
   state: {
     /** カードセット */
-    version: '1.0.0b1',
+    version: '1.0.0b2',
     /** カードセット */
     cardSet: []
   }, /* end of state */

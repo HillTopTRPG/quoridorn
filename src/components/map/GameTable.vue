@@ -57,7 +57,7 @@ export default {
       'importStart'
     ]),
     dragging () {
-      console.log(`★★★★ dragging ★★★★`)
+      console.qLog(`★★★★ dragging ★★★★`)
     },
     onWheel (delta) {
       const changeValue = 100
@@ -88,7 +88,7 @@ export default {
       return Math.atan2(loc.y, loc.x) * 180 / Math.PI
     },
     leftDown () {
-      // console.log(`  [methods] mousedown left on GameTable`)
+      // console.qLog(`  [methods] mousedown left on GameTable`)
       const obj = {
         move: {
           from: {
@@ -101,7 +101,7 @@ export default {
       this.setProperty({property: 'map', value: obj, logOff: true})
     },
     leftUp () {
-      // console.log(`  [methods] mouseup left on GameTable`)
+      // console.qLog(`  [methods] mouseup left on GameTable`)
       if (this.rollObj.isRolling) {
         // マップ上のオブジェクトを回転中の場合
         const pieceObj = this.$store.state.public[this.rollObj.propName].list.filter(obj => obj.key === this.rollObj.key)[0]
@@ -109,7 +109,7 @@ export default {
         this.setProperty({property: `map.rollObj.isRolling`, value: false, logOff: true})
         const planeAngle = this.arrangeAngle(pieceObj.angle.dragging + pieceObj.angle.total)
         const total = this.arrangeAngle(Math.round(planeAngle / 30) * 30)
-        // console.log(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
+        // console.qLog(`angle:${angle}, planeAngle:${planeAngle}, totalB:${this.angle.total}, totalA:${total}`)
         const obj = {
           total: total,
           dragging: 0
@@ -134,7 +134,7 @@ export default {
       }
     },
     rightDown () {
-      console.log(`  [methods] mousedown right on GameTable`)
+      console.qLog(`  [methods] GameTableイベント => event: mousedown, mouse: right`)
       const obj = {
         angle: {
           dragStart: this.calcCoordinate(this.mouseLocate.x, this.mouseLocate.y, this.currentAngle).angle
@@ -144,7 +144,7 @@ export default {
       this.setProperty({property: 'map', value: obj, logOff: true})
     },
     rightUp (event) {
-      console.log(`  [methods] mouseup right on GameTable`)
+      console.qLog(`  [methods] GameTableイベント => event: mouseup, mouse: right`)
       const isDraggingRight = this.isDraggingRight
       this.setProperty({property: 'map.isMouseDownRight', value: false, logOff: true})
 
@@ -175,7 +175,7 @@ export default {
           }
           this.setProperty({property: `private.display.gameTableContext`, value: obj, logOff: true})
           this.windowOpen(`private.display.gameTableContext`)
-          console.log(`  [methods] open context => gameTableContext`)
+          console.qLog(`  [methods] open context => gameTableContext`)
         }
       } else {
         this.setProperty({property: `map.isOverEvent`, value: false, logOff: true})
@@ -234,7 +234,7 @@ export default {
         locateOnTable.y = (Math.ceil(locateOnTable.y / this.gridSize) - 1) * this.gridSize
       }
 
-      console.log(`  [methods] drop on GameTable(${canvasAddress.grid.column}, ${canvasAddress.grid.row}) => ${kind}`)
+      console.qLog(`  [methods] drop on GameTable => type: ${kind}, address: (${canvasAddress.grid.column},${canvasAddress.grid.row})`)
 
       const pieceObj = { kind: kind, left: locateOnTable.x, top: locateOnTable.y, isNotice: true }
 
@@ -326,7 +326,7 @@ export default {
       const imageFiles = []
       const zipFiles = []
       for (const file of files) {
-        console.log(file.type)
+        console.qLog(file.type)
         if (file.type.indexOf('image/') === 0) {
           // 画像
           imageFiles.push(file)

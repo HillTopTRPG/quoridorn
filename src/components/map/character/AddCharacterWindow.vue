@@ -47,24 +47,24 @@ export default {
       event.dataTransfer.setData('description', this.text)
       event.dataTransfer.setData('useImageIndex', this.useImageIndex)
       event.dataTransfer.setData('currentImageTag', this.currentImageTag)
-      console.log(`  [methods] drag start character => {` +
-        `name:"${this.name}", ` +
-        `size:${this.size}, ` +
-        `useImageList:${this.useImageList}, ` +
-        `isHide:${this.isHide}, ` +
-        `url:${this.url}, ` +
-        `text:${this.text}, ` +
-        `useImageIndex:${this.useImageIndex}, ` +
-        `currentImageTag:${this.currentImageTag}}`)
+      // console.qLog(`  [methods] drag start character => {` +
+      //   `name:"${this.name}", ` +
+      //   `size:${this.size}, ` +
+      //   `useImageList:${this.useImageList}, ` +
+      //   `isHide:${this.isHide}, ` +
+      //   `url:${this.url}, ` +
+      //   `text:${this.text}, ` +
+      //   `useImageIndex:${this.useImageIndex}, ` +
+      //   `currentImageTag:${this.currentImageTag}}`)
     },
     getKeyObj (list, key) {
       const filteredList = list.filter(obj => obj.key === key)
       if (filteredList.length === 0) {
-        console.log(`key:"${key}" is not find.`)
+        console.qLog(`key:"${key}" is not find.`)
         return null
       }
       if (filteredList.length > 1) {
-        console.log(`key:"(${key})" is duplicate.`)
+        console.qLog(`key:"(${key})" is duplicate.`)
         return null
       }
       return filteredList[0]
@@ -104,7 +104,6 @@ export default {
       const imageStr = this.useImageList.split('|')[this.useImageIndex]
       const isReverse = imageStr.indexOf(':R') >= 0
       const imageKey = imageStr.replace(':R', '')
-      console.log(imageKey, this.imageList)
       return {
         isReverse: isReverse,
         data: this.getKeyObj(this.imageList, imageKey).data

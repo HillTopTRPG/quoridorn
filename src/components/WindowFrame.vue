@@ -94,7 +94,7 @@ export default {
       'windowActive'
     ]),
     closeWindow () {
-      // console.log(`  [methods] closeWindow(click [x]button)`)
+      // console.qLog(`  [methods] closeWindow(click [x]button)`)
       this.windowClose(this.displayProperty)
       this.$emit('cancel')
     },
@@ -112,7 +112,7 @@ export default {
       } else {
         const moveMode = this.moveMode
         const winFac = this.windowFactor
-        // console.log(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
+        // console.qLog(this.moveMode, winFac.x, winFac.y, winFac.w, winFac.h, winFac.draggingX, winFac.draggingY)
         if (moveMode.indexOf('right') >= 0) {
           winFac.r -= winFac.draggingX
           winFac.w += winFac.draggingX
@@ -133,7 +133,7 @@ export default {
         winFac.draggingY = 0
         this.mouseUp(event)
       }
-      // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+      // console.qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
       this.moveMode = (flg ? direct : '')
     },
     reflesh () {
@@ -161,7 +161,7 @@ export default {
         case 'move':
           this.windowFactor.draggingX = moveX
       }
-      // console.log(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
+      // console.qLog(this.moveMode, this.windowFactor.x, this.windowFactor.y, this.windowFactor.w, this.windowFactor.h, this.windowFactor.draggingX, this.windowFactor.draggingY)
     },
     move (event, flg, isTouch) {
       if (flg) {

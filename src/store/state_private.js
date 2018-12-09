@@ -103,6 +103,13 @@ const storeModulePrivate = {
       settingChatTabWindow: { command: null, isDisplay: false, zIndex: 1 },
       settingChatFontWindow: { command: null, isDisplay: false, zIndex: 1 },
       welcomeWindow: { command: null, isDisplay: false, zIndex: 1 },
+      settingChatTargetTabWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        widthList: [80, 110, 140],
+        selectLineKey: null
+      },
       mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       characterContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       gameTableContext: { command: null, isDisplay: false, x: 0, y: 0 },
@@ -126,7 +133,7 @@ const storeModulePrivate = {
      * @param property
      */
     windowOpen ({ state, getters }, property) {
-      // console.log(`window open => ${property}`)
+      // console.qLog(`window open => ${property}`)
       const windowObj = getters.getStateValue(property)
       if (!windowObj.isDisplay) {
         // まだ表示していないウィンドウを開いた場合
@@ -197,7 +204,7 @@ const storeModulePrivate = {
       let maxIndex = 0
       const splits = property.split('.')
       const dispName = splits[splits.length - 1]
-      // console.log(`windowActive => ${dispName}`)
+      // console.qLog(`windowActive => ${dispName}`)
       for (const key in state.display) {
         if (!state.display.hasOwnProperty(key)) continue
         const value = state.display[key]
