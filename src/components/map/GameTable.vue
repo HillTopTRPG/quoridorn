@@ -236,7 +236,7 @@ export default {
 
       console.qLog(`  [methods] drop on GameTable => type: ${kind}, address: (${canvasAddress.grid.column},${canvasAddress.grid.row})`)
 
-      const pieceObj = { kind: kind, left: locateOnTable.x, top: locateOnTable.y, isNotice: true }
+      const pieceObj = { kind: kind, propName: kind, left: locateOnTable.x, top: locateOnTable.y, isNotice: true, owner: this.playerName, place: 'field' }
 
       // マップマスクの作成
       if (kind === 'mapMask') {
@@ -247,7 +247,6 @@ export default {
         const rows = parseInt(event.dataTransfer.getData('rows'), 10)
 
         // 必須項目
-        pieceObj.propName = 'mapMask'
         pieceObj.columns = columns
         pieceObj.rows = rows
         // 個別部
@@ -271,7 +270,6 @@ export default {
         const currentImageTag = event.dataTransfer.getData('currentImageTag')
 
         // 必須項目
-        pieceObj.propName = 'character'
         pieceObj.columns = size
         pieceObj.rows = size
         // 個別部
@@ -282,6 +280,8 @@ export default {
         pieceObj.text = text
         pieceObj.useImageIndex = useImageIndex
         pieceObj.currentImageTag = currentImageTag
+        pieceObj.fontColorType = 0
+        pieceObj.fontColor = ''
 
         if (this.$store.state.private.display.addCharacterWindow.isContinuous) {
           const splits = name.split('_')
@@ -306,7 +306,6 @@ export default {
         const description = event.dataTransfer.getData('description')
 
         // 必須項目
-        pieceObj.propName = 'chit'
         pieceObj.columns = columns
         pieceObj.rows = rows
         // 個別部
@@ -326,7 +325,7 @@ export default {
       const imageFiles = []
       const zipFiles = []
       for (const file of files) {
-        console.qLog(file.type)
+        console.log(file.type)
         if (file.type.indexOf('image/') === 0) {
           // 画像
           imageFiles.push(file)
@@ -448,6 +447,7 @@ export default {
       'parseColor',
       'getBackgroundImage'
     ]),
+    playerName: state => state.private.self.playerName,
     rollObj: state => state.map.rollObj,
     isDraggingLeft: state => state.map.isDraggingLeft,
     isMouseDownRight: state => state.map.isMouseDownRight,

@@ -71,6 +71,10 @@ window.console.qLog = function () {
         format += `%c${format.endsWith('\n') ? indent : ''}${arg}`
         logs.push('')
       }
+    } else if (toString.call(arg) === '[object Array]') {
+      format += '%c%s'
+      logs.push('color: blue;')
+      logs.push(arg)
     } else {
       const jsonStr = JSON.stringify(arg, undefined, 2).split('\n').map(line => `${indent}${line}`).join('\n')
       if (jsonStr.length > 200) {

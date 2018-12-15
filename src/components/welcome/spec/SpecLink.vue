@@ -16,7 +16,7 @@ export default {
         console.error(`Not found => #${id}`)
         return
       }
-      console.qLog(elm)
+      console.log(elm)
       if (!elm.checked) elm.click()
     }
   },

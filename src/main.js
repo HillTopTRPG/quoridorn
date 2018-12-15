@@ -40,6 +40,7 @@ import CardContext from './components/map/card/CardContext'
 import WelcomeWindow from './components/welcome/WelcomeWindow'
 import VersionWindow from './components/simple/VersionWindow'
 import SettingChatTargetTabWindow from './components/chat/SettingChatTargetTabWindow'
+import PlayerBoxWindow from './components/simple/PlayerBoxWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -195,3 +196,6 @@ versionWindow.$mount('#versionWindow')
 
 const settingChatTargetTabWindow = new Vue({ store, components: { SettingChatTargetTabWindow }, template: `<SettingChatTargetTabWindow/>` })
 settingChatTargetTabWindow.$mount('#settingChatTargetTabWindow')
+
+const playerBoxWindow = new Vue({ store, components: { PlayerBoxWindow }, template: `<PlayerBoxWindow/>` })
+playerBoxWindow.$mount('#playerBoxWindow')

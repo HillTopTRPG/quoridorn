@@ -197,7 +197,7 @@ export default {
     isReverse: state => state.deck.isReverse,
     useIndex () { return this.cardList.length - this.index - 1 },
     isShuffleMove () {
-      console.qLog(this.useIndex, (this.useIndex < 6) && (this.useIndex % 2 === 1))
+      console.log(this.useIndex, (this.useIndex < 6) && (this.useIndex % 2 === 1))
       return (this.useIndex < 6) && (this.useIndex % 2 === 0)
     }
   })

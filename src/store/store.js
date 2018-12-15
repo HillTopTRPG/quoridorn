@@ -32,6 +32,9 @@ const store = new Vuex.Store({
     room: {
       webRtcRoom: null
     },
+    chat: {
+      activeTab: 'メイン'
+    },
     map: {
       grid: { c: 0, r: 0 },
       mouse: { onScreen: { x: 0, y: 0 }, onTable: { x: 0, y: 0 }, onCanvas: { x: 0, y: 0 } },
@@ -82,7 +85,8 @@ const store = new Vuex.Store({
         // dispatch('windowOpen', 'private.display.resourceWindow')
         // dispatch('windowOpen', 'private.display.chatPaletteWindow')
         // dispatch('windowOpen', 'private.display.counterRemoConWindow')
-        dispatch('windowOpen', 'private.display.functionListWindow')
+        // dispatch('windowOpen', 'private.display.functionListWindow')
+        dispatch('windowOpen', 'private.display.playerBoxWindow')
       }, 0)
 
       const cardSetName = '花札'
@@ -130,10 +134,19 @@ const store = new Vuex.Store({
       // const webif = getParam('webif')
       const roomId = window['getUrlParam']('roomId')
       const peerId = window['getUrlParam']('peerId')
-      const name = window['getUrlParam']('name')
-      const password = window['getUrlParam']('password')
-      state.private.self.password = !password ? '' : password
-      state.private.self.playerName = !name ? '' : name
+      const playerName = window['getUrlParam']('playerName') || '名無し'
+      const playerType = window['getUrlParam']('playerType') || 'PL'
+      const password = window['getUrlParam']('password') || ''
+      dispatch('setProperty', {
+        property: `private.self`,
+        value: {
+          password: password,
+          playerName: playerName,
+          playerType: playerType,
+          currentChatName: `${playerName}(${playerType})`
+        },
+        logOff: false
+      })
 
       // 部屋が指定されていたら接続しにいく
       if (roomId) {
@@ -141,7 +154,7 @@ const store = new Vuex.Store({
           roomId: roomId,
           peerId: peerId,
           openedCallBack: () => {
-            dispatch('changeName', name)
+            // dispatch('changeName', name)
           }
         })
       }

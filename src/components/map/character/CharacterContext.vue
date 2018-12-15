@@ -3,7 +3,8 @@
   <ContextFrame displayProperty="private.display.characterContext">
     <div class="item" @click.left.prevent="viewEditCharacter">変更</div>
     <hr>
-    <div class="item" @click.left.prevent="deleteCharacter">削除</div>
+    <div class="item" @click.left.prevent="moveToWaitRoom">キャラクター待合室に移動</div>
+    <div class="item" @click.left.prevent="moveToGraveyard">墓場に移動（削除）</div>
     <hr>
     <div class="item" @click.left.prevent="copyCharacter">複製</div>
     <hr v-if="url">
@@ -26,7 +27,8 @@ export default {
       'windowOpen',
       'setProperty',
       'deletePieceInfo',
-      'windowClose'
+      'windowClose',
+      'changePieceInfo'
     ]),
     viewEditCharacter () {
       console.qLog(`  [methods] select context => item: Character(${this.objKey}).viewEditCharacter`)
@@ -34,11 +36,19 @@ export default {
       this.windowOpen('private.display.editCharacterWindow')
       this.windowClose('private.display.characterContext')
     },
-    deleteCharacter () {
-      console.qLog(`  [methods] select context => item: Character(${this.objKey}).deleteCharacter`)
-      this.deletePieceInfo({ propName: 'character', key: this.objKey, isNotice: true })
+    moveToWaitRoom () {
+      this.changePieceInfo({ propName: 'character', key: this.objKey, place: 'waiting', isNotice: true })
       this.windowClose('private.display.characterContext')
     },
+    moveToGraveyard () {
+      this.changePieceInfo({ propName: 'character', key: this.objKey, place: 'graveyard', isNotice: true })
+      this.windowClose('private.display.characterContext')
+    },
+    // deleteCharacter () {
+    //   console.qLog(`  [methods] select context => item: Character(${this.objKey}).deleteCharacter`)
+    //   this.deletePieceInfo({ propName: 'character', key: this.objKey, isNotice: true })
+    //   this.windowClose('private.display.characterContext')
+    // },
     copyCharacter () {
       console.qLog(`  [methods] select context => item: Character(${this.objKey}).copyCharacter`)
       this.windowClose('private.display.characterContext')

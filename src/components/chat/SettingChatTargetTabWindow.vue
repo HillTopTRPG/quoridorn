@@ -10,8 +10,9 @@
             <th :style="colStyle(1)">名前</th><Divider :index="1"/>
             <template v-for="(member, index) in members">
               <th :style="colStyle(index + 2)" :key="index">{{member.name}}</th>
-              <Divider v-if="index < members.length - 1" :key="index" :index="index + 2"/>
+              <Divider :key="index" :index="index + 2"/>
             </template>
+            <th :style="colStyle(members.length + 2)"></th>
           </tr>
           </thead>
           <tbody>
@@ -22,7 +23,35 @@
               :key="groupTargetTab.key"
               @click="selectLine(groupTargetTab.key)"
               :class="{isActive: selectLineKey === groupTargetTab.key}">
-            <td :style="colStyle(0)"></td><Divider :index="0"/>
+            <td :style="colStyle(0)">
+              <select>
+                <option value="0">グルチャ</option>
+                <option value="1">秘匿チャ</option>
+              </select>
+            </td>
+            <Divider :index="0"/>
+
+            <td :style="colStyle(1)">
+              <input
+                type="text"
+                :value="groupTargetTab.name"
+                @input="inputGroupTargetTabName"
+              >
+            </td>
+            <Divider :index="1"/>
+
+            <template v-for="(member, index) in members">
+              <th :style="colStyle(index + 2)" :key="index">
+                <input
+                  type="checkbox"
+                  :value="isSelected(groupTargetTab, member.peerId)"
+                  @click="changeGroupTargetMember(groupTargetTab, member.peerId)"
+                >
+              </th>
+              <Divider :key="index" :index="index + 2"/>
+            </template>
+
+            <td :style="colStyle(members.length + 2)"></td>
           </tr>
           <tr class="space">
             <td :style="colStyle(0)"></td><Divider :index="0"/>
@@ -98,6 +127,16 @@ export default {
         },
         logOff: true
       })
+    },
+    inputGroupTargetTabName (event) {
+      const text = event.target.value
+      console.qLog(`inputGroupTargetTabName => text: ${text}`)
+    },
+    isSelected (groupTargetTab, member) {
+
+    },
+    changeGroupTargetMember (groupTargetTab, member) {
+
     }
   },
   computed: mapState({

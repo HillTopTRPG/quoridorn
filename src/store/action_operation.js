@@ -24,7 +24,7 @@ const actionOperation = {
         const color = payload.color
         const tab = payload.tab ? payload.tab : activeChatTab.name
         const logObj = {
-          peerId: payload.peerId ? payload.peerId : rootState.private.self.peerId,
+          owner: payload.owner,
           viewHtml: '<span style="color: ' + color + ';"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
         }
         // 未読カウントアップ
@@ -36,8 +36,38 @@ const actionOperation = {
         }
         rootState.public.chat.logs[tab].push(logObj)
       }
+
       // チャット文字連携処理
       dispatch('chatLinkage', text)
+    },
+    /** ========================================================================
+     * チャット文字色変更
+     */
+    changeChatFontColor: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doChangeChatFontColor' }) },
+    doChangeChatFontColor: ({ dispatch, rootState, rootGetters }, { key, color, historyChange }) => {
+      console.log('doChangeChatFontColor', key, color, historyChange)
+      const kind = key.split('-')[0]
+      const target = rootState.public[kind].list.filter(obj => obj.key === key)[0]
+      console.log(target, rootState.public[kind])
+      if (!target) return
+      target.fontColor = color
+      if (!historyChange) return
+      const change = {}
+      for (const tab in rootState.public.chat.logs) {
+        if (!rootState.public.chat.logs.hasOwnProperty(tab)) continue
+        const changeTab = {}
+        change[tab] = changeTab
+        rootState.public.chat.logs[tab]
+          .forEach((log, index) => {
+            console.log('chatLogs', tab, log.owner, target.key, log.owner !== target.key, log.viewHtml)
+            if (log.owner !== target.key) return
+            console.log('push')
+            changeTab[index] = {
+              viewHtml: log.viewHtml.replace(/^(<span style="color: )([^;]+)(;">)/, `$1${color}$3`)
+            }
+          })
+      }
+      dispatch('setProperty', {property: `public.chat.logs`, value: change, isNotice: false, logOff: false})
     },
     /** ========================================================================
      * チャット文字連携処理
@@ -82,16 +112,16 @@ const actionOperation = {
      * 名前を変更する
      */
     changeName: ({ dispatch, rootState }, name) => {
-      dispatch('setProperty', {property: 'private.self.playerName', value: name, logOff: false})
-      const myPeerId = rootState.private.self.peerId
-      const members = rootState.public.room.members
-      const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
-      if (myMemberObjList.length > 0) {
-        const memberObj = myMemberObjList[0]
-        const index = members.indexOf(memberObj)
-        dispatch('setProperty', {property: `public.room.members.${index}.name`, value: name, logOff: true})
-        dispatch('sendRoomData', { type: 'CHANGE_PLAYER_NAME', value: name })
-      }
+      dispatch('setProperty', {property: 'private.self.currentChatName', value: name, logOff: false})
+      // const myPeerId = rootState.private.self.peerId
+      // const members = rootState.public.room.members
+      // const myMemberObjList = members.filter(memberObj => memberObj.peerId === myPeerId)
+      // if (myMemberObjList.length > 0) {
+      //   const memberObj = myMemberObjList[0]
+      //   const index = members.indexOf(memberObj)
+      //   dispatch('setProperty', {property: `public.room.members.${index}.name`, value: name, logOff: true})
+      //   dispatch('sendRoomData', { type: 'CHANGE_PLAYER_NAME', value: name })
+      // }
     },
     /** ========================================================================
      * BGMを追加する
@@ -135,7 +165,7 @@ const actionOperation = {
       obj.key = key
       rootState.public[payload.propName].maxKey = maxKey
 
-      console.qLog(`[mutations] doAddPieceInfo => {type: ${payload.propName}, key:${obj.key}, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
+      console.qLog(`[mutations] doAddPieceInfo => {type: ${obj.type}, key:${obj.key}, name:"${obj.name}", locate:(${obj.top}, ${obj.left}), CsRs:(${obj.columns}, ${obj.rows}), bg:"${obj.color}", font:"${obj.fontColor}"}`)
 
       rootState.public[payload.propName].list.push(obj)
       if (rootState.private.self.peerId === payload.ownerPeerId) {

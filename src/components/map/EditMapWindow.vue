@@ -102,7 +102,7 @@ export default {
       'windowClose'
     ]),
     initWindow () {
-      console.qLog(this.storeMapObj.isEditting, this.peerId)
+      console.log(this.storeMapObj.isEditting, this.peerId)
       if (this.storeMapObj.isEditting && this.storeMapObj.isEditting !== this.peerId) {
         alert('ルームメイトとマップ変更操作が競合しますので、この操作はキャンセルします。')
         this.windowClose('private.display.editMapWindow')

@@ -15,7 +15,7 @@ const actionPeer = {
     /** ========================================================================
      * WebRTCでPeer接続し、Roomにも接続する
      */
-    createPeer ({ rootState, dispatch }, {peerId, roomId, openedCallBack}) {
+    createPeer ({ rootState, dispatch }, {peerId, roomId}) {
       const options = {
         key: window.__SKYWAY_KEY__,
         debug: 1
@@ -34,11 +34,15 @@ const actionPeer = {
         if (rootState.private.self.peerId !== id) {
           rootState.private.self.peerId = id
           rootState.public.room.password = rootState.private.self.password
-          rootState.public.room.members.push({
+          dispatch('addMember', {
             peerId: id,
             name: rootState.private.self.playerName,
-            color: 'black',
             isCame: true
+          })
+          dispatch('addPlayer', {
+            name: rootState.private.self.playerName,
+            color: '#000000',
+            type: rootState.private.self.playerType
           })
         }
         if (roomId) {
@@ -47,7 +51,7 @@ const actionPeer = {
           room.on('open', () => {
             console.qLog(`Room接続成功 => Room: ${roomId}`)
             rootState.room.webRtcRoom = room
-            dispatch('connectFunc', {room: room, callBackFunc: openedCallBack})
+            dispatch('connectFunc', {room: room})
           })
         } else {
           console.error(`RoomIdは必須項目です。`)
@@ -84,7 +88,7 @@ const actionPeer = {
     /** ========================================================================
      * 接続後の処理
      */
-    connectFunc: ({ rootState, dispatch }, {room, callBackFunc}) => {
+    connectFunc: ({ rootState, dispatch }, {room}) => {
       // Handle a chat connection.
       const roomName = room.name.replace('sfu_text_', '')
 
@@ -97,11 +101,11 @@ const actionPeer = {
       // 誰かが入室してきた場合
       room.on('peerJoin', peerId => {
         console.qLog(`入室を感知 => peerId: ${peerId}`)
-        const filtered = rootState.public.room.members.filter(memberObj => memberObj.peerId === peerId)
-        if (filtered.length > 0) {
-        } else {
-          dispatch('addMember', peerId)
-        }
+        // const filtered = rootState.public.room.members.filter(memberObj => memberObj.peerId === peerId)
+        // if (filtered.length > 0) {
+        // } else {
+        //   dispatch('addMember', { peerId: peerId, name: '', isCame: false })
+        // }
         // 自分が親だったら、入ってきた人に部屋情報を教えてあげる
         if (rootState.public.room.members[0].peerId === rootState.private.self.peerId) {
           dispatch('sendRoomData', { type: 'NOTICE_OTHER_PLAYER', value: rootState.public, targets: [peerId] })
@@ -117,11 +121,11 @@ const actionPeer = {
         const index = rootState.public.room.members.indexOf(memberObj)
         if (memberObj.isCame) {
           dispatch('addChatLog', {
-            peerId: peerId,
             name: logName,
             text: `${memberObj.name}(${peerId}) が退室しました。`,
             color: logColor,
-            tab: logTab
+            tab: logTab,
+            owner: 'SYSTEM'
           })
         }
         rootState.public.room.members.splice(index, 1)
@@ -132,16 +136,15 @@ const actionPeer = {
         const peerId = message.src
         const sendData = message.data
         const memberObj = rootState.public.room.members.filter(member => member.peerId === peerId)[0]
-        console.qLog('####', message, memberObj, rootState.public.room.members)
-        const index = rootState.public.room.members.indexOf(memberObj)
+        console.log('####', message, memberObj, rootState.public.room.members)
         const targets = sendData.targets
         if (!targets || targets.length === 0 || targets.filter(target => target === rootState.private.self.peerId).length > 0) {
           const type = sendData.type
           const value = sendData.value
           if (type === 'DO_METHOD') {
-            console.qLog(`$$ RoomData受信 -> TYPE: ${type}, METHOD: ${sendData.method}, VALUE:`, value)
+            console.qLog(`RoomData受信 => TYPE: ${type}, METHOD: ${sendData.method}, VALUE:`, value)
           } else {
-            console.qLog(`$$ RoomData受信 -> TYPE: ${type}, VALUE:`, value)
+            console.qLog(`RoomData受信 => TYPE: ${type}, VALUE:`, value)
           }
           switch (type) {
             // ルームメンバーの情報を受け取ったとき
@@ -159,58 +162,84 @@ const actionPeer = {
                 name: logName,
                 text: `Room: ${roomName} に接続しました！！`,
                 color: logColor,
-                tab: logTab
+                tab: logTab,
+                owner: 'SYSTEM'
               })
 
-              let me = null
+              // 自分を一番後ろにする処理
+              let memberMe = null
+              let playerMe = null
               value.room.members.forEach(memberObj => {
-                if (memberObj.peerId === rootState.private.self.peerId) {
+                if (memberObj.name === rootState.private.self.playerName) {
                   memberObj.isCame = true
-                  rootState.private.self.playerName = memberObj.name
-                  me = memberObj
+                  memberMe = memberObj
                 }
               })
-              if (!me) {
-                me = rootState.public.room.members[0]
-                // 自分を一番後ろにする
-                value.room.members.push(me)
+              value.player.list.forEach(playerObj => {
+                if (playerObj.name === rootState.private.self.playerName) {
+                  playerMe = playerObj
+                }
+              })
+              if (!memberMe) {
+                memberMe = rootState.public.room.members[0]
+                value.room.members.push(memberMe)
+              }
+              if (!playerMe) {
+                playerMe = rootState.public.player.list[0]
+                value.player.list.push(playerMe)
               }
               rootState.public = value
               // ルームメンバーに自己紹介する
-              dispatch('sendRoomData', { type: 'NOTICE_MY_INFO', value: { name: me.name, color: me.color } })
-              setTimeout(() => {
-                if (callBackFunc) callBackFunc()
-              }, 0)
+              dispatch('sendRoomData', {
+                type: 'NOTICE_MY_INFO',
+                value: {
+                  name: memberMe.name,
+                  type: playerMe.type,
+                  color: playerMe.color
+                }
+              })
+              // setTimeout(() => {
+              //   if (callBackFunc) callBackFunc()
+              // }, 0)
               break
             // ルームメンバーの名前が変わったとき
-            case 'CHANGE_PLAYER_NAME':
-              memberObj.name = value
-              rootState.public.room.members.splice(index, 1, memberObj)
-              break
+            // case 'CHANGE_PLAYER_NAME':
+            //   memberObj.name = value
+            //   rootState.public.room.members.splice(index, 1, memberObj)
+            //   break
             // ルームメンバーの自己紹介を受け取ったとき
             case 'NOTICE_MY_INFO':
-              memberObj.name = value.name
-              memberObj.color = value.color
-              memberObj.isCame = true
-              dispatch('addChatLog', {
+              dispatch('addMember', {
                 peerId: peerId,
+                name: value.name,
+                isCame: true
+              })
+              dispatch('addPlayer', {
+                name: value.name,
+                color: value.color,
+                type: value.type
+              })
+              dispatch('addChatLog', {
                 name: logName,
                 text: `PeerId: ${peerId} が入室しました。`,
                 color: logColor,
-                tab: logTab
+                tab: logTab,
+                owner: 'SYSTEM'
               })
-              rootState.public.room.members.splice(index, 1, memberObj)
               break
             // チャット発言を受け取ったとき
-            case 'SEND_CHAT':
-              dispatch('addChatLog', {
-                peerId: peerId,
-                name: memberObj.name,
-                text: value.text,
-                color: memberObj.color,
-                tab: value.tab
-              })
-              break
+            // case 'SEND_CHAT':
+            //   // TODO get owner
+            //   // peerId
+            //   console.log('-------', memberObj.name, value.text, memberObj.color, value.tab)
+            //   dispatch('addChatLog', {
+            //     name: memberObj.name,
+            //     text: value.text,
+            //     color: memberObj.color,
+            //     tab: value.tab,
+            //     owner: 'SYSTEM'
+            //   })
+            //   break
             // 画面操作を受け取ったとき
             case 'DO_METHOD':
               const method = sendData.method
@@ -237,7 +266,7 @@ const actionPeer = {
               }
               break
             case 'NOTICE_INPUT':
-              dispatch('noticeInput', peerId)
+              dispatch('noticeInput', value)
               break
             default:
           }
@@ -319,6 +348,10 @@ const actionPeer = {
     sendRoomData ({ rootState }, payload) {
       if (rootState.room.webRtcRoom) {
         rootState.room.webRtcRoom.send(payload)
+        switch (payload.type) {
+          case 'NOTICE_INPUT':
+            return
+        }
         console.qLog('RoomData送信 =>', payload)
       }
     }

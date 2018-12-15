@@ -108,6 +108,7 @@
     <div class="hoverMenu hoverMenu8" v-show="isShow('ウィンドウ')">
       <MenuBooleanItem property="private.display.chatWindow">チャット表示</MenuBooleanItem>
       <MenuBooleanItem property="private.setting.dice">ダイス表示</MenuBooleanItem>
+      <MenuBooleanItem property="private.display.playerBoxWindow">プレイヤー一覧表示</MenuBooleanItem>
       <MenuBooleanItem property="private.display.initiativeWindow">イニシアティブ表示</MenuBooleanItem>
       <MenuBooleanItem property="private.display.resourceWindow">リソース表示</MenuBooleanItem>
       <hr>

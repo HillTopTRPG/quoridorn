@@ -197,10 +197,10 @@ const actionFile = {
           })
           const func = hisObj => {
             let key = hisObj.key
-            console.qLog(key)
+            console.log(key)
             if (key.split('-')[0] === 'image') {
               const matchObj = key.match(/\$([0-9]+)/)
-              console.qLog(matchObj[1])
+              console.log(matchObj[1])
               const index = parseInt(matchObj[1], 10)
               hisObj.key = addImageKeyList[index]
             }

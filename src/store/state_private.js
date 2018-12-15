@@ -16,6 +16,8 @@ const storeModulePrivate = {
     self: {
       peerId: null,
       playerName: '',
+      playerType: '',
+      currentChatName: '',
       password: '',
       color: 'black',
       cards: []
@@ -110,6 +112,7 @@ const storeModulePrivate = {
         widthList: [80, 110, 140],
         selectLineKey: null
       },
+      playerBoxWindow: { command: null, isDisplay: false, zIndex: 1 },
       mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       characterContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
       gameTableContext: { command: null, isDisplay: false, x: 0, y: 0 },

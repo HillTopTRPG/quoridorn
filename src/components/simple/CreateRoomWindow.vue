@@ -1,17 +1,34 @@
 <template>
-  <WindowFrame titleText="入室画面" display-property="private.display.createRoomWindow" align="center" fixSize="400, 300" @open="open">
+  <WindowFrame titleText="入室画面" display-property="private.display.createRoomWindow" align="center" fixSize="370, 266" @open="open">
     <div class="contents">
-      <div class="message">入室する部屋の情報を入力してください。<br>継続卓の場合は保存データを読み込んで、表示される招待用URLでアクセスしてください。</div>
-      <label class="nameLabel">部屋名：</label>
-      <input class="nameInput" type="text" v-model="roomName" placeholder="必須項目です。" />
-      <button class="nameCheckBtn" @click="checkRoomExist">部屋存在確認</button>
-      <label class="passwordLabel">パスワード：</label>
-      <input class="passwordInput" type="text" v-model="password" />
-      <div class="existMsg" v-show="existCheckMessage !== ''"><b>{{existCheckMessage}}</b></div>
-      <label class="systemLabel">システム：</label>
-      <select class="systemSelect" v-model="currentSystem">
-        <option v-for="systemObj in diceBotSystems" :key="systemObj.value" :value="systemObj.value">{{systemObj.name}}</option>
-      </select>
+      <fieldset class="roomInfo">
+        <legend>部屋の情報</legend>
+        <label class="roomNameLabel">部屋名：
+          <input class="roomNameInput" type="text" v-model="roomName" placeholder="必須項目です。" />
+        </label>
+        <div>
+          <button class="roomNameCheckBtn" @click="checkRoomExist">部屋存在確認</button>
+          <span class="existMsg" v-show="existCheckMessage !== ''"><b>{{existCheckMessage}}</b></span>
+        </div>
+        <label class="passwordLabel">パスワード：<input class="passwordInput" type="password" v-model="password" /></label>
+        <label class="systemLabel">システム：
+          <select class="systemSelect" v-model="currentSystem">
+            <option v-for="systemObj in diceBotSystems" :key="systemObj.value" :value="systemObj.value">{{systemObj.name}}</option>
+          </select>
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend>あなたの情報</legend>
+        <div>
+          <select class="playerTypeSelect" v-model="playerType" :title="'権限：\nPL：通常\nGM：チャットログを'">
+            <option value="PL">プレイヤー</option>
+            <option value="GM">ゲームマスター</option>
+            <option value="SubGM">サブGM</option>
+          </select>
+          <input class="playerNameInput" type="text" v-model="playerName" placeholder="名前（必須項目）" />
+        </div>
+        <div v-html="roleText[playerType].replace(/\n/g, '<br>')"></div>
+      </fieldset>
       <div class="operateArea">
         <button @click="commit">決定</button>
         <button @click="cancel">キャンセル</button>
@@ -35,10 +52,17 @@ export default {
   data () {
     return {
       roomName: '',
+      playerName: '',
       password: '',
       currentSystem: 'DiceBot',
       diceBotSystems: [],
-      existCheckMessage: ''
+      existCheckMessage: '',
+      playerType: 'PL',
+      roleText: {
+        PL: '部屋の設定や他のプレイヤーの設定の一部が変更不可です。',
+        GM: 'すべての部屋設定とプレイヤーの設定を変更可能です。',
+        SubGM: '見た目が異なるだけで、ゲームマスターと同等の権限です。'
+      }
     }
   },
   created () {
@@ -47,11 +71,10 @@ export default {
       value: 'DiceBot'
     })
     setTimeout(function () {
-      // console.qLog(`bcdice-js ダイスボット一覧`)
-      DiceBotLoader.collectDiceBots().forEach(function (diceBot) {
+      DiceBotLoader['collectDiceBots']().forEach(function (diceBot) {
         // console.qLog(`"${diceBot.gameType()}" : "${diceBot.gameName()}"`)
         this.diceBotSystems.push({
-          name: diceBot.gameName(),
+          name: diceBot['gameName'](),
           value: diceBot.gameType()
         })
       }.bind(this))
@@ -76,12 +99,27 @@ export default {
       this.currentSystem = 'DiceBot'
     },
     commit () {
+      const errorMsg = []
       if (this.roomName === '') {
-        alert(`部屋名は必須項目です。\n入力をお願いします。`)
+        errorMsg.push('・部屋名は必須項目です。')
+      }
+      if (this.playerName === '') {
+        errorMsg.push('・あなたの名前は必須項目です。')
+      }
+      if (errorMsg.length > 0) {
+        alert(`${errorMsg.join('\n')}\n入力をお願いします。`)
         return
       }
       this.setProperty({property: 'public.room.system', value: this.currentSystem})
-      this.setProperty({property: 'private.self.password', value: this.password, logOff: true})
+      this.setProperty({
+        property: 'private.self',
+        value: {
+          password: this.password,
+          playerName: this.playerName,
+          playerType: this.playerType
+        },
+        logOff: true
+      })
       this.emptyMember()
       this.createPeer({
         roomId: this.roomName
@@ -101,7 +139,7 @@ export default {
       this.checkRoomName({
         roomName: this.roomName,
         roomFindFunc: message => (_.existCheckMessage = message),
-        roomNonFindFunc: () => (_.existCheckMessage = 'この部屋は存在しません。新しく部屋を作ることになります。')
+        roomNonFindFunc: () => (_.existCheckMessage = 'この部屋は存在しません。')
       })
     }
   }
@@ -111,28 +149,43 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .contents {
-  display: grid;
+  display: flex;
+  flex-direction : column;
   width: 100%;
   font-size: 12px;
-  position: absolute;
-  grid-template-columns: auto 1fr auto;
-  grid-template-rows: auto auto auto auto auto auto;
-  grid-template-areas:
-    "message       message       message"
-    "nameLabel     nameInput     nameCheckBtn"
-    "existMsg      existMsg      existMsg"
-    "passwordLabel passwordInput ....."
-    "systemLabel   systemSelect  systemSelect"
-    "operateArea   operateArea   operateArea";
 }
-.message { grid-area: message; }
-.nameLabel { grid-area: nameLabel; }
-.nameInput { grid-area: nameInput; }
-.nameCheckBtn { grid-area: nameCheckBtn; }
-.existMsg { grid-area: existMsg; }
-.passwordLabel { grid-area: passwordLabel; }
-.passwordInput { grid-area: passwordInput; }
-.systemLabel { grid-area: systemLabel; }
-.systemSelect { grid-area: systemSelect; }
-.operateArea { grid-area: operateArea; text-align: center; }
+.contents > *:not(:first-child) {
+  margin-top: 0.5em;
+}
+.roomInfo {
+  display: flex;
+  flex-direction : column;
+}
+.role span {
+  border-radius: 5px;
+  border: 1px solid blue;
+  background-color: blue;
+  color: white;
+  padding: 0 3px;
+  cursor: default;
+  font-size: 80%;
+}
+.role span:hover {
+  border-color: red;
+}
+fieldset > label,
+fieldset > div {
+  width: 100%;
+}
+fieldset > label,
+fieldset > div {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+fieldset > label > *:last-child,
+fieldset > div > *:last-child {
+  flex: 1;
+}
+.operateArea { text-align: center; }
 </style>

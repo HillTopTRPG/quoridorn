@@ -97,9 +97,6 @@ const storeModulePublic = {
       }
     },
 
-    /** 部屋情報 */
-    room: { id: '', members: [], system: 'DiceBot', password: '' },
-
     /** デッキ */
     deck: {
       cards: {
@@ -130,6 +127,12 @@ const storeModulePublic = {
       isEditting: null
     },
 
+    /** 部屋情報 */
+    room: { id: '', members: [], system: 'DiceBot', password: '' },
+
+    /** プレイヤー */
+    player: { list: [] },
+
     /** マップマスク */
     mapMask: { list: [], maxKey: -1 },
 
@@ -142,18 +145,18 @@ const storeModulePublic = {
     /** チャット */
     chat: {
       /** チャットのタブ */
-      tabs: [ { name: 'メイン', isActive: true, isHover: false, unRead: 0, secretInfo: null } ],
+      tabs: [ { name: 'メイン', isHover: false, unRead: 0, secretInfo: null } ],
       /** グループチャットのタブ */
       groupTargetTab: [ { key: 'groupTargetTab-1', name: '全体', group: [], targetTab: null } ],
 
       /** チャットのリスト */
       logs: {
         'メイン': [
-          { peerId: 12345, viewHtml: '<b>HillTop</b>：Hello World!!' },
-          { peerId: 12345, viewHtml: '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>' },
-          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：どどんとふの仕様にできるだけ近づけるように努力しています。</span>' },
-          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：Twitterで私が困ってたらいろいろ教えていただけると嬉しいです。</span>' },
-          { peerId: 12345, viewHtml: '<span style="color: black;"><b>HillTop</b>：9月末までは休みを利用して開発できますが、10月からは新しい仕事が始まるので、開発スピードが落ちます。</span>' }
+          { owner: 'SYSTEM', viewHtml: '<b>HillTop</b>：Hello World!!' },
+          { owner: 'SYSTEM', viewHtml: '<span style="color: red;"><b>SYSTEM</b>：こちらデモ版です。</span>' },
+          { owner: 'SYSTEM', viewHtml: '<span style="color: black;"><b>HillTop</b>：どどんとふの仕様にできるだけ近づけるように努力しています。</span>' },
+          { owner: 'SYSTEM', viewHtml: '<span style="color: black;"><b>HillTop</b>：Twitterで私が困ってたらいろいろ教えていただけると嬉しいです。</span>' },
+          { owner: 'SYSTEM', viewHtml: '<span style="color: black;"><b>HillTop</b>：9月末までは休みを利用して開発できますが、10月からは新しい仕事が始まるので、開発スピードが落ちます。</span>' }
         ]
       },
 
@@ -182,8 +185,16 @@ const storeModulePublic = {
      * @param commit
      * @returns {*}
      */
-    addMember: ({ commit }) =>
-      commit('addMember'),
+    addMember: ({ commit }, { peerId, name, isCame }) =>
+      commit('addMember', { peerId, name, isCame }),
+
+    /**
+     * プレイヤーを追加する
+     * @param commit
+     * @returns {*}
+     */
+    addPlayer: ({ commit }, { name, color, type }) =>
+      commit('addPlayer', { name, color, type }),
 
     /**
      * ルームメンバを空にする
@@ -234,14 +245,14 @@ const storeModulePublic = {
      * ルームメンバの入力中状態の通知
      * @param commit
      * @param state
-     * @param peerId
+     * @param name
      */
-    noticeInput: ({ commit, state }, peerId) => {
+    noticeInput: ({ commit, state }, name) => {
       // 即時入力カウントアップ
-      commit('inputPeerId', { peerId: peerId, add: 1 })
+      commit('inputPeerId', { name: name, add: 1 })
       // 少し経ったらカウントダウン
       setTimeout(() => {
-        commit('inputPeerId', { peerId: peerId, add: -1 })
+        commit('inputPeerId', { name: name, add: -1 })
       }, 400)
     }
   }, /* end of actions */
@@ -252,12 +263,25 @@ const storeModulePublic = {
      * @param state
      * @returns {*[]}
      */
-    addMember: (state, peerId) => {
+    addMember: (state, { peerId, name, isCame }) => {
       state.room.members.push({
         peerId: peerId,
-        name: '',
-        color: 'black',
-        isCame: false
+        name: name,
+        isCame: isCame
+      })
+    },
+
+    /**
+     * プレイヤーを追加する
+     * @param state
+     * @returns {*[]}
+     */
+    addPlayer: (state, { name, color, type }) => {
+      state.player.list.push({
+        key: `player-${name}`,
+        name: name,
+        fontColor: color,
+        type: type
       })
     },
 
@@ -300,13 +324,13 @@ const storeModulePublic = {
      * @param state
      * @param payload
      */
-    inputPeerId (state, { peerId, add }) {
+    inputPeerId (state, { name, add }) {
       // プロパティが無ければ、リアクティブになる形式で登録をする
-      if (!state.chat.inputting[peerId]) {
-        this._vm.$set(state.chat.inputting, peerId, 0)
+      if (!state.chat.inputting[name]) {
+        this._vm.$set(state.chat.inputting, name, 0)
       }
       // 値の足し込み
-      state.chat.inputting[peerId] += add
+      state.chat.inputting[name] += add
     },
 
     /**
@@ -423,7 +447,11 @@ const storeModulePublic = {
       // 追加されたタブの検知
       state.chat.tabs.forEach(tabsTab => {
         if (!state.chat.logs[tabsTab.name]) {
-          state.chat.logs[tabsTab.name] = []
+          // this.$set(state.chat.logs, tabsTab.name, [])
+          const newLogs = { ...state.chat.logs }
+          newLogs[tabsTab.name] = []
+          state.chat.logs = newLogs
+          // state.chat.logs[tabsTab.name] = []
         }
       })
     }
@@ -446,14 +474,6 @@ const storeModulePublic = {
       // TODO obstacle属性の作成
       return allPieceList
     },
-
-    /**
-     * 選択済みのタブのチャットログ一覧
-     * @param state
-     * @param getters
-     * @returns {*}
-     */
-    chatLogs: (state, getters) => state.chat.logs[getters.activeChatTab.name],
 
     /**
      * グリッドに合わせるかどうか
@@ -491,7 +511,17 @@ const storeModulePublic = {
      * @param state
      * @returns {*}
      */
-    getBackgroundImage: state => state.image.list.filter(d => d.key === state.map.imageKey)[0].data
+    getBackgroundImage: state => state.image.list.filter(d => d.key === state.map.imageKey)[0].data,
+
+    getPeerActors: (state, getters, rootState) => {
+      const playerName = rootState.private.self.playerName
+      const player = state.player.list.filter(p => p.name === playerName)[0]
+      if (player) {
+        return [ player, ...state.character.list.filter(character => character.owner === playerName) ]
+      } else {
+        return [ { name: '名無し', type: 'PL' }, ...state.character.list ]
+      }
+    }
   } /* end of getters */
 }
 export default storeModulePublic
