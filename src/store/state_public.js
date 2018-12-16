@@ -147,7 +147,10 @@ const storeModulePublic = {
       /** チャットのタブ */
       tabs: [ { name: 'メイン', isHover: false, unRead: 0, secretInfo: null } ],
       /** グループチャットのタブ */
-      groupTargetTab: [ { key: 'groupTargetTab-1', name: '全体', group: [], targetTab: null } ],
+      groupTargetTab: {
+        list: [ { key: 'groupTargetTab-0', isSecret: false, name: '全体', targetTab: null, isAll: true, group: [] } ],
+        maxKey: 0
+      },
 
       /** チャットのリスト */
       logs: {
@@ -193,8 +196,10 @@ const storeModulePublic = {
      * @param commit
      * @returns {*}
      */
-    addPlayer: ({ commit }, { name, color, type }) =>
-      commit('addPlayer', { name, color, type }),
+    addPlayer: ({ commit }, { name, color, type }) => {
+      commit('addPlayer', {name, color, type})
+      commit('addPlayerWidth')
+    },
 
     /**
      * ルームメンバを空にする

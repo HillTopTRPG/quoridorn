@@ -252,6 +252,21 @@ const actionOperation = {
       //   const delHistoryIndex = rootState.private.history.indexOf(delHistoryObj)
       //   rootState.private.history.splice(delHistoryIndex, 1)
       // }
+    },
+    /** ========================================================================
+     * グループチャットの追加
+     */
+    addGroupTargetTab: ({ dispatch }, payload) => { dispatch('sendNoticeOperation', { value: payload, method: 'doAddGroupTargetTab' }) },
+    doAddGroupTargetTab: ({ rootState }, payload) => {
+      const addObj = {
+        key: `groupTargetTab-${++rootState.public.chat.groupTargetTab.maxKey}`,
+        isSecret: false,
+        name: '',
+        targetTab: null,
+        isAll: false,
+        group: [ payload.ownerKey ]
+      }
+      rootState.public.chat.groupTargetTab.list.push(addObj)
     }
   }
 }

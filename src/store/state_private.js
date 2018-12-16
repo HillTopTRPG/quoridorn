@@ -109,8 +109,14 @@ const storeModulePrivate = {
         command: null,
         isDisplay: false,
         zIndex: 1,
-        widthList: [80, 110, 140],
-        selectLineKey: null
+        widthList: [25, 80, 80, 25, 286], // 500
+        windowSize: { w: 554, h: 300 },
+        selectLineKey: null,
+        hoverDevIndex: -1,
+        movingIndex: -1,
+        startX: -1,
+        startLeftWidth: -1,
+        startRightWidth: -1
       },
       playerBoxWindow: { command: null, isDisplay: false, zIndex: 1 },
       mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
@@ -232,6 +238,41 @@ const storeModulePrivate = {
         }
       }
     }
-  } /* end of actions */
+  }, /* end of actions */
+  mutations: {
+    /**
+     * プレイヤーを追加する
+     * @param state
+     * @returns {*[]}
+     */
+    addPlayerWidth: (state) => {
+      const widthList = state.display.settingChatTargetTabWindow.widthList
+      const maxWidth = state.display.settingChatTargetTabWindow.windowSize.w - 54
+      const fixWidth = widthList[0] + widthList[1] + widthList[2] + widthList[3] + 4
+      let itemWidth = 50
+      const itemNum = widthList.length - 4
+      const itemTotalWidth = (itemWidth + 1) * itemNum
+      const contentsWidth = fixWidth + itemTotalWidth
+      let marginWidth = 0
+      if (contentsWidth <= maxWidth) {
+        marginWidth = maxWidth - contentsWidth
+      } else {
+        marginWidth = 0
+        itemWidth = (maxWidth - fixWidth) / itemNum - 1
+      }
+      const newArr = [
+        widthList[0],
+        widthList[1],
+        widthList[2],
+        widthList[3]
+      ]
+      for (let i = 0; i < itemNum; i++) {
+        newArr.push(itemWidth)
+      }
+      newArr.push(marginWidth)
+      console.log('#=#=#=#=#', newArr.join(','))
+      state.display.settingChatTargetTabWindow.widthList = newArr
+    }
+  }
 }
 export default storeModulePrivate

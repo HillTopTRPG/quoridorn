@@ -74,7 +74,7 @@ window.console.qLog = function () {
     } else if (toString.call(arg) === '[object Array]') {
       format += '%c%s'
       logs.push('color: blue;')
-      logs.push(arg)
+      logs.push(arg.join(', '))
     } else {
       const jsonStr = JSON.stringify(arg, undefined, 2).split('\n').map(line => `${indent}${line}`).join('\n')
       if (jsonStr.length > 200) {

@@ -12,7 +12,8 @@ import { mapState, mapActions } from 'vuex'
 export default {
   name: 'divider',
   props: {
-    'index': { type: Number, required: true }
+    'index': { type: Number, required: true },
+    'prop': { type: String, required: true }
   },
   methods: {
     ...mapActions([
@@ -21,7 +22,7 @@ export default {
     hoverDev (index) {
       if (this.movingIndex === -1) {
         this.setProperty({
-          property: 'private.display.settingBGMWindow.hoverDevIndex',
+          property: `private.display.${this.prop}.hoverDevIndex`,
           value: index !== undefined ? index : -1,
           logOff: true
         })
@@ -29,7 +30,7 @@ export default {
     },
     moveDevStart (event, index) {
       this.setProperty({
-        property: 'private.display.settingBGMWindow',
+        property: `private.display.${this.prop}`,
         value: {
           movingIndex: index,
           startX: event.clientX,
@@ -41,9 +42,15 @@ export default {
     }
   },
   computed: mapState({
-    widthList: state => state.private.display.settingBGMWindow.widthList,
-    hoverDevIndex: state => state.private.display.settingBGMWindow.hoverDevIndex,
-    movingIndex: state => state.private.display.settingBGMWindow.movingIndex
+    widthList (state) {
+      return state.private.display[this.prop].widthList
+    },
+    hoverDevIndex (state) {
+      return state.private.display[this.prop].hoverDevIndex
+    },
+    movingIndex (state) {
+      return state.private.display[this.prop].movingIndex
+    }
   })
 }
 </script>

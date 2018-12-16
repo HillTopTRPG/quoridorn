@@ -88,7 +88,7 @@ const actionPeer = {
     /** ========================================================================
      * 接続後の処理
      */
-    connectFunc: ({ rootState, dispatch }, {room}) => {
+    connectFunc: ({ rootState, dispatch, commit }, {room}) => {
       // Handle a chat connection.
       const roomName = room.name.replace('sfu_text_', '')
 
@@ -178,6 +178,8 @@ const actionPeer = {
               value.player.list.forEach(playerObj => {
                 if (playerObj.name === rootState.private.self.playerName) {
                   playerMe = playerObj
+                } else {
+                  commit('addPlayerWidth')
                 }
               })
               if (!memberMe) {
