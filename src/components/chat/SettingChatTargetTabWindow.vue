@@ -1,9 +1,8 @@
 <template>
-  <WindowFrame titleText="チャット対象タブ設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
+  <WindowFrame titleText="グループチャット設定画面" display-property="private.display.settingChatTargetTabWindow" align="center" :fixSize="`${windowSize.w}, ${windowSize.h}`" @open="initWindow" @reset="initWindow">
     <div class="contents">
       <div>
         <button type="button" @click="add">追加</button>
-        <button type="button" @click="add">変更</button>
         <button type="button" @click="add">削除</button>
       </div>
       <div class="tableContainer">
@@ -13,12 +12,16 @@
             <th :style="colStyle(0)">秘匿</th><Divider :index="0" prop="settingChatTargetTabWindow"/>
             <th :style="colStyle(1)">名前</th><Divider :index="1" prop="settingChatTargetTabWindow"/>
             <th :style="colStyle(2)">出力先タブ</th><Divider :index="2" prop="settingChatTargetTabWindow"/>
+            <th :style="colStyle(3)">送信先</th><Divider :index="3" prop="settingChatTargetTabWindow"/>
+            <th :style="colStyle(4)"></th>
+            <!--
             <th :style="colStyle(3)">全体</th><Divider :index="3" prop="settingChatTargetTabWindow"/>
             <template v-for="(player, index) in players">
               <th :style="colStyle(index + 4)" :key="player.key">{{player.name}}</th>
               <Divider :key="`${player.key}-divider`" :index="index + 4" prop="settingChatTargetTabWindow"/>
             </template>
             <th :style="colStyle(players.length + 4)"></th>
+            -->
           </tr>
           </thead>
           <tbody>
@@ -30,28 +33,35 @@
               @click="selectLine(groupTargetTab.key)"
               :class="{isActive: selectLineKey === groupTargetTab.key}">
 
+            <!-- 秘匿チェック -->
             <td :style="colStyle(0)">
               <input
                 type="checkbox"
                 :checked="groupTargetTab.isSecret"
-                @change="changeProp(groupTargetTab, 'isSecret', !groupTargetTab.isSecret)"/>
+                disabled
+                @change="changeProp(groupTargetTab, 'isSecret', !groupTargetTab.isSecret)"
+              />
             </td>
             <Divider :index="0" prop="settingChatTargetTabWindow"/>
 
+            <!-- 名前 -->
             <td :style="colStyle(1)">
               <input
                 type="text"
                 :value="groupTargetTab.name"
-                @change="event => changeProp(groupTargetTab, 'name', event.target.value)"
                 placeholder="グルチャ名"
+                disabled
+                @change="event => changeProp(groupTargetTab, 'name', event.target.value)"
               >
             </td>
             <Divider :index="1" prop="settingChatTargetTabWindow"/>
 
+            <!-- 出力先タブ -->
             <td :style="colStyle(2)">
               <select
                 :value="groupTargetTab.targetTab"
                 @change="event => changeProp(groupTargetTab, 'targetTab', event.target.value)"
+                disabled
               >
                 <option :value="null">指定なし</option>
                 <option
@@ -63,6 +73,18 @@
             </td>
             <Divider :index="2" prop="settingChatTargetTabWindow"/>
 
+            <!-- 送信先 -->
+            <td :style="colStyle(3)">
+              {{getViewNames(groupTargetTab)}}
+            </td>
+            <Divider :index="2" prop="settingChatTargetTabWindow"/>
+
+            <!-- 編集ボタン -->
+            <td :style="colStyle(4)">
+              <button type="button" @click="edit(groupTargetTab.key)">編集</button>
+            </td>
+
+            <!--
             <td :style="colStyle(3)">
               <input
                 type="checkbox"
@@ -84,19 +106,23 @@
             </template>
 
             <td :style="colStyle(players.length + 4)"></td>
+            -->
           </tr>
           <tr class="space">
             <td :style="colStyle(0)"></td><Divider :index="0" prop="settingChatTargetTabWindow"/>
             <td :style="colStyle(1)"></td><Divider :index="1" prop="settingChatTargetTabWindow"/>
             <td :style="colStyle(2)"></td><Divider :index="2" prop="settingChatTargetTabWindow"/>
             <td :style="colStyle(3)"></td><Divider :index="3" prop="settingChatTargetTabWindow"/>
+            <td :style="colStyle(4)"></td>
 
+            <!--
             <template v-for="(player, index) in players">
               <td :style="colStyle(index + 4)" :key="`${player.key}`"></td>
               <Divider :index="index + 4" :key="`${player.key}-divider`" prop="settingChatTargetTabWindow"/>
             </template>
 
             <td :style="colStyle(players.length + 4)"></td>
+            -->
           </tr>
           </tbody>
         </table>
@@ -126,6 +152,7 @@ export default {
   methods: {
     ...mapActions([
       'windowClose',
+      'windowOpen',
       'changeChatTab',
       'setProperty',
       'addGroupTargetTab'
@@ -142,6 +169,10 @@ export default {
     },
     add () {
       this.addGroupTargetTab({ ownerKey: this.getChatFromKey() })
+    },
+    edit (key) {
+      this.setProperty({property: 'private.display.editGroupChatWindow.key', value: key, logOff: false})
+      this.windowOpen('private.display.editGroupChatWindow')
     },
     moveDev (event) {
       if (this.movingIndex > -1) {
@@ -208,24 +239,6 @@ export default {
       }
       this.changeProp(groupTargetTab, 'group', newArr)
     },
-    getViewName (key) {
-      if (!key) return
-      const kind = key.split('-')[0]
-      if (kind === 'player') {
-        // プレイヤー
-        const player = this.playerList.filter(player => player.key === key)[0]
-        const type = player.type
-        return `${player.name}(${type})`
-      } else if (kind === 'character') {
-        // キャラクター
-        const character = this.characterList.filter(character => character.key === key)[0]
-        return `${character.name}`
-      } else if (kind === 'groupTargetTab') {
-        // グループチャットタブ
-        const tab = this.groupTargetTabList.filter(tab => tab.key === key)[0]
-        return `${tab.name}`
-      }
-    },
     getChatFromKey () {
       const obj = this.getPeerActors
         .map(actor => ({name: this.getViewName(actor.key), key: actor.key}))
@@ -234,11 +247,15 @@ export default {
         return ''
       }
       return obj.key
+    },
+    getViewNames (tab) {
+      return tab.isAll ? '全員' : tab.group.map(g => this.getViewName(g)).join(', ')
     }
   },
   computed: mapState({
     ...mapGetters([
-      'getPeerActors'
+      'getPeerActors',
+      'getViewName'
     ]),
     groupTargetTabList: state => state.public.chat.groupTargetTab.list,
     /* Start 列幅可変テーブルのプロパティ */
@@ -268,7 +285,7 @@ export default {
     position: absolute;
     height: 100%;
     width: 100%;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     font-size: 12px;
   }
   label {

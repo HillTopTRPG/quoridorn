@@ -28,7 +28,7 @@
               :key="bgmObj.key"
               @click="selectLine(bgmObj.key)"
               @dblclick="playBGM()"
-              :class="{isActive: selectBgmKey === bgmObj.key}">
+              :class="{isActive: selectLineKey === bgmObj.key}">
               <td :style="colStyle(0)" :title="linkageStr(bgmObj)">{{bgmObj.chatLinkage > 0 ? 'あり' : 'なし'}}</td><Divider :index="0" prop="settingBGMWindow"/>
               <td :style="colStyle(1)">{{bgmObj.tag}}</td><Divider :index="1" prop="settingBGMWindow"/>
               <td :style="colStyle(2)">
@@ -91,7 +91,7 @@ export default {
     },
     initWindow () {
       this.setProperty({
-        property: 'private.display.settingBGMWindow.selectBgmKey',
+        property: 'private.display.settingBGMWindow.selectLineKey',
         value: -1,
         logOff: true
       })
@@ -106,19 +106,19 @@ export default {
       this.windowOpen('private.display.addBGMWindow')
     },
     doModify () {
-      if (this.selectBgmKey < 0) {
+      if (this.selectLineKey < 0) {
         alert('BGMを選択してください')
         return
       }
       this.setProperty({
         property: 'private.display.editBGMWindow.key',
-        value: this.selectBgmKey,
+        value: this.selectLineKey,
         logOff: true
       })
       this.windowOpen('private.display.editBGMWindow')
     },
     doDelete () {
-      console.qLog(`doDelete: ${this.selectBgmKey}`)
+      console.qLog(`doDelete: ${this.selectLineKey}`)
       alert('未実装の機能です。')
     },
     changeSortMode (event) {
@@ -130,13 +130,13 @@ export default {
     },
     selectLine (bgmKey) {
       this.setProperty({
-        property: 'private.display.settingBGMWindow.selectBgmKey',
+        property: 'private.display.settingBGMWindow.selectLineKey',
         value: bgmKey,
         logOff: true
       })
     },
     playBGM (isPreview = false) {
-      this.setProperty({property: 'private.display.jukeboxWindow.command', logOff: true, isNotice: !isPreview, value: {command: 'add', payload: this.selectBgmKey}})
+      this.setProperty({property: 'private.display.jukeboxWindow.command', logOff: true, isNotice: !isPreview, value: {command: 'add', payload: this.selectLineKey}})
     },
     moveDev (event) {
       if (this.movingIndex > -1) {
@@ -179,7 +179,7 @@ export default {
     },
     bgmList: state => state.public.bgm.list,
     /* Start 列幅可変テーブルのプロパティ */
-    selectBgmKey: state => state.private.display.settingBGMWindow.selectBgmKey,
+    selectLineKey: state => state.private.display.settingBGMWindow.selectLineKey,
     widthList: state => state.private.display.settingBGMWindow.widthList,
     movingIndex: state => state.private.display.settingBGMWindow.movingIndex,
     startX: state => state.private.display.settingBGMWindow.startX,

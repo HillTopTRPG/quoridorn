@@ -8,7 +8,7 @@
         <span
           class="tab"
           v-for="(tabObj, index) in chatTabList"
-          :key="tabObj.text"
+          :key="tabObj.name"
           :class="{ active: tabObj.name === activeTab, unRead: tabObj.unRead > 0 }"
           @mousedown.prevent="selectChatTab(tabObj.name)"
           :tabindex="index + 1"
@@ -447,12 +447,13 @@ export default {
       }
       if (this.currentMessage === '') return
 
-      // オプション選択中のEnterは特別仕様
+      // チャット送信オプション選択中のEnterは特別仕様
       if (this.chatOptionSelectMode) {
         this.commitChatOption()
         return
       }
 
+      // 文字色決定
       const actor = this.getPeerActors.filter(actor => actor.key === this.currentActorKey)[0]
       let color = 'black'
       if (actor) {
@@ -468,23 +469,47 @@ export default {
         }
       }
 
+      // 括弧をつけるオプション
       let text = this.currentMessage
       if (this.addBrackets) {
         text = `「${text}」`
       }
 
+      // 出力先タブ決定
       let outputTab = this.chatTargetTab
       if (outputTab === '[選択中]') {
         outputTab = this.activeTab
       }
 
-      this.addChatLog({
+      const messageObj = {
         name: this.currentChatName,
         text: text,
         color: color,
         tab: outputTab,
         owner: this.getPeerActors.filter(actor => actor.key === this.currentActorKey)[0].key
-      })
+      }
+
+      // 送信先決定
+      if (this.chatTarget !== 'groupTargetTab-0') {
+        const kind = this.chatTarget.split('-')[0]
+        if (kind === 'groupTargetTab') {
+          // グループチャット向け
+          const groupTargetTab = this.groupTargetTabList.filter(tab => tab.key === this.chatTarget)[0]
+          if (groupTargetTab) {
+            messageObj.to = groupTargetTab.group
+            messageObj.isSecret = groupTargetTab.isSecret
+          }
+        } else {
+          // 個人向け
+          messageObj.to = [ this.chatTarget ]
+          messageObj.isSecret = true
+        }
+      }
+
+      // -------------------
+      // プレイヤー発言
+      // -------------------
+      this.addChatLog(messageObj)
 
       this.bcDice.setMessage(this.currentMessage)
       const resultObj = this.bcDice.dice_command()
@@ -517,24 +542,6 @@ export default {
       // }, 0)
     },
     memberToName: member => member.name ? member.name : '名無し',
-    getViewName (key) {
-      if (!key) return
-      const kind = key.split('-')[0]
-      if (kind === 'player') {
-        // プレイヤー
-        const player = this.playerList.filter(player => player.key === key)[0]
-        const type = player.type
-        return `${player.name}(${type})`
-      } else if (kind === 'character') {
-        // キャラクター
-        const character = this.characterList.filter(character => character.key === key)[0]
-        return `${character.name}`
-      } else if (kind === 'groupTargetTab') {
-        // グループチャットタブ
-        const tab = this.groupTargetTabList.filter(tab => tab.key === key)[0]
-        return `${tab.name}`
-      }
-    },
     nameToKey (name) {
       const obj = this.getPeerActors
         .map(actor => ({name: this.getViewName(actor.key), key: actor.key}))
@@ -581,7 +588,8 @@ export default {
   },
   computed: mapState({
     ...mapGetters([
-      'getPeerActors'
+      'getPeerActors',
+      'getViewName'
     ]),
     chatLogList: state => state.public.chat.logs[state.chat.activeTab],
     chatTabList: state => state.public.chat.tabs,

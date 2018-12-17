@@ -198,7 +198,7 @@ const storeModulePublic = {
      */
     addPlayer: ({ commit }, { name, color, type }) => {
       commit('addPlayer', {name, color, type})
-      commit('addPlayerWidth')
+      // commit('addPlayerWidth')
     },
 
     /**
@@ -525,6 +525,25 @@ const storeModulePublic = {
         return [ player, ...state.character.list.filter(character => character.owner === playerName) ]
       } else {
         return [ { name: '名無し', type: 'PL' }, ...state.character.list ]
+      }
+    },
+
+    getViewName: state => key => {
+      if (!key) return
+      const kind = key.split('-')[0]
+      if (kind === 'player') {
+        // プレイヤー
+        const player = state.player.list.filter(player => player.key === key)[0]
+        const type = player.type
+        return `${player.name}(${type})`
+      } else if (kind === 'character') {
+        // キャラクター
+        const character = state.character.list.filter(character => character.key === key)[0]
+        return `${character.name}`
+      } else if (kind === 'groupTargetTab') {
+        // グループチャットタブ
+        const tab = state.chat.groupTargetTab.list.filter(tab => tab.key === key)[0]
+        return `${tab.name}`
       }
     }
   } /* end of getters */

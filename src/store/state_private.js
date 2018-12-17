@@ -90,13 +90,15 @@ const storeModulePrivate = {
         isDisplay: false,
         doResetPosition: false,
         zIndex: 1,
+        // テーブル形式用データここから
         widthList: [30, 30, 30, 125, 40, 25, 30, 40],
-        selectBgmKey: null,
+        selectLineKey: null,
         hoverDevIndex: -1,
         movingIndex: -1,
         startX: -1,
         startLeftWidth: -1,
         startRightWidth: -1
+        // テーブル形式用データここまで
       },
       jukeboxWindow: { command: null, isDisplay: false, zIndex: 1, masterMute: false, masterVolume: 0.5 },
       editBGMWindow: { command: null, isDisplay: false, zIndex: 1, key: -1 },
@@ -109,14 +111,32 @@ const storeModulePrivate = {
         command: null,
         isDisplay: false,
         zIndex: 1,
-        widthList: [25, 80, 80, 25, 286], // 500
-        windowSize: { w: 554, h: 300 },
+        windowSize: { w: 537, h: 300 },
+        // テーブル形式用データここから
+        widthList: [25, 80, 80, 253, 58], // 500
         selectLineKey: null,
         hoverDevIndex: -1,
         movingIndex: -1,
         startX: -1,
         startLeftWidth: -1,
         startRightWidth: -1
+        // テーブル形式用データここまで
+      },
+      editGroupChatWindow: {
+        command: null,
+        isDisplay: false,
+        zIndex: 1,
+        windowSize: { w: 220, h: 300 },
+        key: null,
+        // テーブル形式用データここから
+        widthList: [25, 174], // 200
+        selectLineKey: null,
+        hoverDevIndex: -1,
+        movingIndex: -1,
+        startX: -1,
+        startLeftWidth: -1,
+        startRightWidth: -1
+        // テーブル形式用データここまで
       },
       playerBoxWindow: { command: null, isDisplay: false, zIndex: 1 },
       mapMaskContext: { command: null, isDisplay: false, key: -1, x: 0, y: 0 },
@@ -240,39 +260,39 @@ const storeModulePrivate = {
     }
   }, /* end of actions */
   mutations: {
-    /**
-     * プレイヤーを追加する
-     * @param state
-     * @returns {*[]}
-     */
-    addPlayerWidth: (state) => {
-      const widthList = state.display.settingChatTargetTabWindow.widthList
-      const maxWidth = state.display.settingChatTargetTabWindow.windowSize.w - 54
-      const fixWidth = widthList[0] + widthList[1] + widthList[2] + widthList[3] + 4
-      let itemWidth = 50
-      const itemNum = widthList.length - 4
-      const itemTotalWidth = (itemWidth + 1) * itemNum
-      const contentsWidth = fixWidth + itemTotalWidth
-      let marginWidth = 0
-      if (contentsWidth <= maxWidth) {
-        marginWidth = maxWidth - contentsWidth
-      } else {
-        marginWidth = 0
-        itemWidth = (maxWidth - fixWidth) / itemNum - 1
-      }
-      const newArr = [
-        widthList[0],
-        widthList[1],
-        widthList[2],
-        widthList[3]
-      ]
-      for (let i = 0; i < itemNum; i++) {
-        newArr.push(itemWidth)
-      }
-      newArr.push(marginWidth)
-      console.log('#=#=#=#=#', newArr.join(','))
-      state.display.settingChatTargetTabWindow.widthList = newArr
-    }
+    // /**
+    //  * プレイヤーを追加する
+    //  * @param state
+    //  * @returns {*[]}
+    //  */
+    // addPlayerWidth: (state) => {
+    //   const widthList = state.display.settingChatTargetTabWindow.widthList
+    //   const maxWidth = state.display.settingChatTargetTabWindow.windowSize.w - 54
+    //   const fixWidth = widthList[0] + widthList[1] + widthList[2] + widthList[3] + 4
+    //   let itemWidth = 50
+    //   const itemNum = widthList.length - 4
+    //   const itemTotalWidth = (itemWidth + 1) * itemNum
+    //   const contentsWidth = fixWidth + itemTotalWidth
+    //   let marginWidth = 0
+    //   if (contentsWidth <= maxWidth) {
+    //     marginWidth = maxWidth - contentsWidth
+    //   } else {
+    //     marginWidth = 0
+    //     itemWidth = (maxWidth - fixWidth) / itemNum - 1
+    //   }
+    //   const newArr = [
+    //     widthList[0],
+    //     widthList[1],
+    //     widthList[2],
+    //     widthList[3]
+    //   ]
+    //   for (let i = 0; i < itemNum; i++) {
+    //     newArr.push(itemWidth)
+    //   }
+    //   newArr.push(marginWidth)
+    //   console.log('#=#=#=#=#', newArr.join(','))
+    //   state.display.settingChatTargetTabWindow.widthList = newArr
+    // }
   }
 }
 export default storeModulePrivate

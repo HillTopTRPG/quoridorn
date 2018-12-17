@@ -236,7 +236,15 @@ export default {
 
       console.qLog(`  [methods] drop on GameTable => type: ${kind}, address: (${canvasAddress.grid.column},${canvasAddress.grid.row})`)
 
-      const pieceObj = { kind: kind, propName: kind, left: locateOnTable.x, top: locateOnTable.y, isNotice: true, owner: this.playerName, place: 'field' }
+      const pieceObj = {
+        kind: kind,
+        propName: kind,
+        left: locateOnTable.x,
+        top: locateOnTable.y,
+        isNotice: true,
+        owner: `player-${this.playerName}`,
+        place: 'field'
+      }
 
       // マップマスクの作成
       if (kind === 'mapMask') {

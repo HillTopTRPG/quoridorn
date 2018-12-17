@@ -41,6 +41,7 @@ import WelcomeWindow from './components/welcome/WelcomeWindow'
 import VersionWindow from './components/simple/VersionWindow'
 import SettingChatTargetTabWindow from './components/chat/SettingChatTargetTabWindow'
 import PlayerBoxWindow from './components/simple/PlayerBoxWindow'
+import EditGroupChatWindow from './components/chat/EditGroupChatWindow'
 
 // const ChatWindow = asyncComponent(() => import(/* webpackChunkName: 'chatWindow' */ './components/chat/ChatWindow'))
 import ChatWindow from './components/chat/ChatWindow'
@@ -199,3 +200,6 @@ settingChatTargetTabWindow.$mount('#settingChatTargetTabWindow')
 
 const playerBoxWindow = new Vue({ store, components: { PlayerBoxWindow }, template: `<PlayerBoxWindow/>` })
 playerBoxWindow.$mount('#playerBoxWindow')
+
+const editGroupChatWindow = new Vue({ store, components: { EditGroupChatWindow }, template: `<EditGroupChatWindow/>` })
+editGroupChatWindow.$mount('#editGroupChatWindow')

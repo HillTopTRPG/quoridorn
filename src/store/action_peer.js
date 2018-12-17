@@ -179,7 +179,7 @@ const actionPeer = {
                 if (playerObj.name === rootState.private.self.playerName) {
                   playerMe = playerObj
                 } else {
-                  commit('addPlayerWidth')
+                  // commit('addPlayerWidth')
                 }
               })
               if (!memberMe) {
