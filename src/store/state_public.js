@@ -549,7 +549,7 @@ const storeModulePublic = {
 
     getViewName: (state, getters) => key => {
       const obj = getters.getObj(key)
-      if (!obj) return
+      if (!obj) return '名無し(PL)'
       const kind = obj.key.split('-')[0]
       if (kind === 'player') {
         // プレイヤー

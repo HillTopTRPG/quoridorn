@@ -520,6 +520,8 @@ export default {
         ownerKey = undefined
       }
 
+      const currentActor = this.getPeerActors.filter(actor => actor.key === this.currentActorKey)[0]
+
       const messageObj = {
         name: this.currentChatName,
         text: text,
@@ -527,7 +529,7 @@ export default {
         tab: outputTab,
         from: ownerKey,
         target: this.chatTarget,
-        owner: this.getPeerActors.filter(actor => actor.key === this.currentActorKey)[0].key
+        owner: currentActor ? currentActor.key : null
       }
 
       // 送信先決定

@@ -120,7 +120,8 @@ export default {
           password: this.password,
           playerPassword: this.playerPassword,
           playerName: this.playerName,
-          playerType: this.playerType
+          playerType: this.playerType,
+          currentChatName: `${this.playerName}(${this.playerType})`
         },
         logOff: true
       })
