@@ -1,11 +1,11 @@
 <template>
   <WindowFrame titleText="プレイヤーボックス画面" display-property="private.display.playerBoxWindow" align="center" fixSize="300, 400">
     <div class="contents">
-      <select v-model="currentPlayerName">
-        <option v-for="player in players" :key="player.name" :value="player.name">{{player.name}}</option>
+      <select v-model="currentPlayerKey">
+        <option v-for="player in players" :key="player.key" :value="player.key">{{player.name}}</option>
       </select>
-      <fieldset v-if="currentPlayerName">
-        <legend>{{currentPlayerName}}({{getType}})</legend>
+      <fieldset v-if="currentPlayerKey">
+        <legend>{{getPlayerName(currentPlayerKey)}}({{getType}})</legend>
         <label>
           チャット文字色
           <input
@@ -61,28 +61,32 @@
         <!-----------------
          ! キャラクター待合室
          !---------------->
-        <fieldset v-if="myPlayerType === 'GM' || currentPlayerName === myPlayerName">
+        <fieldset v-if="myPlayerType === 'GM' || currentPlayerKey === selfPlayerKey">
           <legend>キャラクター待合室</legend>
           <ul class="objList">
             <li v-for="character in getMapObject('character', 'waiting')" :key="character.key">
               <CharacterChip :type="character.kind" :objKey="character.key" />
+              <button @click="toMap(character.key)">マップへ</button>
             </li>
           </ul>
         </fieldset>
         <!-----------------
          ! 墓場
          !---------------->
-        <fieldset v-if="myPlayerType === 'GM' || currentPlayerName === myPlayerName">
+        <fieldset v-if="myPlayerType === 'GM' || currentPlayerKey === selfPlayerKey">
           <legend>墓場</legend>
           <ul class="objList">
             <li v-for="character in getMapObject('character', 'graveyard')" :key="character.key">
               <CharacterChip :type="character.kind" :objKey="character.key" />
+              <button @click="toMap(character.key)">マップへ</button>
             </li>
             <li v-for="mapMask in getMapObject('mapMask', 'graveyard')" :key="mapMask.key">
               <MapMaskChip :type="mapMask.kind" :objKey="mapMask.key" />
+              <button @click="toMap(mapMask.key)">マップへ</button>
             </li>
             <li v-for="chit in getMapObject('chit', 'graveyard')" :key="chit.key">
               <ChitChip :type="chit.kind" :objKey="chit.key" />
+              <button @click="toMap(chit.key)">マップへ</button>
             </li>
           </ul>
         </fieldset>
@@ -92,7 +96,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import WindowFrame from '../WindowFrame'
 import WindowMixin from '../WindowMixin'
 import CharacterChip from '../map/character/CharacterChip'
@@ -106,7 +110,7 @@ export default {
   },
   data () {
     return {
-      currentPlayerName: null
+      currentPlayerKey: null
     }
   },
   methods: {
@@ -117,7 +121,8 @@ export default {
       'emptyProperty',
       'setProperty',
       'getPieceObj',
-      'changeChatFontColor'
+      'changeChatFontColor',
+      'changePieceInfo'
     ]),
     changeFontColorType (key, value) {
       const targetCharacter = this.characters.filter(character => character.key === key)[0]
@@ -140,19 +145,34 @@ export default {
         color: value,
         historyChange: historyChange
       })
+    },
+    getPlayerName (playerKey) {
+      const player = this.getObj(playerKey)
+      if (!player) return ''
+      return player.name
+    },
+    toMap (key) {
+      const kind = key.split('-')[0]
+      this.changePieceInfo({ propName: kind, key: key, place: 'field', isNotice: true })
     }
   },
   watch: {
   },
   computed: mapState({
+    ...mapGetters([
+      'getObj'
+    ]),
     members: state => state.public.room.members,
     players: state => state.public.player.list,
     myPeerId: state => state.private.self.peerId,
-    myPlayerName: state => state.private.self.playerName,
+    selfPlayerKey: state => {
+      const player = state.public.player.list.filter(player => player.name === state.private.self.playerName)[0]
+      return player ? player.key : null
+    },
     myPlayerType: state => state.private.self.playerType,
     characters: state => state.public.character.list,
     getPlayer () {
-      return this.players.filter(player => player.name === this.currentPlayerName)[0]
+      return this.getObj(this.currentPlayerKey)
     },
     getType () {
       const player = this.getPlayer
@@ -166,12 +186,12 @@ export default {
     },
     getMembers () {
       return function () {
-        return this.members.filter(member => member.name === this.currentPlayerName)
+        return this.members.filter(member => member.name === this.currentPlayerKey)
       }
     },
     getMapObject (state) {
       return function (kind, place) {
-        return state.public[kind].list.filter(target => target.owner === this.currentPlayerName && target.place === place)
+        return state.public[kind].list.filter(target => target.owner === this.currentPlayerKey && target.place === place)
       }
     }
   })

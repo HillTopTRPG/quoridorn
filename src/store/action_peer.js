@@ -98,6 +98,8 @@ const actionPeer = {
 
       rootState.public.room.id = roomName
 
+      dispatch('windowOpen', 'private.display.playerBoxWindow')
+
       // 誰かが入室してきた場合
       room.on('peerJoin', peerId => {
         console.qLog(`入室を感知 => peerId: ${peerId}`)

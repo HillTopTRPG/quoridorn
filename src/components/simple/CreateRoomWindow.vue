@@ -1,5 +1,5 @@
 <template>
-  <WindowFrame titleText="入室画面" display-property="private.display.createRoomWindow" align="center" fixSize="370, 266" @open="open">
+  <WindowFrame titleText="入室画面" display-property="private.display.createRoomWindow" align="center" fixSize="370, 286" @open="open">
     <div class="contents">
       <fieldset class="roomInfo">
         <legend>部屋の情報</legend>
@@ -27,6 +27,7 @@
           </select>
           <input class="playerNameInput" type="text" v-model="playerName" placeholder="名前（必須項目）" />
         </div>
+        <label class="passwordLabel">パスワード：<input class="passwordInput" type="password" v-model="playerPassword" /></label>
         <div v-html="roleText[playerType].replace(/\n/g, '<br>')"></div>
       </fieldset>
       <div class="operateArea">
@@ -54,6 +55,7 @@ export default {
       roomName: '',
       playerName: '',
       password: '',
+      playerPassword: '',
       currentSystem: 'DiceBot',
       diceBotSystems: [],
       existCheckMessage: '',
@@ -96,6 +98,7 @@ export default {
     open () {
       this.roomName = ''
       this.password = ''
+      this.playerPassword = ''
       this.currentSystem = 'DiceBot'
     },
     commit () {
@@ -115,6 +118,7 @@ export default {
         property: 'private.self',
         value: {
           password: this.password,
+          playerPassword: this.playerPassword,
           playerName: this.playerName,
           playerType: this.playerType
         },

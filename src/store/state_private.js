@@ -126,7 +126,7 @@ const storeModulePrivate = {
         command: null,
         isDisplay: false,
         zIndex: 1,
-        windowSize: { w: 220, h: 300 },
+        windowSize: { w: 237, h: 400 },
         key: null,
         // テーブル形式用データここから
         widthList: [25, 174], // 200

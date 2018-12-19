@@ -475,7 +475,9 @@ const storeModulePublic = {
      * @param state
      */
     getAllObstacle: state => {
-      const allPieceList = state.character.list.concat(state.chit.list).concat(state.mapMask.list)
+      const allPieceList = state.character.list.filter(o => o.place === 'field')
+        .concat(state.chit.list.filter(o => o.place === 'field'))
+        .concat(state.mapMask.list.filter(o => o.place === 'field'))
       // TODO obstacle属性の作成
       return allPieceList
     },
@@ -509,7 +511,9 @@ const storeModulePublic = {
        * @param type
        * @returns {*}
        */
-      (type) => state[type].list.map(pieceObj => pieceObj.key),
+      (type) => state[type].list
+        .filter(pieceObj => pieceObj.place === 'field')
+        .map(pieceObj => pieceObj.key),
 
     /**
      * 現在の背景画像
@@ -522,28 +526,37 @@ const storeModulePublic = {
       const playerName = rootState.private.self.playerName
       const player = state.player.list.filter(p => p.name === playerName)[0]
       if (player) {
-        return [ player, ...state.character.list.filter(character => character.owner === playerName) ]
+        return [ player, ...state.character.list.filter(character => character.owner === player.key) ]
       } else {
         return [ { name: '名無し', type: 'PL' }, ...state.character.list ]
       }
     },
 
-    getViewName: state => key => {
+    getObj: state => key => {
       if (!key) return
       const kind = key.split('-')[0]
       if (kind === 'player') {
         // プレイヤー
-        const player = state.player.list.filter(player => player.key === key)[0]
-        const type = player.type
-        return `${player.name}(${type})`
+        return state.player.list.filter(player => player.key === key)[0]
       } else if (kind === 'character') {
         // キャラクター
-        const character = state.character.list.filter(character => character.key === key)[0]
-        return `${character.name}`
+        return state.character.list.filter(character => character.key === key)[0]
       } else if (kind === 'groupTargetTab') {
         // グループチャットタブ
-        const tab = state.chat.groupTargetTab.list.filter(tab => tab.key === key)[0]
-        return `${tab.name}`
+        return state.chat.groupTargetTab.list.filter(tab => tab.key === key)[0]
+      }
+    },
+
+    getViewName: (state, getters) => key => {
+      const obj = getters.getObj(key)
+      if (!obj) return
+      const kind = obj.key.split('-')[0]
+      if (kind === 'player') {
+        // プレイヤー
+        const type = obj.type
+        return `${obj.name}(${type})`
+      } else {
+        return `${obj.name}`
       }
     }
   } /* end of getters */

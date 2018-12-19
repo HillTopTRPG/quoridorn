@@ -14,14 +14,6 @@
             <th :style="colStyle(2)">出力先タブ</th><Divider :index="2" prop="settingChatTargetTabWindow"/>
             <th :style="colStyle(3)">送信先</th><Divider :index="3" prop="settingChatTargetTabWindow"/>
             <th :style="colStyle(4)"></th>
-            <!--
-            <th :style="colStyle(3)">全体</th><Divider :index="3" prop="settingChatTargetTabWindow"/>
-            <template v-for="(player, index) in players">
-              <th :style="colStyle(index + 4)" :key="player.key">{{player.name}}</th>
-              <Divider :key="`${player.key}-divider`" :index="index + 4" prop="settingChatTargetTabWindow"/>
-            </template>
-            <th :style="colStyle(players.length + 4)"></th>
-            -->
           </tr>
           </thead>
           <tbody>
@@ -35,46 +27,24 @@
 
             <!-- 秘匿チェック -->
             <td :style="colStyle(0)">
-              <input
-                type="checkbox"
-                :checked="groupTargetTab.isSecret"
-                disabled
-                @change="changeProp(groupTargetTab, 'isSecret', !groupTargetTab.isSecret)"
-              />
+              <span class="icon-checkmark" v-if="groupTargetTab.isSecret"></span>
             </td>
             <Divider :index="0" prop="settingChatTargetTabWindow"/>
 
             <!-- 名前 -->
             <td :style="colStyle(1)">
-              <input
-                type="text"
-                :value="groupTargetTab.name"
-                placeholder="グルチャ名"
-                disabled
-                @change="event => changeProp(groupTargetTab, 'name', event.target.value)"
-              >
+              {{groupTargetTab.name}}
             </td>
             <Divider :index="1" prop="settingChatTargetTabWindow"/>
 
             <!-- 出力先タブ -->
             <td :style="colStyle(2)">
-              <select
-                :value="groupTargetTab.targetTab"
-                @change="event => changeProp(groupTargetTab, 'targetTab', event.target.value)"
-                disabled
-              >
-                <option :value="null">指定なし</option>
-                <option
-                  v-for="tabObj in chatTabList"
-                  :key="tabObj.name"
-                  :value="tabObj.name"
-                >{{tabObj.name}}</option>
-              </select>
+              {{groupTargetTab.targetTab ? groupTargetTab.targetTab : '指定なし'}}
             </td>
             <Divider :index="2" prop="settingChatTargetTabWindow"/>
 
             <!-- 送信先 -->
-            <td :style="colStyle(3)">
+            <td :style="colStyle(3)" style="text-align: left; padding: 0 0.3rem;">
               {{getViewNames(groupTargetTab)}}
             </td>
             <Divider :index="2" prop="settingChatTargetTabWindow"/>
@@ -83,30 +53,6 @@
             <td :style="colStyle(4)">
               <button type="button" @click="edit(groupTargetTab.key)">編集</button>
             </td>
-
-            <!--
-            <td :style="colStyle(3)">
-              <input
-                type="checkbox"
-                :checked="groupTargetTab.isAll"
-                @change="changeProp(groupTargetTab, 'isAll', !groupTargetTab.isAll)"/>
-            </td>
-            <Divider :index="3" prop="settingChatTargetTabWindow"/>
-
-            <template v-for="(player, index) in players">
-              <th :style="colStyle(index + 4)" :key="`${player.key}`">
-                <input
-                  type="checkbox"
-                  :checked="isSelected(groupTargetTab, player)"
-                  :disabled="groupTargetTab.isAll"
-                  @change="event => changeGroupTargetMember(groupTargetTab, player, event.target.checked)"
-                >
-              </th>
-              <Divider :index="index + 4" :key="`${player.key}-divider`" prop="settingChatTargetTabWindow"/>
-            </template>
-
-            <td :style="colStyle(players.length + 4)"></td>
-            -->
           </tr>
           <tr class="space">
             <td :style="colStyle(0)"></td><Divider :index="0" prop="settingChatTargetTabWindow"/>
@@ -114,15 +60,6 @@
             <td :style="colStyle(2)"></td><Divider :index="2" prop="settingChatTargetTabWindow"/>
             <td :style="colStyle(3)"></td><Divider :index="3" prop="settingChatTargetTabWindow"/>
             <td :style="colStyle(4)"></td>
-
-            <!--
-            <template v-for="(player, index) in players">
-              <td :style="colStyle(index + 4)" :key="`${player.key}`"></td>
-              <Divider :index="index + 4" :key="`${player.key}-divider`" prop="settingChatTargetTabWindow"/>
-            </template>
-
-            <td :style="colStyle(players.length + 4)"></td>
-            -->
           </tr>
           </tbody>
         </table>
@@ -255,9 +192,29 @@ export default {
   computed: mapState({
     ...mapGetters([
       'getPeerActors',
-      'getViewName'
+      'getViewName',
+      'getObj'
     ]),
-    groupTargetTabList: state => state.public.chat.groupTargetTab.list,
+    groupTargetTabList (state) {
+      console.log('$$$$$$$', state.public.chat.groupTargetTab.list)
+      return state.public.chat.groupTargetTab.list.filter(tab => {
+        if (tab.isAll) return true
+        console.log('!!!!', tab.group)
+        const targetList = tab.group
+          .map(g => this.getObj(g))
+          .filter(obj => {
+            console.log('---', obj)
+            const kind = obj.key.split('-')[0]
+            if (kind === 'player') {
+              if (obj.key === this.selfPlayerKey) return true
+            } else {
+              if (obj.owner === this.selfPlayerKey) return true
+            }
+            return false
+          })
+        return targetList.length > 0
+      })
+    },
     /* Start 列幅可変テーブルのプロパティ */
     selectLineKey: state => state.private.display.settingChatTargetTabWindow.selectLineKey,
     widthList: state => state.private.display.settingChatTargetTabWindow.widthList,
@@ -307,7 +264,7 @@ export default {
     width: 100%;
     height: 216px;
     border: 1px solid rgb(183, 186, 188);
-    font-size: 8px;
+    font-size: 10px;
     box-sizing: border-box;
   }
   table {
@@ -317,9 +274,9 @@ export default {
     border-spacing: 0;
     table-layout: fixed;
     background-image: linear-gradient( 0deg, white 0%, white 50%, rgb(247, 247, 247) 51%, rgb(247, 247, 247) 100% );
-    background-size: 4em 4em;
+    background-size: 5em 5em;
   }
-  tr { height: 2em; }
+  tr { height: 2.5em; }
   tr.space { height: auto; }
   th, td {
     padding: 0;
@@ -345,7 +302,7 @@ export default {
     border-bottom: 1px solid rgb(183, 186, 188);
   }
   table tbody tr {
-    height: 2em;
+    height: 2.5em;
   }
   table tbody tr:not(.space).isActive {
     background-color: rgb(127, 206, 255) !important;
@@ -390,6 +347,14 @@ export default {
   table input {
     background: none;
     border: none;
+  }
+  button {
+    /*height: 2.5em;*/
+    font-size: inherit;
+    box-sizing: border-box;
+    border-radius: 3px;
+    padding: 0.3em 0.5em;
+    line-height: 1em;
   }
   /* End 列幅可変テーブルのCSS */
 </style>

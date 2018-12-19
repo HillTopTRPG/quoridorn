@@ -8,9 +8,9 @@
       <ul v-if="memberList.length > 0">
         <li v-for="(memberObj, index) in memberList" :key="memberObj.peerId">
           <b v-if="index === 0">[親]</b>
-          <b v-if="memberObj.peerId === yourPeerId">[あなた]</b>
+          <b v-if="memberObj.peerId === yourPeerId">[この画面]</b>
           <span>{{memberObj.name}} (peerID：{{memberObj.peerId}})</span>
-          <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(memberObj.peerId)"/></div>
+          <div class="returnUrlArea">復帰用URL：<input class="returnUrl" type="text" readonly="readonly" :value="createURL(memberObj)"/></div>
         </li>
       </ul>
     </div>
@@ -29,8 +29,8 @@ export default {
     WindowFrame
   },
   methods: {
-    createURL (peerId) {
-      return `${this.inviteUrl}&peerId=${peerId}`
+    createURL (memberObj) {
+      return `${this.inviteUrl}&playerName=${memberObj.name}`
     }
     // open () {
     //   setTimeout(function () {

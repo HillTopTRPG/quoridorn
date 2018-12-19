@@ -39,6 +39,7 @@
               <Load/><!-- ロード機能 -->
               <ChatWindow/><!-- チャット画面 -->
               <DiceWindow/><!-- ダイス画面 -->
+              <PlayerBoxWindow/><!-- プレイヤーボックス画面 -->
               <ChangeFontSizeWindow/><!-- フォントサイズ調整画面 -->
               <ResetAllWindow/><!-- ウィンドウ配置初期化機能 -->
               <AddCharacterWindow/><!-- キャラクター追加画面 -->
@@ -91,6 +92,7 @@ import Save from './spec/Save'
 import Load from './spec/Load'
 import ChatWindow from './spec/ChatWindow'
 import DiceWindow from './spec/DiceWindow'
+import PlayerBoxWindow from './spec/PlayerBoxWindow'
 import ChangeFontSizeWindow from './spec/ChangeFontSizeWindow'
 import ResetAllWindow from './spec/ResetAllWindow'
 import AddCharacterWindow from './spec/AddCharacterWindow'
@@ -131,6 +133,7 @@ export default {
     Load,
     ChatWindow,
     DiceWindow,
+    PlayerBoxWindow,
     ChangeFontSizeWindow,
     ResetAllWindow,
     AddCharacterWindow,

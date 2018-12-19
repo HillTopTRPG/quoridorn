@@ -11,23 +11,23 @@ Vue.use(Vuex)
  * Store
  */
 const storeModuleSetting = {
-  // TODO settingのデータは別経路で保存する？
+  // FIXME settingのデータは別経路で保存する？
   state: {
     /** カードセット */
     version: '1.0.0b2',
     /** カードセット */
-    cardSet: []
+    cardSet: deckList
   }, /* end of state */
   actions: {
-    /**
-     * 指定されたプロパティパスの子画面を開く
-     * @param state
-     * @param getters
-     * @param property
-     */
-    onSettingMount ({ state }) {
-      deckList.forEach(deck => state.cardSet.push(deck))
-    }
+    // /**
+    //  * 指定されたプロパティパスの子画面を開く
+    //  * @param state
+    //  * @param getters
+    //  * @param property
+    //  */
+    // onSettingMount ({ state }) {
+    //   deckList.forEach(deck => state.cardSet.push(deck))
+    // }
   } /* end of actions */
 }
 export default storeModuleSetting

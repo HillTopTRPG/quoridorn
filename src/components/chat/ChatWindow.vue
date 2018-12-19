@@ -1,17 +1,16 @@
 <template>
-  <WindowFrame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 240" :fontSizeBar="true">
+  <WindowFrame titleText="チャット" display-property="private.display.chatWindow" align="left-bottom" baseSize="-300, 260" :fontSizeBar="true">
     <div class="container">
       <!----------------
        ! タブ
        !--------------->
       <div class="tabs dep">
-        <span
-          class="tab"
-          v-for="(tabObj, index) in chatTabList"
-          :key="tabObj.name"
-          :class="{ active: tabObj.name === activeTab, unRead: tabObj.unRead > 0 }"
-          @mousedown.prevent="selectChatTab(tabObj.name)"
-          :tabindex="index + 1"
+        <span class="tab"
+              v-for="(tabObj, index) in chatTabList"
+              :key="tabObj.name"
+              :class="{ active: tabObj.name === activeTab, unRead: tabObj.unRead > 0 }"
+              @mousedown.prevent="selectChatTab(tabObj.name)"
+              :tabindex="index + 1"
         >#{{tabObj.name}}/{{tabObj.unRead}}</span>
         <span class="tab addButton" @click="addTab" :tabindex="chatTabList.length + 1"><span class="icon-cog"></span></span>
       </div>
@@ -25,8 +24,8 @@
        ! 操作盤
        !--------------->
       <div class="oneLine dep">
-        <span class="label">名前</span>
-        <select :tabindex="chatTabList.length + 2" :value="nameToKey(currentChatName)" @change="inputName" title="">
+        <span class="label">名前(！)</span>
+        <select :tabindex="chatTabList.length + 2" :value="nameToKeyView(currentChatName)" @change="inputName" title="">
           <option v-for="actor in getPeerActors" :key="actor.key" :value="actor.key">{{getViewName(actor.key)}}</option>
         </select>
         <!--<select :tabindex="chatTabList.length + 5" v-model="secretTarget">-->
@@ -44,17 +43,16 @@
       <div class="sendLine dep">
         <div class="textAreaContainer">
           <!----------------
-           ! 秘匿タブ
+           ! グループチャットタブ
            !--------------->
           <div class="tabs">
-            <span
-              class="tab"
-              v-for="(tabObj, index) in groupTargetTabList"
-              :key="tabObj.key"
-              :class="{ active: tabObj.key === chatTarget }"
-              @mousedown.prevent="groupTargetTabSelect(tabObj.key)"
-              :tabindex="chatTabList.length + 12 + index"
-            >> {{tabObj.name}}</span>
+            <span class="tab"
+                  v-for="(tabObj, index) in groupTargetTabList"
+                  :key="tabObj.key"
+                  :class="{ active: tabObj.key === chatTarget }"
+                  @mousedown.prevent="groupTargetTabSelect(tabObj.key)"
+                  :tabindex="chatTabList.length + 12 + index"
+            >> {{tabObj.name}}{{otherMatcherName(tabObj) ? `(${otherMatcherName(tabObj)})` : ''}}</span>
             <span class="tab addButton"
                   @click="addTargetTab"
                   :tabindex="chatTabList.length + chatTabList.length + 12"
@@ -68,36 +66,44 @@
            ! チャットオプション（送信者）
            !--------------->
           <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'from'">
-            送信者
+            <span>送信者{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
             <ul>
-              <li
-                v-for="actor in getPeerActors"
-                :key="actor.key"
-                :class="{selected: currentChatName === getViewName(actor.key)}"
-                tabindex="-1"
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
+              <li v-for="actor in getPeerActors"
+                  :key="actor.key"
+                  :class="{selected: currentChatName === getViewName(actor.key)}"
+                  tabindex="-1"
               >{{getViewName(actor.key)}}</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
           </div>
           <!----------------
            ! チャットオプション（対象）
            !--------------->
           <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'target'">
-            送信先
+            <span>送信先{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
             <ul>
-              <li
-                v-for="target in chatTargetList"
-                :key="target.key"
-                :class="{selected: chatTarget === target.key}"
-                tabindex="-1"
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
+              <li v-for="target in chatOptionPagingList"
+                  :key="target.key"
+                  :class="{selected: chatTarget === target.key}"
+                  tabindex="-1"
               >{{getViewName(target.key)}}</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
           </div>
           <!----------------
            ! チャットオプション（タブ）
            !--------------->
           <div class="chatOptionSelector dep" v-if="chatOptionSelectMode === 'tab'">
-            出力先のタブ
+            <span>出力先のタブ{{chatOptionPageMaxNum > 1 ? ` (${chatOptionPageNum} / ${chatOptionPageMaxNum})` : ''}}</span>
             <ul>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === 1">[末尾へ]</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== 1">[前へ]</li>
               <li :class="{selected: chatTargetTab === '[選択中]'}">[選択中]</li>
               <li
                 v-for="tab in chatTabList"
@@ -105,6 +111,8 @@
                 :class="{selected: chatTargetTab === tab.name}"
                 tabindex="-1"
               >{{tab.name}}</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum !== chatOptionPageMaxNum">[次へ]</li>
+              <li class="ope" v-if="chatOptionPageMaxNum > 1 && chatOptionPageNum === chatOptionPageMaxNum">[先頭へ]</li>
             </ul>
           </div>
           <div class="chatInputArea">
@@ -173,12 +181,13 @@ export default {
       currentMessage: '',
       /** 発言時に「」を付与するかどうか */
       addBrackets: false,
+      /** チャットオプション入力モード('tab':# or 'target':@ or '') */
+      chatOptionSelectMode: '',
+      chatOptionPagingSize: 8,
       /** 発言先 */
       chatTarget: 'groupTargetTab-0',
       /** 出力先のタブ */
       chatTargetTab: '[選択中]',
-      /** チャットオプション入力モード('tab':# or 'target':@ or '') */
-      chatOptionSelectMode: '',
       /** 選択されているシステム */
       currentDiceBotSystem: 'DiceBot',
       /** 現在発言中のアクターのkey */
@@ -261,7 +270,7 @@ export default {
           if (selectFrom) return
           if (this.getViewName(target.key).startsWith(useText)) {
             console.log(target)
-            selectFrom = target.key
+            selectFrom = this.getViewName(target.key)
           }
         })
       }
@@ -320,12 +329,16 @@ export default {
     },
     chatOptionSelectChange (direction, event) {
       let selection = []
-      let targetProperty = ''
       let target = null
+
+      if (!this.volatileFrom) this.volatileFrom = this.currentChatName
+      if (!this.volatileTarget) this.volatileTarget = this.chatTarget
+      if (!this.volatileActiveTab) this.volatileActiveTab = this.activeTab
+      if (!this.volatileTargetTab) this.volatileTargetTab = this.chatTargetTab
+
       if (this.chatOptionSelectMode === 'from') {
         selection = this.getPeerActors
-        targetProperty = 'currentChatName'
-        target = selection.filter(s => this.getViewName(s.key) === this[targetProperty])[0]
+        target = selection.filter(s => this.getViewName(s.key) === this.currentChatName)[0]
         event.preventDefault()
 
         let index = selection.indexOf(target)
@@ -334,13 +347,17 @@ export default {
         if (index === selection.length) index = 0
         const newValue = selection[index]
 
-        if (!this.volatileFrom) this.volatileFrom = this[targetProperty]
-        this.setProperty({property: 'private.self.currentChatName', value: this.getViewName(newValue.key), isNotice: false, logOff: true})
+        this.setProperty({
+          property: 'private.self.currentChatName',
+          value: this.getViewName(newValue.key),
+          isNotice: false,
+          logOff: true
+        })
       }
+
       if (this.chatOptionSelectMode === 'target') {
         selection = this.chatTargetList
-        targetProperty = 'chatTarget'
-        target = selection.filter(s => s.key === this[targetProperty])[0]
+        target = selection.filter(s => s.key === this.chatTarget)[0]
         event.preventDefault()
 
         let index = selection.indexOf(target)
@@ -349,17 +366,15 @@ export default {
         if (index === selection.length) index = 0
         const newValue = selection[index]
 
-        if (!this.volatileTarget) this.volatileTarget = this[targetProperty]
-        this[targetProperty] = newValue.key
-        if (newValue.targetTab) this.chatTargetTab = newValue.targetTab
+        this.groupTargetTabSelect(newValue.key)
       }
+
       if (this.chatOptionSelectMode === 'tab') {
         selection = [
           '[選択中]',
           ...this.chatTabList.map(tab => tab.name)
         ]
-        targetProperty = 'chatTargetTab'
-        target = this[targetProperty]
+        target = this.chatTargetTab
         event.preventDefault()
 
         let index = selection.indexOf(target)
@@ -368,10 +383,8 @@ export default {
         if (index === selection.length) index = 0
         const newValue = selection[index]
 
-        if (!this.volatileActiveTab) this.volatileActiveTab = this.activeTab
-        if (!this.volatileTargetTab) this.volatileTargetTab = this[targetProperty]
         this.selectChatTab(newValue !== '[選択中]' ? newValue : this.volatileActiveTab)
-        this[targetProperty] = newValue
+        this.chatTargetTab = newValue
       }
     },
     blurTextArea () {
@@ -395,8 +408,22 @@ export default {
       this.setProperty({property: 'chat.activeTab', value: name, logOff: true})
       this.chatTabSelect(name)
     },
-    groupTargetTabSelect (targetName) {
-      this.chatTarget = targetName
+    groupTargetTabSelect (targetKey) {
+      this.chatTarget = targetKey
+
+      if (this.chatTarget.split('-')[0] === 'groupTargetTab') {
+        const tabObj = this.getObj(this.chatTarget)
+        if (tabObj.targetTab) this.chatTargetTab = tabObj.targetTab
+        const otherName = this.otherMatcherName(tabObj)
+        if (otherName.length > 0) {
+          this.setProperty({
+            property: 'private.self.currentChatName',
+            value: otherName,
+            isNotice: false,
+            logOff: true
+          })
+        }
+      }
     },
     inputName (event) {
       const actorKey = event.target.value
@@ -407,9 +434,6 @@ export default {
     clickChatOption () {
       console.log('clickChatOption')
       document.getElementById('chatTextArea').focus()
-    },
-    onFocus () {
-      this.$emit('onFocus')
     },
     addTab () {
       this.windowOpen('private.display.settingChatTabWindow')
@@ -481,30 +505,47 @@ export default {
         outputTab = this.activeTab
       }
 
+      let ownerKey = null
+      const currentChatKey = this.nameToKey(this.currentChatName)
+      if (currentChatKey) {
+        const kind = currentChatKey.split('-')[0]
+        if (kind === 'player') {
+          ownerKey = this.selfPlayerKey
+        } else if (kind === 'character') {
+          ownerKey = this.getObj(currentChatKey).owner
+        } else {
+          ownerKey = undefined
+        }
+      } else {
+        ownerKey = undefined
+      }
+
       const messageObj = {
         name: this.currentChatName,
         text: text,
         color: color,
         tab: outputTab,
+        from: ownerKey,
+        target: this.chatTarget,
         owner: this.getPeerActors.filter(actor => actor.key === this.currentActorKey)[0].key
       }
 
       // 送信先決定
-      if (this.chatTarget !== 'groupTargetTab-0') {
-        const kind = this.chatTarget.split('-')[0]
-        if (kind === 'groupTargetTab') {
-          // グループチャット向け
-          const groupTargetTab = this.groupTargetTabList.filter(tab => tab.key === this.chatTarget)[0]
-          if (groupTargetTab) {
-            messageObj.to = groupTargetTab.group
-            messageObj.isSecret = groupTargetTab.isSecret
-          }
-        } else {
-          // 個人向け
-          messageObj.to = [ this.chatTarget ]
-          messageObj.isSecret = true
-        }
-      }
+      // if (this.chatTarget !== 'groupTargetTab-0') {
+      //   const kind = this.chatTarget.split('-')[0]
+      //   if (kind === 'groupTargetTab') {
+      //     // グループチャット向け
+      //     const groupTargetTab = this.groupTargetTabList.filter(tab => tab.key === this.chatTarget)[0]
+      //     if (groupTargetTab) {
+      //       messageObj.to = groupTargetTab.group
+      //       messageObj.isSecret = groupTargetTab.isSecret
+      //     }
+      //   } else {
+      //     // 個人向け
+      //     messageObj.to = [ this.chatTarget ]
+      //     messageObj.isSecret = true
+      //   }
+      // }
 
       // -------------------
       // プレイヤー発言
@@ -542,16 +583,38 @@ export default {
       // }, 0)
     },
     memberToName: member => member.name ? member.name : '名無し',
+    nameToKeyView (name) {
+      const key = this.nameToKey(name)
+      this.currentActorKey = key
+      return key
+    },
     nameToKey (name) {
       const obj = this.getPeerActors
         .map(actor => ({name: this.getViewName(actor.key), key: actor.key}))
         .filter(obj => obj.name === name)[0]
       if (!obj) {
-        this.currentActorKey = ''
         return ''
       }
-      this.currentActorKey = obj.key
       return obj.key
+    },
+    otherMatcherName (tabObj) {
+      if (tabObj.isAll) return ''
+      const matchNameList = this.tabMatchObj(tabObj).map(obj => this.getViewName(obj.key))
+      if (matchNameList.indexOf(this.currentChatName) >= 0) return ''
+      return matchNameList[0]
+    },
+    tabMatchObj (tabObj) {
+      return tabObj.group
+        .map(g => this.getObj(g))
+        .filter(obj => {
+          const kind = obj.key.split('-')[0]
+          if (kind === 'player') {
+            if (obj.key === this.selfPlayerKey) return true
+          } else {
+            if (obj.owner === this.selfPlayerKey) return true
+          }
+          return false
+        })
     }
   },
   watch: {
@@ -589,9 +652,38 @@ export default {
   computed: mapState({
     ...mapGetters([
       'getPeerActors',
-      'getViewName'
+      'getViewName',
+      'getObj'
     ]),
-    chatLogList: state => state.public.chat.logs[state.chat.activeTab],
+    chatLogList (state) {
+      return state.public.chat.logs[state.chat.activeTab].filter(log => {
+        if (log.from === this.selfPlayerKey) return true
+        if (!log.target) return true
+        if (log.target === 'groupTargetTab-0') return true
+        const kind = log.target.split('-')[0]
+        if (kind === 'groupTargetTab') {
+          const target = this.getObj(log.target)
+          if (!target.isSecret) return true
+          if (target.isAll) return true
+          const findIndex = target.group.findIndex(g => {
+            const kind = g.split('-')[0]
+            if (kind === 'player') {
+              if (g === this.selfPlayerKey) return true
+            } else if (kind === 'character') {
+              if (this.getObj(g).owner === this.selfPlayerKey) return true
+            }
+            return false
+          })
+          return findIndex > -1
+        } else if (kind === 'player') {
+          console.log('-----player', log.target, this.selfPlayerKey, log.target === this.selfPlayerKey)
+          return log.target === this.selfPlayerKey
+        } else {
+          const target = this.getObj(log.target)
+          return target.owner === this.selfPlayerKey
+        }
+      })
+    },
     chatTabList: state => state.public.chat.tabs,
     playerList: state => state.public.player.list,
     characterList: state => state.public.character.list,
@@ -604,6 +696,10 @@ export default {
             const targetCharacter = this.characterList
               .filter(character => character.owner === this.currentActorKey)
               .filter(character => character.key === targetKey)[0]
+            if (targetCharacter) return true
+          } else if (this.currentActorKey.split('-')[0] === 'character') {
+            const targetCharacter = this.characterList
+              .filter(character => character.key === this.currentActorKey)[0]
             if (targetCharacter) return true
           }
           return false
@@ -632,12 +728,66 @@ export default {
       const list = [
         ...this.groupTargetTabList,
         ...this.playerList,
-        ...this.characterList
+        ...this.characterList.filter(character => character.place === 'field')
       ]
       return list
     },
     activeTab: state => state.chat.activeTab,
-    hoverTab: state => state.chat.hoverTab
+    hoverTab: state => state.chat.hoverTab,
+    selfPlayerKey: state => {
+      const player = state.public.player.list.filter(player => player.name === state.private.self.playerName)[0]
+      return player ? player.key : null
+    },
+    chatOptionPageNum () {
+      if (this.chatOptionSelectMode === 'from') {
+        const index = this.getPeerActors.findIndex(target => target.key === this.chatTarget)
+        if (index === -1) return -1
+        return Math.floor(index / this.chatOptionPagingSize) + 1
+      }
+      if (this.chatOptionSelectMode === 'target') {
+        const index = this.chatTargetList.findIndex(target => target.key === this.chatTarget)
+        if (index === -1) return -1
+        return Math.floor(index / this.chatOptionPagingSize) + 1
+      }
+      if (this.chatOptionSelectMode === 'tab') {
+        const index = this.chatTabList.findIndex(target => target.name === this.activeTab)
+        if (index === -1) return -1
+        return Math.floor(index / this.chatOptionPagingSize) + 1
+      }
+      return -1
+    },
+    chatOptionPageMaxNum () {
+      if (this.chatOptionSelectMode === 'from') {
+        return Math.floor(this.getPeerActors.length / this.chatOptionPagingSize) + 1
+      }
+      if (this.chatOptionSelectMode === 'target') {
+        return Math.floor(this.chatTargetList.length / this.chatOptionPagingSize) + 1
+      }
+      if (this.chatOptionSelectMode === 'tab') {
+        return Math.floor(this.chatTabList.length / this.chatOptionPagingSize) + 1
+      }
+      return 0
+    },
+    chatOptionPagingList () {
+      const pageNum = this.chatOptionPageNum
+      const startIndex = (pageNum - 1) * this.chatOptionPagingSize
+      if (this.chatOptionSelectMode === 'from') {
+        const endIndex = Math.min(pageNum * this.chatOptionPagingSize, this.getPeerActors.length)
+        const result = this.getPeerActors.concat()
+        return result.splice(startIndex, endIndex - startIndex)
+      }
+      if (this.chatOptionSelectMode === 'target') {
+        const endIndex = Math.min(pageNum * this.chatOptionPagingSize, this.chatTargetList.length)
+        const result = this.chatTargetList.concat()
+        return result.splice(startIndex, endIndex - startIndex)
+      }
+      if (this.chatOptionSelectMode === 'tab') {
+        const endIndex = Math.min(pageNum * this.chatOptionPagingSize, this.chatTabList.length)
+        const result = this.chatTabList.concat()
+        return result.splice(startIndex, endIndex - startIndex)
+      }
+      return 0
+    }
   })
 }
 </script>
@@ -652,6 +802,7 @@ export default {
   display: -ms-flexbox;
   flex-direction: column;
   position: relative;
+  overflow: visible;
 }
 .tabs {
   display: flex;
@@ -773,9 +924,16 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.chatInputArea {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  font-size: 13px;
+}
 .chatOption {
   display: flex;
-  height: 4.6em;
+  height: 3.6em;
+  padding: 0.2em 0 0.2em 0.4em;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
@@ -795,6 +953,7 @@ export default {
   padding-left: 0.2rem;
   padding-right: 0.4rem;
   border-radius: 5px 0 0 5px;
+  font-size: 11px;
 }
 .chatOption .emphasis {
   color: black;
@@ -809,6 +968,7 @@ textarea {
   width: 100%;
   height: 3.6em;
   padding: 0.2em 0 0.2em 0.4em;
+  font-size: inherit;
   line-height: 1.1em;
   /*border-radius: 0 5px 5px 0;*/
   border: 1px solid gray;
@@ -877,6 +1037,14 @@ i.icon-music:hover, i.icon-music.hover { background-color: rgb(0, 150, 150); col
   -webkit-user-select: none;
   cursor: default;
   z-index: 1000;
+  max-height: 22.8em;
+  overflow-y: auto;
+}
+.chatOptionSelector .ope {
+  color: #777;
+}
+.chatOptionSelector > span {
+  line-height: 1.8em;
 }
 .chatOptionSelector ul {
   padding: 0;
@@ -885,14 +1053,10 @@ i.icon-music:hover, i.icon-music.hover { background-color: rgb(0, 150, 150); col
 }
 .chatOptionSelector li {
   padding: 0.2em 0.8em;
+  line-height: 1.6em;
 }
 .chatOptionSelector .selected {
   background-color: rgba(255, 255, 255, 0.8);
-}
-.chatInputArea {
-  flex: 1;
-  display: flex;
-  width: 100%;
 }
 .bracketOption {
   flex: 1;

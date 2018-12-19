@@ -1,5 +1,5 @@
 <template>
-  <SpecFrame property="chatWindow" label-str="チャット画面" lastVersion="1.0.0b1" :isSpecFixed="true">
+  <SpecFrame property="chatWindow" label-str="チャット画面" lastVersion="1.0.0b2" :isSpecFixed="true">
     <!----------------------
      ! 起動操作
      !--------------------->
@@ -21,6 +21,15 @@
         <ol>
           <li>ボイスチャット</li>
           <li>秘匿チャット</li>
+          <li>グループチャット</li>
+          <li>
+            簡易コマンド<br>一覧に一致する名前の入力で絞り込みが可能<br>ESCキー押下で選択キャンセル
+            <ol>
+              <li>「!」または「！」<br>→ 発言者の選択</li>
+              <li>「>」または「＞」<br>→ グループチャットまたは秘匿チャット先(個人)の選択</li>
+              <li>「#」または「＃」<br>→ 出力先タブの選択</li>
+            </ol>
+          </li>
           <li>使用するダイスボットの選択</li>
           <li>ダイスボットのヘルプを子画面で表示</li>
           <li>独自ダイスボットの登録</li>
@@ -46,9 +55,9 @@
           <li>
             ログ保存
             <ol>
-              <li>HTMLとして保存<br>→ 出力されたHTML上で様々な見え方の制御ができるようにする。</li>
-              <li>テキストとして保存</li>
-              <li>タブ選択</li>
+              <li>HTML形式<br>→ 出力されたHTML上で様々な見え方の制御ができるようにする。</li>
+              <li>テキスト形式</li>
+              <li>json形式</li>
             </ol>
           </li>
         </ol>
@@ -65,7 +74,6 @@
      !--------------------->
     <SpecItem class-str="unImplemented" label-str="未実装事項">
       <li>ボイスチャット</li>
-      <li>秘匿チャット</li>
       <li>ダイスボットのヘルプを子画面で表示</li>
       <li>独自ダイスボットの登録</li>
       <li>ノベルゲーム風表示</li>
@@ -88,9 +96,9 @@
       <li>
         ログ保存
         <ol>
-          <li>HTMLとして保存</li>
-          <li>テキストとして保存</li>
-          <li>タブ選択</li>
+          <li>HTML形式</li>
+          <li>テキスト形式</li>
+          <li>json形式</li>
         </ol>
       </li>
     </SpecItem>

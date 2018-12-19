@@ -391,7 +391,7 @@ export default {
 
 ._contents {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   width: 100%;
   height: 100%;
   display: block;

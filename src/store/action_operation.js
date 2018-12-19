@@ -23,9 +23,20 @@ const actionOperation = {
         const name = payload.name
         const color = payload.color
         const tab = payload.tab ? payload.tab : activeChatTab.name
+        const from = payload.from
+        const target = payload.target
+        let viewHtml
+        if (target) {
+          const targetName = rootGetters.getObj(target).name
+          viewHtml = `<span style="color: ${color};"><b>${name} > ${targetName}</b>：${text.replace(/\r?\n/g, '<br>')}</span>`
+        } else {
+          viewHtml = `<span style="color: ${color};"><b>${name}</b>：${text.replace(/\r?\n/g, '<br>')}</span>`
+        }
         const logObj = {
           owner: payload.owner,
-          viewHtml: '<span style="color: ' + color + ';"><b>' + name + '</b>：' + text.replace(/\r?\n/g, '<br>') + '</span>'
+          target: target,
+          from: from,
+          viewHtml: viewHtml
         }
         // 未読カウントアップ
         if (tab !== activeChatTab.name) {
