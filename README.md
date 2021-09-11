@@ -1,3 +1,6 @@
+# This repository has been archived.
+next project: [quoridorn-vue-cli-3](https://github.com/HillTopTRPG/quoridorn-vue-cli-3)
+
 # Quoridorn（コリドーン）
 
 ```
